@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ServicePro Elite - Field Service Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f5f7fa;
+            color: #333;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        
+        .nav {
+            display: flex;
+            gap: 2rem;
+        }
+        
+        .nav-item {
+            cursor: pointer;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            transition: background 0.3s;
+        }
+        
+        .nav-item:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        .nav-item.active {
+            background: rgba(255,255,255,0.3);
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+        }
+        
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .stat-change {
+            font-size: 0.85rem;
+            color: #10b981;
+            margin-top: 0.5rem;
+        }
+        
+        .content-card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        
+        .search-box {
+            padding: 0.75rem 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            width: 300px;
+            transition: border-color 0.3s;
+        }
+        
+        .search-box:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        thead {
+            background: #f9fafb;
+        }
+        
+        th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: #666;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        tr:hover {
+            background: #f9fafb;
+        }
+        
+        .status-badge {
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        
+        .status-active {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .status-scheduled {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        
+        .status-completed {
+            background: #e0e7ff;
+            color: #4338ca;
+        }
+        
+        .status-pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .job-card {
+            background: #f9fafb;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            border-left: 4px solid #667eea;
+        }
+        
+        .job-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        
+        .job-title {
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .job-details {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .schedule-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .day-column {
+            background: white;
+            border-radius: 8px;
+            padding: 1rem;
+            min-height: 400px;
+        }
+        
+        .day-header {
+            font-weight: 600;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        
+        .appointment {
+            background: #667eea;
+            color: white;
+            padding: 0.75rem;
+            border-radius: 6px;
+            margin-bottom: 0.5rem;
+            cursor: move;
+            font-size: 0.85rem;
+        }
+        
+        .appointment-time {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+        
+        @media (max-width: 768px) {
+            .nav {
+                gap: 1rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .search-box {
+                width: 100%;
+            }
+            
+            .schedule-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+<script src="https://sites.super.myninja.ai/_assets/ninja-daytona-script.js"></script>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">⚡ ServicePro Elite</div>
+            <nav class="nav">
+                <div class="nav-item active" onclick="showPage('dashboard')">Dashboard</div>
+                <div class="nav-item" onclick="showPage('customers')">Customers</div>
+                <div class="nav-item" onclick="showPage('jobs')">Jobs</div>
+                <div class="nav-item" onclick="showPage('scheduling')">Scheduling</div>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Dashboard Page -->
+        <div id="dashboard-page">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Total Customers</div>
+                    <div class="stat-value">1,247</div>
+                    <div class="stat-change">↑ 12% from last month</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Active Jobs</div>
+                    <div class="stat-value">23</div>
+                    <div class="stat-change">↑ 5 new today</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Monthly Revenue</div>
+                    <div class="stat-value">$87,540</div>
+                    <div class="stat-change">↑ 18% from last month</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Completed Jobs</div>
+                    <div class="stat-value">156</div>
+                    <div class="stat-change">↑ 23 this week</div>
+                </div>
+            </div>
+
+            <div class="content-card">
+                <div class="card-header">
+                    <h2 class="card-title">Recent Jobs</h2>
+                    <button class="btn btn-primary" onclick="alert('Create new job functionality')">+ New Job</button>
+                </div>
+                <div id="recent-jobs"></div>
+            </div>
+        </div>
+
+        <!-- Customers Page -->
+        <div id="customers-page" class="hidden">
+            <div class="content-card">
+                <div class="card-header">
+                    <h2 class="card-title">Customer Management</h2>
+                    <div style="display: flex; gap: 1rem;">
+                        <input type="text" class="search-box" placeholder="Search customers..." id="customer-search" onkeyup="filterCustomers()">
+                        <button class="btn btn-primary" onclick="alert('Add new customer functionality')">+ Add Customer</button>
+                    </div>
+                </div>
+                <table id="customers-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Address</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="customers-tbody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Jobs Page -->
+        <div id="jobs-page" class="hidden">
+            <div class="content-card">
+                <div class="card-header">
+                    <h2 class="card-title">All Jobs</h2>
+                    <button class="btn btn-primary" onclick="alert('Create new job functionality')">+ New Job</button>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Job ID</th>
+                            <th>Customer</th>
+                            <th>Service Type</th>
+                            <th>Technician</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="jobs-tbody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Scheduling Page -->
+        <div id="scheduling-page" class="hidden">
+            <div class="content-card">
+                <div class="card-header">
+                    <h2 class="card-title">Weekly Schedule</h2>
+                    <button class="btn btn-primary" onclick="alert('Create new appointment functionality')">+ Schedule Job</button>
+                </div>
+                <div class="schedule-grid" id="schedule-grid"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample data
+        const customers = [
+            { name: 'John Smith', email: 'john.smith@email.com', phone: '(555) 123-4567', address: '123 Main St, Springfield', status: 'Active' },
+            { name: 'Sarah Johnson', email: 'sarah.j@email.com', phone: '(555) 234-5678', address: '456 Oak Ave, Riverside', status: 'Active' },
+            { name: 'Michael Brown', email: 'mbrown@email.com', phone: '(555) 345-6789', address: '789 Pine Rd, Lakeside', status: 'Active' },
+            { name: 'Emily Davis', email: 'emily.d@email.com', phone: '(555) 456-7890', address: '321 Elm St, Hilltown', status: 'Active' },
+            { name: 'David Wilson', email: 'dwilson@email.com', phone: '(555) 567-8901', address: '654 Maple Dr, Greenville', status: 'Active' }
+        ];
+
+        const jobs = [
+            { id: 'JOB-001', customer: 'John Smith', service: 'HVAC Repair', technician: 'Mike Johnson', date: '2025-10-14', status: 'Scheduled' },
+            { id: 'JOB-002', customer: 'Sarah Johnson', service: 'Plumbing', technician: 'Tom Wilson', date: '2025-10-14', status: 'Active' },
+            { id: 'JOB-003', customer: 'Michael Brown', service: 'Electrical', technician: 'Steve Davis', date: '2025-10-15', status: 'Scheduled' },
+            { id: 'JOB-004', customer: 'Emily Davis', service: 'HVAC Maintenance', technician: 'Mike Johnson', date: '2025-10-15', status: 'Completed' },
+            { id: 'JOB-005', customer: 'David Wilson', service: 'Plumbing Repair', technician: 'Tom Wilson', date: '2025-10-16', status: 'Pending' }
+        ];
+
+        const recentJobs = [
+            { customer: 'John Smith', service: 'HVAC Repair', technician: 'Mike Johnson', time: '2 hours ago', status: 'Active' },
+            { customer: 'Sarah Johnson', service: 'Plumbing Installation', technician: 'Tom Wilson', time: '4 hours ago', status: 'Scheduled' },
+            { customer: 'Michael Brown', service: 'Electrical Inspection', technician: 'Steve Davis', time: '6 hours ago', status: 'Completed' }
+        ];
+
+        const weekDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+        
+        const appointments = {
+            'Monday': [
+                { time: '9:00 AM', customer: 'John Smith', service: 'HVAC Repair' },
+                { time: '2:00 PM', customer: 'Jane Doe', service: 'Plumbing' }
+            ],
+            'Tuesday': [
+                { time: '10:00 AM', customer: 'Bob Wilson', service: 'Electrical' },
+                { time: '3:00 PM', customer: 'Alice Brown', service: 'HVAC Maintenance' }
+            ],
+            'Wednesday': [
+                { time: '11:00 AM', customer: 'Charlie Davis', service: 'Plumbing Repair' }
+            ],
+            'Thursday': [
+                { time: '9:30 AM', customer: 'Diana Miller', service: 'HVAC Installation' },
+                { time: '1:00 PM', customer: 'Edward Jones', service: 'Electrical Repair' }
+            ],
+            'Friday': [
+                { time: '10:30 AM', customer: 'Fiona Garcia', service: 'Plumbing Inspection' }
+            ],
+            'Saturday': [],
+            'Sunday': []
+        };
+
+        // Initialize page
+        function init() {
+            loadCustomers();
+            loadJobs();
+            loadRecentJobs();
+            loadSchedule();
+        }
+
+        function showPage(pageName) {
+            // Hide all pages
+            document.getElementById('dashboard-page').classList.add('hidden');
+            document.getElementById('customers-page').classList.add('hidden');
+            document.getElementById('jobs-page').classList.add('hidden');
+            document.getElementById('scheduling-page').classList.add('hidden');
+
+            // Remove active class from all nav items
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+
+            // Show selected page
+            document.getElementById(pageName + '-page').classList.remove('hidden');
+
+            // Add active class to clicked nav item
+            event.target.classList.add('active');
+        }
+
+        function loadCustomers() {
+            const tbody = document.getElementById('customers-tbody');
+            tbody.innerHTML = customers.map(customer => `
+                <tr>
+                    <td>${customer.name}</td>
+                    <td>${customer.email}</td>
+                    <td>${customer.phone}</td>
+                    <td>${customer.address}</td>
+                    <td><span class="status-badge status-active">${customer.status}</span></td>
+                </tr>
+            `).join('');
+        }
+
+        function loadJobs() {
+            const tbody = document.getElementById('jobs-tbody');
+            tbody.innerHTML = jobs.map(job => {
+                let statusClass = 'status-pending';
+                if (job.status === 'Active') statusClass = 'status-active';
+                if (job.status === 'Scheduled') statusClass = 'status-scheduled';
+                if (job.status === 'Completed') statusClass = 'status-completed';
+                
+                return `
+                    <tr>
+                        <td>${job.id}</td>
+                        <td>${job.customer}</td>
+                        <td>${job.service}</td>
+                        <td>${job.technician}</td>
+                        <td>${job.date}</td>
+                        <td><span class="status-badge ${statusClass}">${job.status}</span></td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function loadRecentJobs() {
+            const container = document.getElementById('recent-jobs');
+            container.innerHTML = recentJobs.map(job => {
+                let statusClass = 'status-pending';
+                if (job.status === 'Active') statusClass = 'status-active';
+                if (job.status === 'Scheduled') statusClass = 'status-scheduled';
+                if (job.status === 'Completed') statusClass = 'status-completed';
+                
+                return `
+                    <div class="job-card">
+                        <div class="job-header">
+                            <div class="job-title">${job.customer} - ${job.service}</div>
+                            <span class="status-badge ${statusClass}">${job.status}</span>
+                        </div>
+                        <div class="job-details">
+                            Technician: ${job.technician} • ${job.time}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function loadSchedule() {
+            const grid = document.getElementById('schedule-grid');
+            grid.innerHTML = weekDays.map(day => `
+                <div class="day-column">
+                    <div class="day-header">${day}</div>
+                    ${(appointments[day] || []).map(apt => `
+                        <div class="appointment">
+                            <div class="appointment-time">${apt.time}</div>
+                            <div>${apt.customer}</div>
+                            <div style="font-size: 0.75rem; opacity: 0.9;">${apt.service}</div>
+                        </div>
+                    `).join('')}
+                </div>
+            `).join('');
+        }
+
+        function filterCustomers() {
+            const searchTerm = document.getElementById('customer-search').value.toLowerCase();
+            const tbody = document.getElementById('customers-tbody');
+            
+            const filtered = customers.filter(customer => 
+                customer.name.toLowerCase().includes(searchTerm) ||
+                customer.email.toLowerCase().includes(searchTerm) ||
+                customer.phone.includes(searchTerm) ||
+                customer.address.toLowerCase().includes(searchTerm)
+            );
+            
+            tbody.innerHTML = filtered.map(customer => `
+                <tr>
+                    <td>${customer.name}</td>
+                    <td>${customer.email}</td>
+                    <td>${customer.phone}</td>
+                    <td>${customer.address}</td>
+                    <td><span class="status-badge status-active">${customer.status}</span></td>
+                </tr>
+            `).join('');
+        }
+
+        // Initialize on load
+        init();
+    </script>
+</body>
+</html>
