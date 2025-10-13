@@ -1,0 +1,47 @@
+.
+├── COMPLETE_FEATURES_LIST.md
+├── CONTRIBUTING.md
+├── DEPLOYMENT_CHECKLIST.md
+├── DEPLOYMENT_GUIDE.md
+├── INTEGRATIONS.md
+├── LICENSE
+├── PRODUCTION_READY_SUMMARY.md
+├── PROJECT_COMPLETION_SUMMARY.md
+├── QUICK_START.md
+├── README.md
+├── REPOSITORY_STRUCTURE.txt
+├── SETUP.md
+├── START_APPLICATION.md
+├── backend
+│   ├── Dockerfile
+│   ├── api
+│   ├── migrations
+│   ├── package-lock.json
+│   ├── package.json
+│   ├── seeds
+│   ├── src
+│   ├── tests
+│   ├── uploads
+│   └── vercel.json
+├── docker-compose.yml
+├── docs
+│   └── API.md
+├── frontend
+│   ├── Dockerfile
+│   ├── nginx.conf
+│   ├── package.json
+│   ├── public
+│   ├── src
+│   └── vercel.json
+├── mobile
+│   ├── App.js
+│   ├── assets
+│   ├── package.json
+│   └── src
+├── nginx.conf
+├── scripts
+│   ├── deploy.sh
+│   └── setup.sh
+└── todo.md
+
+16 directories, 29 files
