@@ -1,0 +1,2728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ServicePro Elite - Dashboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; }
+        
+        /* Header & Navigation */
+        .header { background: white; padding: 15px 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 1000; }
+        .header-content { max-width: 1400px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 24px; font-weight: bold; color: #667eea; }
+        .tagline { color: #666; font-size: 14px; }
+        
+        .nav-bar { background: white; padding: 0; margin: 0; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .nav-content { max-width: 1400px; margin: 0 auto; display: flex; align-items: center; }
+        .nav-bar a { color: #667eea; text-decoration: none; padding: 15px 20px; display: flex; align-items: center; gap: 8px; transition: all 0.3s; border-bottom: 3px solid transparent; }
+        .nav-bar a:hover { background: #f8f9fa; color: #764ba2; }
+        .nav-bar a.active { background: #667eea; color: white; border-bottom-color: #5a6fd8; }
+        
+        /* Main Content */
+        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+        .content-section { display: none; }
+        .content-section.active { display: block; }
+        
+        /* KPI Cards */
+        .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin: 20px 0; }
+        .kpi-card { background: white; border-radius: 12px; padding: 25px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); transition: transform 0.3s; cursor: pointer; }
+        .kpi-card:hover { transform: translateY(-3px); }
+        .kpi-value { font-size: 32px; font-weight: bold; color: #667eea; margin-bottom: 5px; }
+        .kpi-label { color: #666; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; }
+        .kpi-change { font-size: 12px; margin-top: 5px; }
+        .kpi-change.positive { color: #28a745; }
+        .kpi-change.negative { color: #dc3545; }
+        
+        /* Quick Actions */
+        .quick-actions { display: flex; gap: 15px; margin: 20px 0; flex-wrap: wrap; }
+        .btn { background: #667eea; color: white; padding: 12px 24px; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; display: inline-flex; align-items: center; gap: 8px; transition: all 0.3s; }
+        .btn:hover { background: #764ba2; transform: translateY(-2px); }
+        .btn-success { background: #28a745; }
+        .btn-success:hover { background: #218838; }
+        
+        /* Status Badges */
+        .status-badge { padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; text-transform: uppercase; }
+        .status-scheduled { background: #17a2b8; color: white; }
+        .status-in-progress { background: #ffc107; color: #212529; }
+        .status-completed { background: #28a745; color: white; }
+        .status-cancelled { background: #dc3545; color: white; }
+        .status-draft { background: #6c757d; color: white; }
+        .status-sent { background: #007bff; color: white; }
+        .status-paid { background: #28a745; color: white; }
+        .status-overdue { background: #dc3545; color: white; }
+        .status-low { background: #ffc107; color: #212529; }
+        .status-good { background: #28a745; color: white; }
+        
+        /* Tables */
+        .table-container { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.1); margin: 20px 0; }
+        .table { width: 100%; border-collapse: collapse; }
+        .table th { background: #667eea; color: white; padding: 15px; text-align: left; font-weight: 600; }
+        .table td { padding: 15px; border-bottom: 1px solid #e1e5e9; }
+        .table tr:hover { background: #f8f9fa; cursor: pointer; }
+        .table tr:last-child td { border-bottom: none; }
+        
+        /* Action Cards */
+        .action-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin: 20px 0; }
+        .action-card { background: white; border-radius: 12px; padding: 25px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .action-card h3 { color: #667eea; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
+        .action-card p { color: #666; margin-bottom: 15px; }
+        
+        /* Charts */
+        .chart-container { background: white; border-radius: 12px; padding: 25px; margin: 20px 0; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .chart-bar { display: flex; align-items: center; margin: 15px 0; }
+        .chart-label { width: 120px; font-size: 14px; color: #666; }
+        .chart-progress { flex: 1; height: 20px; background: #e9ecef; border-radius: 10px; overflow: hidden; margin: 0 15px; }
+        .chart-fill { height: 100%; border-radius: 10px; transition: width 0.3s ease; }
+        .chart-value { font-size: 14px; font-weight: bold; color: #667eea; min-width: 50px; }
+        
+        /* Job Status Colors */
+        .chart-fill.scheduled { background: #17a2b8; }
+        .chart-fill.in-progress { background: #ffc107; }
+        .chart-fill.completed { background: #28a745; }
+        .chart-fill.cancelled { background: #dc3545; }
+        
+        /* Modal */
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); backdrop-filter: blur(5px); }
+        .modal-content { background: white; margin: 5% auto; padding: 30px; border-radius: 12px; width: 90%; max-width: 600px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+        .close { color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer; }
+        .close:hover { color: #000; }
+        
+        /* Forms */
+        .form-group { margin: 15px 0; }
+        .form-group label { display: block; margin-bottom: 5px; color: #333; font-weight: 500; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 12px; border: 2px solid #e1e5e9; border-radius: 8px; font-size: 16px; }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: #667eea; }
+        
+        /* Alert */
+        .alert { padding: 15px; border-radius: 8px; margin: 15px 0; animation: slideIn 0.3s ease-out; }
+        .alert-success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .alert-error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .alert-warning { background: #fff3cd; color: #856404; border: 1px solid #ffeaa7; }
+        @keyframes slideIn { from { transform: translateX(-100%); } to { transform: translateX(0); } }
+        
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .header-content { flex-direction: column; gap: 10px; }
+            .nav-content { flex-wrap: wrap; }
+            .nav-bar a { padding: 10px 15px; font-size: 12px; }
+            .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+            .quick-actions { justify-content: center; }
+            .action-grid { grid-template-columns: 1fr; }
+            .modal-content { width: 95%; margin: 10% auto; padding: 20px; }
+            .table-container { overflow-x: auto; }
+            .btn { width: 100%; justify-content: center; }
+        }
+        
+        @media (max-width: 480px) {
+            .kpi-grid { grid-template-columns: 1fr; }
+            .logo { font-size: 20px; }
+            .kpi-value { font-size: 24px; }
+        }
+    </style>
+<script src="https://sites.super.myninja.ai/_assets/ninja-daytona-script.js"></script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div>
+                <div class="logo">ServicePro Elite</div>
+                <div class="tagline">Complete Field Service Management Platform – Better Than ServiceTitan</div>
+            </div>
+            <div class="quick-actions">
+                <button class="btn btn-success" onclick="showQuickAddModal('job')">➕ Quick Add Job</button>
+                <button class="btn btn-success" onclick="showQuickAddModal('customer')">➕ Quick Add Customer</button>
+                <button class="btn btn-success" onclick="showQuickAddModal('invoice')">➕ Quick Add Invoice</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="nav-bar">
+        <div class="nav-content">
+            <a href="#" class="active" onclick="showSection('dashboard')">📊 Dashboard</a>
+            <a href="#" onclick="showSection('customers')">📇 Customers</a>
+            <a href="#" onclick="showSection('jobs')">📋 Jobs</a>
+            <a href="#" onclick="showSection('scheduling')">📅 Scheduling</a>
+            <a href="#" onclick="showSection('inventory')">📦 Inventory</a>
+            <a href="#" onclick="showSection('invoices')">🧾 Invoices</a>
+            <a href="#" onclick="showSection('calculator')">🧮 HVAC Calculator</a>
+            <a href="#" onclick="showSection('reports')">📈 Reports</a>
+        </div>
+    </nav>
+
+    <!-- Main Content Container -->
+    <div class="container">
+        <!-- Dashboard Section -->
+        <div id="dashboard" class="content-section active">
+            <h2>📊 Dashboard Overview</h2>
+            
+            <!-- KPI Cards -->
+            <div class="kpi-grid">
+                <div class="kpi-card" onclick="showSection('reports')" style="cursor: pointer;">
+                    <div class="kpi-value" id="monthly-revenue">$458,434</div>
+                    <div class="kpi-label">Monthly Revenue</div>
+                    <div class="kpi-change positive">↑ 15% vs last month</div>
+                </div>
+                <div class="kpi-card" onclick="showSection('jobs')" style="cursor: pointer;">
+                    <div class="kpi-value" id="active-jobs">53</div>
+                    <div class="kpi-label">Active Jobs</div>
+                    <div class="kpi-change positive">↑ 8% this week</div>
+                </div>
+                <div class="kpi-card" onclick="showSection('customers')" style="cursor: pointer;">
+                    <div class="kpi-value" id="total-customers">1,247</div>
+                    <div class="kpi-label">Total Customers</div>
+                    <div class="kpi-change positive">↑ 12% this month</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-value" id="satisfaction-rate">98%</div>
+                    <div class="kpi-label">Customer Satisfaction</div>
+                    <div class="kpi-change">→ Steady</div>
+                </div>
+            </div>
+
+            <!-- Job Status Breakdown -->
+            <div class="chart-container">
+                <h3>📊 Job Status Breakdown</h3>
+                <div class="chart-bar">
+                    <span class="chart-label">📅 Scheduled</span>
+                    <div class="chart-progress">
+                        <div class="chart-fill scheduled" style="width: 30%"></div>
+                    </div>
+                    <span class="chart-value">30%</span>
+                </div>
+                <div class="chart-bar">
+                    <span class="chart-label">⚡ In Progress</span>
+                    <div class="chart-progress">
+                        <div class="chart-fill in-progress" style="width: 25%"></div>
+                    </div>
+                    <span class="chart-value">25%</span>
+                </div>
+                <div class="chart-bar">
+                    <span class="chart-label">✅ Completed</span>
+                    <div class="chart-progress">
+                        <div class="chart-fill completed" style="width: 40%"></div>
+                    </div>
+                    <span class="chart-value">40%</span>
+                </div>
+                <div class="chart-bar">
+                    <span class="chart-label">❌ Cancelled</span>
+                    <div class="chart-progress">
+                        <div class="chart-fill cancelled" style="width: 5%"></div>
+                    </div>
+                    <span class="chart-value">5%</span>
+                </div>
+            </div>
+
+            <!-- Operational Panels -->
+            <div class="action-grid">
+                <!-- Today's Schedule -->
+                <div class="action-card">
+                    <h3>📅 Today's Schedule</h3>
+                    <div id="today-schedule"></div>
+                    <button class="btn" onclick="showSection('scheduling')">View Full Schedule</button>
+                </div>
+
+                <!-- Recent Jobs -->
+                <div class="action-card">
+                    <h3>🔁 Recent Jobs</h3>
+                    <div id="recent-jobs"></div>
+                    <button class="btn" onclick="showSection('jobs')">View All Jobs</button>
+                </div>
+
+                <!-- New Customers -->
+                <div class="action-card">
+                    <h3>👤 New Customers</h3>
+                    <div id="new-customers"></div>
+                    <button class="btn" onclick="showSection('customers')">View All Customers</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Customers Section -->
+        <div id="customers" class="content-section">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2>📇 Customer Management</h2>
+                <div>
+                    <button class="btn btn-success" onclick="showAddCustomerModal()">➕ Add Customer</button>
+                    <button class="btn btn-secondary" onclick="exportCustomers()">📤 Export</button>
+                </div>
+            </div>
+
+            <!-- Search and Filter -->
+            <div style="display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap;">
+                <input type="text" id="customer-search" placeholder="Search customers..." style="flex: 1; min-width: 200px;" onkeyup="searchCustomers()">
+                <select id="customer-filter" onchange="filterCustomers()" style="min-width: 150px;">
+                    <option value="all">All Customers</option>
+                    <option value="recent">Recent (30 days)</option>
+                    <option value="vip">VIP Customers</option>
+                    <option value="overdue">Overdue Service</option>
+                </select>
+                <select id="customer-sort" onchange="sortCustomers()" style="min-width: 150px;">
+                    <option value="name">Sort by Name</option>
+                    <option value="date">Sort by Last Service</option>
+                    <option value="location">Sort by Location</option>
+                </select>
+            </div>
+
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Customer</th>
+                            <th>Contact</th>
+                            <th>Location</th>
+                            <th>Equipment</th>
+                            <th>Last Service</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="customers-table"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Jobs Section -->
+        <div id="jobs" class="content-section">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2>📋 Job Management</h2>
+                <div>
+                    <button class="btn btn-success" onclick="showAddJobModal()">➕ Add Job</button>
+                    <button class="btn btn-secondary" onclick="exportJobs()">📤 Export</button>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div style="display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap;">
+                <select id="job-status-filter" onchange="filterJobs()" style="min-width: 150px;">
+                    <option value="all">All Status</option>
+                    <option value="scheduled">Scheduled</option>
+                    <option value="in-progress">In Progress</option>
+                    <option value="completed">Completed</option>
+                    <option value="cancelled">Cancelled</option>
+                </select>
+                <select id="job-tech-filter" onchange="filterJobs()" style="min-width: 150px;">
+                    <option value="all">All Technicians</option>
+                    <option value="Mike Johnson">Mike Johnson</option>
+                    <option value="Sarah Williams">Sarah Williams</option>
+                    <option value="Tom Davis">Tom Davis</option>
+                </select>
+                <input type="date" id="job-date-filter" onchange="filterJobs()" style="min-width: 150px;">
+            </div>
+
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Job ID</th>
+                            <th>Customer</th>
+                            <th>Service</th>
+                            <th>Date</th>
+                            <th>Technician</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="jobs-table"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Scheduling Section -->
+        <div id="scheduling" class="content-section">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2>📅 Scheduling & Dispatch</h2>
+                <button class="btn btn-success" onclick="showScheduleModal()">➕ Schedule Appointment</button>
+            </div>
+
+            <div class="action-grid">
+                <div class="action-card">
+                    <h3>📅 This Week's Schedule</h3>
+                    <div id="week-schedule"></div>
+                    <button class="btn" onclick="viewWeekSchedule()">View Week</button>
+                </div>
+                <div class="action-card">
+                    <h3>🔧 Available Technicians</h3>
+                    <div id="available-techs"></div>
+                    <button class="btn" onclick="viewTechSchedule()">View Tech Schedule</button>
+                </div>
+                <div class="action-card">
+                    <h3>🚨 Emergency Calls</h3>
+                    <div id="emergency-calls"></div>
+                    <button class="btn" onclick="viewEmergencyCalls()">View Emergency</button>
+                </div>
+            </div>
+
+            <!-- Calendar View -->
+            <div class="chart-container">
+                <h3>📅 Appointment Calendar</h3>
+                <div id="appointment-calendar"></div>
+            </div>
+        </div>
+
+        <!-- Inventory Section -->
+        <div id="inventory" class="content-section">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2>📦 Inventory Management</h2>
+                <div>
+                    <button class="btn btn-success" onclick="showAddInventoryModal()">➕ Add Item</button>
+                    <button class="btn btn-secondary" onclick="exportInventory()">📤 Export</button>
+                </div>
+            </div>
+
+            <!-- Inventory Alerts -->
+            <div id="inventory-alerts"></div>
+
+            <!-- Filters -->
+            <div style="display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap;">
+                <select id="inventory-category-filter" onchange="filterInventory()" style="min-width: 150px;">
+                    <option value="all">All Categories</option>
+                    <option value="refrigerant">Refrigerant</option>
+                    <option value="parts">Parts</option>
+                    <option value="tools">Tools</option>
+                    <option value="consumables">Consumables</option>
+                </select>
+                <select id="inventory-status-filter" onchange="filterInventory()" style="min-width: 150px;">
+                    <option value="all">All Status</option>
+                    <option value="good">Good Stock</option>
+                    <option value="low">Low Stock</option>
+                    <option value="out">Out of Stock</option>
+                </select>
+            </div>
+
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Item</th>
+                            <th>SKU</th>
+                            <th>Category</th>
+                            <th>Quantity</th>
+                            <th>Min Level</th>
+                            <th>Price</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="inventory-table"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Invoices Section -->
+        <div id="invoices" class="content-section">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2>🧾 Invoicing & Payments</h2>
+                <div>
+                    <button class="btn btn-success" onclick="showCreateInvoiceModal()">➕ Create Invoice</button>
+                    <button class="btn btn-secondary" onclick="exportInvoices()">📤 Export</button>
+                </div>
+            </div>
+
+            <!-- Invoice Status Summary -->
+            <div class="kpi-grid" style="margin-bottom: 30px;">
+                <div class="kpi-card">
+                    <div class="kpi-value" id="total-invoices">$0</div>
+                    <div class="kpi-label">Total Invoices</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-value" id="paid-invoices">$0</div>
+                    <div class="kpi-label">Paid</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-value" id="pending-invoices">$0</div>
+                    <div class="kpi-label">Pending</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-value" id="overdue-invoices">$0</div>
+                    <div class="kpi-label">Overdue</div>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div style="display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap;">
+                <select id="invoice-status-filter" onchange="filterInvoices()" style="min-width: 150px;">
+                    <option value="all">All Status</option>
+                    <option value="draft">Draft</option>
+                    <option value="sent">Sent</option>
+                    <option value="paid">Paid</option>
+                    <option value="overdue">Overdue</option>
+                </select>
+                <input type="date" id="invoice-date-filter" onchange="filterInvoices()" style="min-width: 150px;">
+            </div>
+
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Invoice #</th>
+                            <th>Customer</th>
+                            <th>Date</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="invoices-table"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- HVAC Calculator Section -->
+        <div id="calculator" class="content-section">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2>🧮 HVAC Calculator Suite</h2>
+                <a href="hvac-calculator.html" class="btn" style="font-size: 16px; padding: 12px 24px;">
+                    🚀 Launch Complete Calculator
+                </a>
+            </div>
+
+            <p style="margin-bottom: 20px;">Professional-grade tools for HVAC technicians - 100% offline capable with advanced calculations</p>
+
+            <div class="action-grid">
+                <div class="action-card">
+                    <h3>❄️ Refrigeration Calculator</h3>
+                    <p>Superheat, subcooling, target calculations with charge analysis</p>
+                    <button class="btn" onclick="launchCalculator('refrigeration')">Open Calculator</button>
+                </div>
+                <div class="action-card">
+                    <h3>🌪️ Airflow Calculator</h3>
+                    <p>Temperature split analysis with CFM estimation</p>
+                    <button class="btn" onclick="launchCalculator('airflow')">Open Calculator</button>
+                </div>
+                <div class="action-card">
+                    <h3>⚡ Electrical Calculator</h3>
+                    <p>Amp draw analysis with capacitor testing</p>
+                    <button class="btn" onclick="launchCalculator('electrical')">Open Calculator</button>
+                </div>
+                <div class="action-card">
+                    <h3>📏 Duct Calculator</h3>
+                    <p>Velocity and friction loss calculations</p>
+                    <button class="btn" onclick="launchCalculator('duct')">Open Calculator</button>
+                </div>
+            </div>
+
+            <!-- Quick Calc Widget -->
+            <div class="chart-container">
+                <h3>⚡ Quick HVAC Calculator</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                    <div class="form-group">
+                        <label>Temperature Split (°F):</label>
+                        <input type="number" id="quick-temp-split" placeholder="20">
+                        <button class="btn btn-small" onclick="quickCalc('temp-split')">Calculate</button>
+                    </div>
+                    <div class="form-group">
+                        <label>Superheat (°F):</label>
+                        <input type="number" id="quick-superheat" placeholder="12">
+                        <button class="btn btn-small" onclick="quickCalc('superheat')">Calculate</button>
+                    </div>
+                    <div class="form-group">
+                        <label>Amp Draw (%):</label>
+                        <input type="number" id="quick-amps" placeholder="85">
+                        <button class="btn btn-small" onclick="quickCalc('amps')">Calculate</button>
+                    </div>
+                </div>
+                <div id="quick-calc-results" style="margin-top: 20px;"></div>
+            </div>
+        </div>
+
+        <!-- Reports Section -->
+        <div id="reports" class="content-section">
+            <h2>📈 Reports & Analytics</h2>
+            
+            <div class="action-grid">
+                <div class="action-card">
+                    <h3>💰 Revenue Analysis</h3>
+                    <p>Monthly revenue trends and seasonal patterns</p>
+                    <button class="btn" onclick="generateReport('revenue')">Generate Report</button>
+                </div>
+                <div class="action-card">
+                    <h3>📊 Job Performance</h3>
+                    <p>Completion rates, efficiency metrics, and profitability</p>
+                    <button class="btn" onclick="generateReport('jobs')">Generate Report</button>
+                </div>
+                <div class="action-card">
+                    <h3>👥 Customer Analytics</h3>
+                    <p>Retention rates, satisfaction scores, and growth trends</p>
+                    <button class="btn" onclick="generateReport('customers')">Generate Report</button>
+                </div>
+                <div class="action-card">
+                    <h3>🔧 Technician Performance</h3>
+                    <p>Efficiency ratings, job completion times, and reviews</p>
+                    <button class="btn" onclick="generateReport('technicians')">Generate Report</button>
+                </div>
+            </div>
+
+            <!-- Report Results -->
+            <div id="report-results" class="chart-container" style="display: none;">
+                <h3>📊 Report Results</h3>
+                <div id="report-content"></div>
+                <button class="btn btn-secondary" onclick="exportReport()">📄 Export Report</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <div id="modal-body"></div>
+        </div>
+    </div>
+
+    <script>
+        // ServicePro Elite - Complete Dashboard JavaScript
+        // Production-ready with all requested features
+
+        // Sample Data Structure
+        let customers = [
+            {
+                id: 1,
+                name: "John Smith",
+                email: "john.smith@email.com",
+                phone: "(555) 123-4567",
+                address: "123 Main Street, Anytown, ST 12345",
+                equipment: "Carrier 3-Ton AC Unit (Model: 24ABC636A003)",
+                lastService: "2024-10-01",
+                status: "active",
+                tags: ["VIP", "Annual Member"],
+                notes: "Prefers morning appointments. Has 2 dogs.",
+                membership: { type: "Annual", expires: "2025-10-01" }
+            },
+            {
+                id: 2,
+                name: "Jane Doe",
+                email: "jane.doe@email.com",
+                phone: "(555) 987-6543",
+                address: "456 Oak Avenue, Somewhere, ST 67890",
+                equipment: "Trane Furnace (Model: S9X1B080U4PS)",
+                lastService: "2024-09-15",
+                status: "active",
+                tags: ["New Customer"],
+                notes: "First service completed. Follow up for maintenance plan.",
+                membership: null
+            },
+            {
+                id: 3,
+                name: "Bob Johnson",
+                email: "bob.johnson@email.com",
+                phone: "(555) 456-7890",
+                address: "789 Pine Road, Elsewhere, ST 13579",
+                equipment: "Lennox Heat Pump (Model: XP20-036-230)",
+                lastService: "2024-08-20",
+                status: "overdue",
+                tags: ["Overdue Service"],
+                notes: "System showing signs of wear. Recommend replacement consultation.",
+                membership: null
+            }
+        ];
+
+        let jobs = [
+            {
+                id: 1,
+                customerId: 1,
+                customerName: "John Smith",
+                serviceType: "AC Repair - No Cooling",
+                description: "Customer reports AC not cooling properly. System is running but blowing warm air.",
+                date: "2024-10-15",
+                time: "09:00",
+                status: "scheduled",
+                technician: "Mike Johnson",
+                amount: 285.00,
+                priority: "normal",
+                notes: "Check refrigerant levels and compressor operation",
+                equipment: "Carrier 3-Ton AC Unit",
+                location: "123 Main Street, Anytown, ST 12345"
+            },
+            {
+                id: 2,
+                customerId: 2,
+                customerName: "Jane Doe",
+                serviceType: "Annual Furnace Maintenance",
+                description: "Annual maintenance service including filter replacement and system inspection.",
+                date: "2024-10-14",
+                time: "14:00",
+                status: "in-progress",
+                technician: "Sarah Williams",
+                amount: 159.00,
+                priority: "normal",
+                notes: "Replace air filter, check heat exchanger, test safety controls",
+                equipment: "Trane Furnace",
+                location: "456 Oak Avenue, Somewhere, ST 67890"
+            },
+            {
+                id: 3,
+                customerId: 3,
+                customerName: "Bob Johnson",
+                serviceType: "Heat Pump Installation",
+                description: "Install new Lennox heat pump system with ductwork modifications.",
+                date: "2024-10-13",
+                time: "08:00",
+                status: "completed",
+                technician: "Tom Davis",
+                amount: 3850.00,
+                priority: "high",
+                notes: "Full system installation completed. Customer satisfied with work.",
+                equipment: "Lennox Heat Pump XP20",
+                location: "789 Pine Road, Elsewhere, ST 13579"
+            }
+        ];
+
+        let inventory = [
+            {
+                id: 1,
+                name: "R-410A Refrigerant",
+                sku: "R410A-25LB",
+                category: "refrigerant",
+                quantity: 45,
+                minLevel: 10,
+                price: 145.00,
+                status: "good",
+                location: "Warehouse A",
+                supplier: "HVAC Supply Co"
+            },
+            {
+                id: 2,
+                name: "AC Filter 20x25x1",
+                sku: "FILTER-2025-1",
+                category: "consumables",
+                quantity: 8,
+                minLevel: 15,
+                price: 25.00,
+                status: "low",
+                location: "Truck #1",
+                supplier: "Filter Supply Inc"
+            },
+            {
+                id: 3,
+                name: "Compressor 3-Ton Scroll",
+                sku: "COMP-3TON-SCROLL",
+                category: "parts",
+                quantity: 2,
+                minLevel: 2,
+                price: 850.00,
+                status: "good",
+                location: "Warehouse B",
+                supplier: "Compressor Specialists"
+            }
+        ];
+
+        let invoices = [
+            {
+                id: 1,
+                customerId: 1,
+                customerName: "John Smith",
+                date: "2024-10-10",
+                dueDate: "2024-10-25",
+                amount: 285.00,
+                status: "paid",
+                items: [
+                    { description: "AC Repair Service", quantity: 1, price: 200.00 },
+                    { description: "R-410A Refrigerant", quantity: 2, price: 42.50 }
+                ],
+                notes: "Payment received via credit card"
+            },
+            {
+                id: 2,
+                customerId: 2,
+                customerName: "Jane Doe",
+                date: "2024-10-12",
+                dueDate: "2024-10-27",
+                amount: 159.00,
+                status: "sent",
+                items: [
+                    { description: "Annual Maintenance Service", quantity: 1, price: 159.00 }
+                ],
+                notes: "Sent via email"
+            },
+            {
+                id: 3,
+                customerId: 3,
+                customerName: "Bob Johnson",
+                date: "2024-10-13",
+                dueDate: "2024-10-28",
+                amount: 3850.00,
+                status: "draft",
+                items: [
+                    { description: "Heat Pump Installation", quantity: 1, price: 3500.00 },
+                    { description: "Ductwork Modifications", quantity: 1, price: 350.00 }
+                ],
+                notes: "Ready to send to customer"
+            }
+        ];
+
+        // Navigation Functions
+        function showSection(section) {
+            // Hide all content sections
+            document.querySelectorAll('.content-section').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Remove active class from all nav links
+            document.querySelectorAll('.nav-bar a').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            // Show selected section
+            document.getElementById(section).classList.add('active');
+            
+            // Add active class to clicked link
+            if (event && event.target) {
+                event.target.classList.add('active');
+            }
+            
+            // Load section data
+            loadSectionData(section);
+        }
+
+        function loadSectionData(section) {
+            switch(section) {
+                case 'dashboard':
+                    loadDashboard();
+                    break;
+                case 'customers':
+                    loadCustomers();
+                    break;
+                case 'jobs':
+                    loadJobs();
+                    break;
+                case 'scheduling':
+                    loadScheduling();
+                    break;
+                case 'inventory':
+                    loadInventory();
+                    break;
+                case 'invoices':
+                    loadInvoices();
+                    break;
+                case 'calculator':
+                    loadCalculator();
+                    break;
+                case 'reports':
+                    loadReports();
+                    break;
+            }
+        }
+
+        // Dashboard Functions
+        function loadDashboard() {
+            updateDashboardStats();
+            loadTodaySchedule();
+            loadRecentJobs();
+            loadRecentCustomers();
+            checkInventoryAlerts();
+        }
+
+        function updateDashboardStats() {
+            const totalRevenue = invoices.reduce((sum, inv) => sum + inv.amount, 0);
+            const activeJobsCount = jobs.filter(j => j.status !== 'completed').length;
+            const satisfactionRate = 98; // Simulated
+            
+            document.getElementById('monthly-revenue').textContent = '$' + totalRevenue.toLocaleString();
+            document.getElementById('active-jobs').textContent = activeJobsCount;
+            document.getElementById('total-customers').textContent = customers.length;
+            document.getElementById('satisfaction-rate').textContent = satisfactionRate + '%';
+        }
+
+        function loadTodaySchedule() {
+            const today = new Date().toISOString().split('T')[0];
+            const todayJobs = jobs.filter(job => job.date === today);
+            const scheduleDiv = document.getElementById('today-schedule');
+            
+            if (todayJobs.length === 0) {
+                scheduleDiv.innerHTML = '<p style="color: #666; font-style: italic;">No jobs scheduled for today</p>';
+            } else {
+                scheduleDiv.innerHTML = todayJobs.map(job => `
+                    <div style="padding: 15px; border-left: 4px solid #17a2b8; margin: 10px 0; background: #f8f9fa; border-radius: 8px; cursor: pointer;" onclick="viewJobDetails(${job.id})">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <strong style="color: #333; font-size: 16px;">${job.customerName}</strong>
+                                <div style="color: #666; margin: 5px 0;">${job.serviceType}</div>
+                                <div style="font-size: 14px; color: #888;">${job.time} | ${job.technician}</div>
+                            </div>
+                            <span class="status-badge status-${job.status}">${job.status}</span>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function loadRecentJobs() {
+            const recentJobsDiv = document.getElementById('recent-jobs');
+            const recentJobs = jobs.slice(0, 5);
+            
+            recentJobsDiv.innerHTML = recentJobs.map(job => `
+                <div style="padding: 15px; border-left: 4px solid #28a745; margin: 10px 0; background: #f8f9fa; border-radius: 8px; cursor: pointer;" onclick="viewJobDetails(${job.id})">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <strong style="color: #333; font-size: 16px;">${job.customerName}</strong>
+                            <div style="color: #666; margin: 5px 0;">${job.serviceType}</div>
+                            <div style="font-size: 14px; color: #888;">${job.date} | $${job.amount} | ${job.technician}</div>
+                        </div>
+                        <span class="status-badge status-${job.status}">${job.status}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function loadRecentCustomers() {
+            const recentCustomersDiv = document.getElementById('new-customers');
+            const recentCustomers = customers.slice(0, 5);
+            
+            recentCustomersDiv.innerHTML = recentCustomers.map(customer => `
+                <div style="padding: 15px; border-left: 4px solid #17a2b8; margin: 10px 0; background: #f8f9fa; border-radius: 8px; cursor: pointer;" onclick="viewCustomerDetails(${customer.id})">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <strong style="color: #333; font-size: 16px;">${customer.name}</strong>
+                            <div style="color: #666; margin: 5px 0;">${customer.equipment}</div>
+                            <div style="font-size: 14px; color: #888;">Last Service: ${customer.lastService}</div>
+                        </div>
+                        <div style="display: flex; gap: 5px;">
+                            ${customer.tags.map(tag => `<span style="background: #667eea; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px;">${tag}</span>`).join('')}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function checkInventoryAlerts() {
+            const lowStockItems = inventory.filter(item => item.quantity <= item.minLevel);
+            const alertsDiv = document.getElementById('inventory-alerts');
+            
+            if (lowStockItems.length > 0) {
+                alertsDiv.innerHTML = `
+                    <div class="alert alert-warning">
+                        <strong>⚠️ Low Stock Alert!</strong> ${lowStockItems.length} items need attention:
+                        ${lowStockItems.map(item => `<strong>${item.name}</strong> (${item.quantity} remaining)`).join(', ')}
+                    </div>
+                `;
+            } else {
+                alertsDiv.innerHTML = '';
+            }
+        }
+
+        // Customer Management Functions
+        function loadCustomers() {
+            const tableBody = document.getElementById('customers-table');
+            const searchTerm = document.getElementById('customer-search')?.value?.toLowerCase() || '';
+            const statusFilter = document.getElementById('customer-filter')?.value || 'all';
+            
+            let filteredCustomers = customers.filter(customer => {
+                const matchesSearch = customer.name.toLowerCase().includes(searchTerm) ||
+                                    customer.email.toLowerCase().includes(searchTerm) ||
+                                    customer.phone.includes(searchTerm);
+                
+                const matchesStatus = statusFilter === 'all' || 
+                                    (statusFilter === 'overdue' && customer.status === 'overdue') ||
+                                    (statusFilter === 'vip' && customer.tags.includes('VIP')) ||
+                                    (statusFilter === 'recent' && new Date(customer.lastService) > new Date(Date.now() - 30 * 24 * 60 * 60 * 1000));
+                
+                return matchesSearch && matchesStatus;
+            });
+            
+            tableBody.innerHTML = filteredCustomers.map(customer => `
+                <tr onclick="viewCustomerDetails(${customer.id})" style="cursor: pointer;">
+                    <td>
+                        <div style="font-weight: 600; color: #333;">${customer.name}</div>
+                        <div style="font-size: 12px; color: #666;">${customer.email}</div>
+                    </td>
+                    <td>
+                        <div>${customer.phone}</div>
+                        <div style="font-size: 12px; color: #666;">${customer.address.split(',')[0]}</div>
+                    </td>
+                    <td>${customer.address}</td>
+                    <td>${customer.equipment}</td>
+                    <td>${customer.lastService}</td>
+                    <td><span class="status-badge status-${customer.status}">${customer.status}</span></td>
+                    <td>
+                        <button class="btn btn-small btn-secondary" onclick="event.stopPropagation(); editCustomer(${customer.id})">✏️ Edit</button>
+                        <button class="btn btn-small btn-secondary" onclick="event.stopPropagation(); viewCustomerHistory(${customer.id})">📋 History</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function showAddCustomerModal() {
+            const modalBody = document.getElementById('modal-body');
+            modalBody.innerHTML = `
+                <h3>➕ Add New Customer</h3>
+                <form id="add-customer-form" onsubmit="addCustomer(event)">
+                    <div class="form-group">
+                        <label>Full Name *</label>
+                        <input type="text" id="customer-name" required placeholder="John Smith">
+                    </div>
+                    <div class="form-group">
+                        <label>Email Address *</label>
+                        <input type="email" id="customer-email" required placeholder="john.smith@email.com">
+                    </div>
+                    <div class="form-group">
+                        <label>Phone Number *</label>
+                        <input type="tel" id="customer-phone" required placeholder="(555) 123-4567">
+                    </div>
+                    <div class="form-group">
+                        <label>Service Address *</label>
+                        <input type="text" id="customer-address" required placeholder="123 Main Street, Anytown, ST 12345">
+                    </div>
+                    <div class="form-group">
+                        <label>Equipment Details</label>
+                        <input type="text" id="customer-equipment" placeholder="Carrier 3-Ton AC Unit Model 24ABC636">
+                    </div>
+                    <div class="form-group">
+                        <label>Customer Tags</label>
+                        <input type="text" id="customer-tags" placeholder="VIP, Annual Member, New Customer">
+                    </div>
+                    <div class="form-group">
+                        <label>Notes</label>
+                        <textarea id="customer-notes" rows="3" placeholder="Any special instructions or notes..."></textarea>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button type="submit" class="btn btn-success">✅ Add Customer</button>
+                        <button type="button" class="btn btn-secondary" onclick="closeModal()">❌ Cancel</button>
+                    </div>
+                </form>
+            `;
+            document.getElementById('modal').style.display = 'block';
+        }
+
+        function addCustomer(event) {
+            event.preventDefault();
+            
+            const name = document.getElementById('customer-name').value.trim();
+            const email = document.getElementById('customer-email').value.trim();
+            const phone = document.getElementById('customer-phone').value.trim();
+            const address = document.getElementById('customer-address').value.trim();
+            
+            if (!name || !email || !phone || !address) {
+                showAlert('Please fill in all required fields!', 'error');
+                return;
+            }
+            
+            // Email validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                showAlert('Please enter a valid email address!', 'error');
+                return;
+            }
+            
+            const newCustomer = {
+                id: customers.length + 1,
+                name: name,
+                email: email,
+                phone: phone,
+                address: address,
+                equipment: document.getElementById('customer-equipment').value.trim() || "Not specified",
+                lastService: new Date().toISOString().split('T')[0],
+                status: "active",
+                tags: document.getElementById('customer-tags').value.split(',').map(tag => tag.trim()).filter(tag => tag) || [],
+                notes: document.getElementById('customer-notes').value.trim(),
+                membership: null
+            };
+            
+            customers.push(newCustomer);
+            localStorage.setItem('customers', JSON.stringify(customers));
+            loadCustomers();
+            closeModal();
+            showAlert('✅ Customer added successfully!', 'success');
+        }
+
+        function viewCustomerDetails(customerId) {
+            const customer = customers.find(c => c.id === customerId);
+            const customerJobs = jobs.filter(job => job.customerId === customerId);
+            
+            const modalBody = document.getElementById('modal-body');
+            modalBody.innerHTML = `
+                <h3>👤 Customer Details - ${customer.name}</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                    <div>
+                        <h4>Contact Information</h4>
+                        <p><strong>Email:</strong> ${customer.email}</p>
+                        <p><strong>Phone:</strong> ${customer.phone}</p>
+                        <p><strong>Address:</strong> ${customer.address}</p>
+                        <p><strong>Equipment:</strong> ${customer.equipment}</p>
+                    </div>
+                    <div>
+                        <h4>Service Information</h4>
+                        <p><strong>Last Service:</strong> ${customer.lastService}</p>
+                        <p><strong>Status:</strong> <span class="status-badge status-${customer.status}">${customer.status}</span></p>
+                        <p><strong>Tags:</strong> ${customer.tags.join(', ') || 'None'}</p>
+                        <p><strong>Total Jobs:</strong> ${customerJobs.length}</p>
+                    </div>
+                </div>
+                ${customer.notes ? `
+                    <div style="margin-bottom: 20px;">
+                        <h4>Notes</h4>
+                        <p>${customer.notes}</p>
+                    </div>
+                ` : ''}
+                ${customerJobs.length > 0 ? `
+                    <div style="margin-bottom: 20px;">
+                        <h4>Recent Service History</h4>
+                        ${customerJobs.slice(0, 5).map(job => `
+                            <div style="padding: 10px; border: 1px solid #e1e5e9; border-radius: 5px; margin: 5px 0;">
+                                <strong>${job.serviceType}</strong> - ${job.date}
+                                <br><span class="status-badge status-${job.status}">${job.status}</span> - $${job.amount}
+                            </div>
+                        `).join('')}
+                    </div>
+                ` : '<p>No service history available.</p>'}
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button class="btn btn-secondary" onclick="editCustomer(${customer.id})">✏️ Edit Customer</button>
+                    <button class="btn btn-secondary" onclick="scheduleServiceForCustomer(${customer.id})">📅 Schedule Service</button>
+                    <button class="btn btn-secondary" onclick="closeModal()">✅ Close</button>
+                </div>
+            `;
+            document.getElementById('modal').style.display = 'block';
+        }
+
+        function editCustomer(customerId) {
+            const customer = customers.find(c => c.id === customerId);
+            const modalBody = document.getElementById('modal-body');
+            modalBody.innerHTML = `
+                <h3>✏️ Edit Customer - ${customer.name}</h3>
+                <form id="edit-customer-form" onsubmit="updateCustomer(event, ${customer.id})">
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" id="edit-customer-name" value="${customer.name}" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email Address</label>
+                        <input type="email" id="edit-customer-email" value="${customer.email}" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Phone Number</label>
+                        <input type="tel" id="edit-customer-phone" value="${customer.phone}" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Service Address</label>
+                        <input type="text" id="edit-customer-address" value="${customer.address}" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Equipment Details</label>
+                        <input type="text" id="edit-customer-equipment" value="${customer.equipment}">
+                    </div>
+                    <div class="form-group">
+                        <label>Tags</label>
+                        <input type="text" id="edit-customer-tags" value="${customer.tags.join(', ')}">
+                    </div>
+                    <div class="form-group">
+                        <label>Notes</label>
+                        <textarea id="edit-customer-notes" rows="3">${customer.notes}</textarea>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button type="submit" class="btn btn-success">💾 Save Changes</button>
+                        <button type="button" class="btn btn-secondary" onclick="closeModal()">❌ Cancel</button>
+                    </div>
+                </form>
+            `;
+            document.getElementById('modal').style.display = 'block';
+        }
+
+        function updateCustomer(event, customerId) {
+            event.preventDefault();
+            
+            const customer = customers.find(c => c.id === customerId);
+            customer.name = document.getElementById('edit-customer-name').value.trim();
+            customer.email = document.getElementById('edit-customer-email').value.trim();
+            customer.phone = document.getElementById('edit-customer-phone').value.trim();
+            customer.address = document.getElementById('edit-customer-address').value.trim();
+            customer.equipment = document.getElementById('edit-customer-equipment').value.trim();
+            customer.tags = document.getElementById('edit-customer-tags').value.split(',').map(tag => tag.trim()).filter(tag => tag);
+            customer.notes = document.getElementById('edit-customer-notes').value.trim();
+            
+            localStorage.setItem('customers', JSON.stringify(customers));
+            loadCustomers();
+            closeModal();
+            showAlert('✅ Customer updated successfully!', 'success');
+        }
+
+        function viewCustomerHistory(customerId) {
+            const customer = customers.find(c => c.id === customerId);
+            const customerJobs = jobs.filter(job => job.customerId === customerId);
+            
+            const modalBody = document.getElementById('modal-body');
+            modalBody.innerHTML = `
+                <h3>📋 Service History - ${customer.name}</h3>
+                <div style="margin-bottom: 20px;">
+                    <h4>Customer Information</h4>
+                    <p><strong>Equipment:</strong> ${customer.equipment}</p>
+                    <p><strong>Total Services:</strong> ${customerJobs.length}</p>
+                    <p><strong>Total Spent:</strong> $${customerJobs.reduce((sum, job) => sum + job.amount, 0).toFixed(2)}</p>
+                </div>
+                <h4>Service History</h4>
+                ${customerJobs.length === 0 ? '<p>No service history available.</p>' : 
+                    customerJobs.map(job => `
+                        <div style="padding: 15px; border: 1px solid #e1e5e9; border-radius: 8px; margin: 10px 0; background: #f8f9fa;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    <strong>${job.serviceType}</strong>
+                                    <div style="color: #666; margin: 5px 0;">${job.description}</div>
+                                    <div style="font-size: 14px; color: #888;">${job.date} | ${job.technician} | $${job.amount}</div>
+                                </div>
+                                <span class="status-badge status-${job.status}">${job.status}</span>
+                            </div>
+                        </div>
+                    `).join('')
+                }
+                <div style="margin-top: 20px;">
+                    <button class="btn btn-secondary" onclick="closeModal()">✅ Close</button>
+                </div>
+            `;
+            document.getElementById('modal').style.display = 'block';
+        }
+
+        function scheduleServiceForCustomer(customerId) {
+            const customer = customers.find(c => c.id === customerId);
+            const modalBody = document.getElementById('modal-body');
+            modalBody.innerHTML = `
+                <h3>📅 Schedule Service for ${customer.name}</h3>
+                <form id="schedule-service-form" onsubmit="createScheduledJob(event, ${customerId})">
+                    <div class="form-group">
+                        <label>Service Type *</label>
+                        <select id="schedule-service-type" required>
+                            <option value="">Select Service Type</option>
+                            <option value="AC Repair">AC Repair</option>
+                            <option value="Furnace Maintenance">Furnace Maintenance</option>
+                            <option value="Heat Pump Service">Heat Pump Service</option>
+                            <option value="Annual Tune-up">Annual Tune-up</option>
+                            <option value="Emergency Service">Emergency Service</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea id="schedule-description" rows="3" placeholder="Describe the issue or service needed..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Preferred Date *</label>
+                        <input type="date" id="schedule-date" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Preferred Time *</label>
+                        <select id="schedule-time" required>
+                            <option value="">Select Time</option>
+                            <option value="08:00">8:00 AM</option>
+                            <option value="10:00">10:00 AM</option>
+                            <option value="12:00">12:00 PM</option>
+                            <option value="14:00">2:00 PM</option>
+                            <option value="16:00">4:00 PM</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Priority</label>
+                        <select id="schedule-priority">
+                            <option value="normal">Normal</option>
+                            <option value="high">High</option>
+                            <option value="emergency">Emergency</option>
+                        </select>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button type="submit" class="btn btn-success">📅 Schedule Service</button>
+                        <button type="button" class="btn btn-secondary" onclick="closeModal()">❌ Cancel</button>
+                    </div>
+                </form>
+            `;
+            document.getElementById('modal').style.display = 'block';
+        }
+
+        function createScheduledJob(event, customerId) {
+            event.preventDefault();
+            
+            const serviceType = document.getElementById('schedule-service-type').value;
+            const description = document.getElementById('schedule-description').value;
+            const date = document.getElementById('schedule-date').value;
+            const time = document.getElementById('schedule-time').value;
+            const priority = document.getElementById('schedule-priority').value;
+            
+            if (!serviceType || !date || !time) {
+                showAlert('Please fill in all required fields!', 'error');
+                return;
+            }
+            
+            const customer = customers.find(c => c.id === customerId);
+            const newJob = {
+                id: jobs.length + 1,
+                customerId: customerId,
+                customerName: customer.name,
+                serviceType: serviceType,
+                description: description || "Service scheduled",
+                date: date,
+                time: time,
+                status: "scheduled",
+                technician: "Unassigned",
+                amount: 0,
+                priority: priority,
+                notes: "Scheduled via customer portal",
+                equipment: customer.equipment,
+                location: customer.address
+            };
+            
+            jobs.push(newJob);
+            localStorage.setItem('jobs', JSON.stringify(jobs));
+            loadJobs();
+            closeModal();
+            showAlert('✅ Service scheduled successfully!', 'success');
+        }
+
+        // Job Management Functions
+        function loadJobs() {
+            const tableBody = document.getElementById('jobs-table');
+            const statusFilter = document.getElementById('job-status-filter')?.value || 'all';
+            const techFilter = document.getElementById('job-tech-filter')?.value || 'all';
+            const dateFilter = document.getElementById('job-date-filter')?.value || '';
+            
+            let filteredJobs = jobs.filter(job => {
+                const matchesStatus = statusFilter === 'all' || job.status === statusFilter;
+                const matchesTech = techFilter === 'all' || job.technician === techFilter;
+                const matchesDate = !dateFilter || job.date === dateFilter;
+                return matchesStatus && matchesTech && matchesDate;
+            });
+            
+            tableBody.innerHTML = filteredJobs.map(job => `
+                <tr onclick="viewJobDetails(${job.id})" style="cursor: pointer;">
+                    <td><strong>#${job.id}</strong></td>
+                    <td>
+                        <div style="font-weight: 600; color: #333;">${job.customerName}</div>
+                        <div style="font-size: 12px; color: #666;">${job.location.split(',')[0]}</div>
+                    </td>
+                    <td>
+                        <div style="font-weight: 500;">${job.serviceType}</div>
+                        <div style="font-size: 12px; color: #666;">${job.description.substring(0, 50)}${job.description.length > 50 ? '...' : ''}</div>
+                    </td>
+                    <td>
+                        <div>${job.date}</div>
+                        <div style="font-size: 12px; color: #666;">${job.time}</div>
+                    </td>
+                    <td>${job.technician}</td>
+                    <td><strong>$${job.amount.toFixed(2)}</strong></td>
+                    <td><span class="status-badge status-${job.status}">${job.status}</span></td>
+                    <td>
+                        <button class="btn btn-small btn-secondary" onclick="event.stopPropagation(); editJob(${job.id})">✏️ Edit</button>
+                        <button class="btn btn-small btn-secondary" onclick="event.stopPropagation(); updateJobStatus(${job.id})">🔄 Update</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function showAddJobModal() {
+            const modalBody = document.getElementById('modal-body');
+            modalBody.innerHTML = `
+                <h3>➕ Add New Job</h3>
+                <form id="add-job-form" onsubmit="addJob(event)">
+                    <div class="form-group">
+                        <label>Customer *</label>
+                        <select id="job-customer" required>
+                            <option value="">Select Customer</option>
+                            ${customers.map(c => `<option value="${c.id}">${c.name}</option>`).join('')}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Service Type *</label>
+                        <select id="job-service" required>
+                            <option value="">Select Service Type</option>
+                            <option value="AC Repair">AC Repair</option>
+                            <option value="Furnace Maintenance">Furnace Maintenance</option>
+                            <option value="Heat Pump Service">Heat Pump Service</option>
+                            <option value="Annual Tune-up">Annual Tune-up</option>
+                            <option value="Emergency Service">Emergency Service</option>
+                            <option value="Installation">Installation</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea id="job-description" rows="3" placeholder="Describe the issue or service needed..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Date *</label>
+                        <input type="date" id="job-date" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Time *</label>
+                        <select id="job-time" required>
+                            <option value="">Select Time</option>
+                            <option value="08:00">8:00 AM</option>
+                            <option value="10:00">10:00 AM</option>
+                            <option value="12:00">12:00 PM</option>
+                            <option value="14:00">2:00 PM</option>
+                            <option value="16:00">4:00 PM</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Estimated Amount</label>
+                        <input type="number" id="job-amount" placeholder="250" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label>Technician</label>
+                        <select id="job-tech">
+                            <option value="">Unassigned</option>
+                            <option value="Mike Johnson">Mike Johnson</option>
+                            <option value="Sarah Williams">Sarah Williams</option>
+                            <option value="Tom Davis">Tom Davis</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Priority</label>
+                        <select id="job-priority">
+                            <option value="normal">Normal</option>
+                            <option value="high">High</option>
+                            <option value="emergency">Emergency</option>
+                        </select>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button type="submit" class="btn btn-success">✅ Add Job</button>
+                        <button type="button" class="btn btn-secondary" onclick="closeModal()">❌ Cancel</button>
+                    </div>
+                </form>
+            `;
+            document.getElementById('modal').style.display = 'block';
+        }
+
+        function addJob(event) {
+            event.preventDefault();
+            
+            const customerId = parseInt(document.getElementById('job-customer').value);
+            const serviceType = document.getElementById('job-service').value;
+            const description = document.getElementById('job-description').value.trim();
+            const date = document.getElementById('job-date').value;
+            const time = document.getElementById('job-time').value;
+            const amount = parseFloat(document.getElementById('job-amount').value) || 0;
+            const technician = document.getElementById('job-tech').value || "Unassigned";
+            const priority = document.getElementById('job-priority').value;
+            
+            if (!customerId || !serviceType || !date || !time) {
+                showAlert('Please fill in all required fields!', 'error');
+                return;
+            }
+            
+            const customer = customers.find(c => c.id === customerId);
+            const newJob = {
+                id: jobs.length + 1,
+                customerId: customerId,
+                customerName: customer.name,
+                serviceType: serviceType,
+                description: description || "Service scheduled",
+                date: date,
+                time: time,
+                status: "scheduled",
+                technician: technician,
+                amount: amount,
+                priority: priority,
+                notes: "New job created",
+                equipment: customer.equipment,
+                location: customer.address
+            };
+            
+            jobs.push(newJob);
+            localStorage.setItem('jobs', JSON.stringify(jobs));
+            loadJobs();
+            closeModal();
+            showAlert('✅ Job added successfully!', 'success');
+        }
+
+        function viewJobDetails(jobId) {
+            const job = jobs.find(j => j.id === jobId);
+            const customer = customers.find(c => c.id === job.customerId);
+            
+            const modalBody = document.getElementById('modal-body');
+            modalBody.innerHTML = `
+                <h3>🔧 Job Details - #${job.id}</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                    <div>
+                        <h4>Customer Information</h4>
+                        <p><strong>Customer:</strong> ${job.customerName}</p>
+                        <p><strong>Phone:</strong> ${customer.phone}</p>
+                        <p><strong>Address:</strong> ${job.location}</p>
+                        <p><strong>Equipment:</strong> ${job.equipment}</p>
+                    </div>
+                    <div>
+                        <h4>Job Details</h4>
+                        <p><strong>Service:</strong> ${job.serviceType}</p>
+                        <p><strong>Date/Time:</strong> ${job.date} at ${job.time}</p>
+                        <p><strong>Technician:</strong> ${job.technician}</p>
+                        <p><strong>Amount:</strong> $${job.amount.toFixed(2)}</p>
+                        <p><strong>Priority:</strong> ${job.priority}</p>
+                    </div>
+                </div>
+                <div style="margin-top: 20px;">
+                    <h4>Description</h4>
+                    <p>${job.description || 'No description provided.'}</p>
+                </div>
+                <div style="margin-top: 20px;">
+                    <h4>Status & Notes</h4>
+                    <p><strong>Status:</strong> <span class="status-badge status-${job.status}">${job.status}</span></p>
+                    <p><strong>Notes:</strong> ${job.notes || 'No notes available.'}</p>
+                </div>
+                <div style="margin-top: 20px; display: flex; gap: 10px;">
+                    <button class="btn btn-secondary" onclick="editJob(${job.id})">✏️ Edit Job</button>
+                    <button class="btn btn-secondary" onclick="updateJobStatus(${job.id})">🔄 Update Status</button>
+                    <button class="btn btn-success" onclick="createInvoiceFromJob(${job.id})">💰 Create Invoice</button>
+                </div>
+            `;
+            document.getElementById('modal').style.display = 'block';
+        }
+
+        function editJob(jobId) {
+            const job = jobs.find(j => j.id === jobId);
+            const modalBody = document.getElementById('modal-body');
+            modalBody.innerHTML = `
+                <h3>✏️ Edit Job #${job.id}</h3>
+                <form id="edit-job-form" onsubmit="updateJob(event, ${job.id})">
+                    <div class="form-group">
+                        <label>Service Type</label>
+                        <select id="edit-job-service">
+                            <option value="AC Repair" ${job.serviceType === 'AC Repair' ? 'selected' : ''}>AC Repair</option>
+                            <option value="Furnace Maintenance" ${job.serviceType === 'Furnace Maintenance' ? 'selected' : ''}>Furnace Maintenance</option>
+                            <option value="Heat Pump Service" ${job.serviceType === 'Heat Pump Service' ? 'selected' : ''}>Heat Pump Service</option>
+                            <option value="Annual Tune-up" ${job.serviceType === 'Annual Tune-up' ? 'selected' : ''}>Annual Tune-up</option>
+                            <option value="Emergency Service" ${job.serviceType === 'Emergency Service' ? 'selected' : ''}>Emergency Service</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea id="edit-job-description" rows="3">${job.description}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Date</label>
+                        <input type="date" id="edit-job-date" value="${job.date}">
+                    </div>
+                    <div class="form-group">
+                        <label>Time</label>
+                        <select id="edit-job-time">
+                            <option value="08:00" ${job.time === '08:00' ? 'selected' : ''}>8:00 AM</option>
+                            <option value="10:00" ${job.time === '10:00' ? 'selected' : ''}>10:00 AM</option>
+                            <option value="12:00" ${job.time === '12:00' ? 'selected' : ''}>12:00 PM</option>
+                            <option value="14:00" ${job.time === '14:00' ? 'selected' : ''}>2:00 PM</option>
+                            <option value="16:00" ${job.time === '16:00' ? 'selected' : ''}>4:00 PM</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Technician</label>
+                        <select id="edit-job-tech">
+                            <option value="Unassigned" ${job.technician === 'Unassigned' ? 'selected' : ''}>Unassigned</option>
+                            <option value="Mike Johnson" ${job.technician === 'Mike Johnson' ? 'selected' : ''}>Mike Johnson</option>
+                            <option value="Sarah Williams" ${job.technician === 'Sarah Williams' ? 'selected' : ''}>Sarah Williams</option>
+                            <option value="Tom Davis" ${job.technician === 'Tom Davis' ? 'selected' : ''}>Tom Davis</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Amount</label>
+                        <input type="number" id="edit-job-amount" value="${job.amount}" step="0.01">
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button type="submit" class="btn btn-success">💾 Save Changes</button>
+                        <button type="button" class="btn btn-secondary" onclick="closeModal()">❌ Cancel</button>
+                    </div>
+                </form>
+            `;
+            document.getElementById('modal').style.display = 'block';
+        }
+
+        function updateJob(event, jobId) {
+            event.preventDefault();
+            
+            const job = jobs.find(j => j.id === jobId);
+            job.serviceType = document.getElementById('edit-job-service').value;
+            job.description = document.getElementById('edit-job-description').value.trim();
+            job.date = document.getElementById('edit-job-date').value;
+            job.time = document.getElementById('edit-job-time').value;
+            job.technician = document.getElementById('edit-job-tech').value;
+            job.amount = parseFloat(document.getElementById('edit-job-amount').value) || 0;
+            
+            localStorage.setItem('jobs', JSON.stringify(jobs));
+            loadJobs();
+            closeModal();
+            showAlert('✅ Job updated successfully!', 'success');
+        }
+
+        function updateJobStatus(jobId) {
+            const job = jobs.find(j => j.id === jobId);
+            const modalBody = document.getElementById('modal-body');
+            modalBody.innerHTML = `
+                <h3>🔄 Update Job Status - #${job.id}</h3>
+                <form id="update-status-form" onsubmit="saveJobStatus(event, ${job.id})">
+                    <div class="form-group">
+                        <label>Current Status</label>
+                        <p><strong>${job.status}</strong></p>
+                    </div>
+                    <div class="form-group">
+                        <label>New Status *</label>
+                        <select id="new-job-status" required>
+                            <option value="scheduled">📅 Scheduled</option>
+                            <option value="in-progress">⚡ In Progress</option>
+                            <option value="completed">✅ Completed</option>
+                            <option value="cancelled">❌ Cancelled</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Update Notes</label>
+                        <textarea id="job-status-notes" rows="3" placeholder="Notes about status change..."></textarea>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button type="submit" class="btn btn-success">💾 Update Status</button>
+                        <button type="button" class="btn btn-secondary" onclick="closeModal()">❌ Cancel</button>
+                    </div>
+                </form>
+            `;
+            document.getElementById('modal').style.display = 'block';
+        }
+
+        function saveJobStatus(event, jobId) {
+            event.preventDefault();
+            
+            const job = jobs.find(j => j.id === jobId);
+            const newStatus = document.getElementById('new-job-status').value;
+            const notes = document.getElementById('job-status-notes').value.trim();
+            
+            job.status = newStatus;
+            job.notes = notes || job.notes;
+            
+            if (newStatus === 'completed') {
+                job.completionDate = new Date().toISOString().split('T')[0];
+            }
+            
+            localStorage.setItem('jobs', JSON.stringify(jobs));
+            loadJobs();
+            closeModal();
+            showAlert(`✅ Job status updated to ${newStatus}!`, 'success');
+        }
+
+        function createInvoiceFromJob(jobId) {
+            const job = jobs.find(j => j.id === jobId);
+            const customer = customers.find(c => c.id === job.customerId);
+            
+            const modalBody = document.getElementById('modal-body');
+            modalBody.innerHTML = `
+                <h3>💰 Create Invoice from Job #${job.id}</h3>
+                <form id="create-invoice-form" onsubmit="createInvoiceFromJobData(event, ${job.id})">
+                    <div class="form-group">
+                        <label>Customer</label>
+                        <p><strong>${job.customerName}</strong></p>
+                    </div>
+                    <div class="form-group">
+                        <label>Service Description *</label>
+                        <textarea id="invoice-description" rows="3" required>${job.serviceType}: ${job.description}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Amount *</label>
+                        <input type="number" id="invoice-amount" value="${job.amount}" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Due Date</label>
+                        <input type="date" id="invoice-due-date" value="${new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]}" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Notes</label>
+                        <textarea id="invoice-notes" rows="2" placeholder="Additional notes..."></textarea>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button type="submit" class="btn btn-success">💾 Create Invoice</button>
+                        <button type="button" class="btn btn-secondary" onclick="closeModal()">❌ Cancel</button>
+                    </div>
+                </form>
+            `;
+            document.getElementById('modal').style.display = 'block';
+        }
+
+        function createInvoiceFromJobData(event, jobId) {
+            event.preventDefault();
+            
+            const job = jobs.find(j => j.id === jobId);
+            const amount = parseFloat(document.getElementById('invoice-amount').value);
+            const dueDate = document.getElementById('invoice-due-date').value;
+            const description = document.getElementById('invoice-description').value.trim();
+            const notes = document.getElementById('invoice-notes').value.trim();
+            
+            if (!amount || amount <= 0) {
+                showAlert('Please enter a valid amount!', 'error');
+                return;
+            }
+            
+            const newInvoice = {
+                id: invoices.length + 1,
+                customerId: job.customerId,
+                customerName: job.customerName,
+                date: new Date().toISOString().split('T')[0],
+                dueDate: dueDate,
+                amount: amount,
+                status: "draft",
+                items: [
+                    { description: description, quantity: 1, price: amount }
+                ],
+                notes: notes
+            };
+            
+            invoices.push(newInvoice);
+            localStorage.setItem('invoices', JSON.stringify(invoices));
+            loadInvoices();
+            closeModal();
+            showAlert('✅ Invoice created successfully!', 'success');
+        }
+
+        // Inventory Functions
+        function loadInventory() {
+            const tableBody = document.getElementById('inventory-table');
+            const categoryFilter = document.getElementById('inventory-category-filter')?.value || 'all';
+            const statusFilter = document.getElementById('inventory-status-filter')?.value || 'all';
+            
+            let filteredInventory = inventory.filter(item => {
+                const matchesCategory = categoryFilter === 'all' || item.category === categoryFilter;
+                const matchesStatus = statusFilter === 'all' || item.status === statusFilter;
+                return matchesCategory && matchesStatus;
+            });
+            
+            tableBody.innerHTML = filteredInventory.map(item => `
+                <tr>
+                    <td>
+                        <div style="font-weight: 600; color: #333;">${item.name}</div>
+                        <div style="font-size: 12px; color: #666;">${item.sku}</div>
+                    </td>
+                    <td>${item.category}</td>
+                    <td>
+                        <div style="font-weight: 600; color: ${item.quantity <= item.minLevel ? '#dc3545' : '#28a745'};">${item.quantity}</div>
+                        <div style="font-size: 11px; color: #666;">Min: ${item.minLevel}</div>
+                    </td>
+                    <td>${item.minLevel}</td>
+                    <td>$${item.price.toFixed(2)}</td>
+                    <td><span class="status-badge status-${item.status}">${item.status}</span></td>
+                    <td>
+                        <button class="btn btn-small btn-secondary" onclick="adjustInventory(${item.id})">⚙️ Adjust</button>
+                        <button class="btn btn-small btn-secondary" onclick="viewInventoryDetails(${item.id})">📋 Details</button>
+                    </td>
+                </tr>
+            `).join('');
+            
+            showInventoryAlerts();
+        }
+
+        function showInventoryAlerts() {
+            const lowStockItems = inventory.filter(item => item.quantity <= item.minLevel);
+            const alertsDiv = document.getElementById('inventory-alerts');
+            
+            if (lowStockItems.length > 0) {
+                alertsDiv.innerHTML = `
+                    <div class="alert alert-warning">
+                        <strong>⚠️ Low Stock Alert!</strong> ${lowStockItems.length} items need attention:
+                        ${lowStockItems.map(item => `<strong>${item.name}</strong> (${item.quantity} remaining)`).join(', ')}
+                    </div>
+                `;
+            } else {
+                alertsDiv.innerHTML = '';
+            }
+        }
+
+        function showAddInventoryModal() {
+            const modalBody = document.getElementById('modal-body');
+            modalBody.innerHTML = `
+                <h3>➕ Add Inventory Item</h3>
+                <form id="add-inventory-form" onsubmit="addInventory(event)">
+                    <div class="form-group">
+                        <label>Item Name *</label>
+                        <input type="text" id="inventory-name" required placeholder="R-410A Refrigerant">
+                    </div>
+                    <div class="form-group">
+                        <label>SKU *</label>
+                        <input type="text" id="inventory-sku" required placeholder="R410A-25LB">
+                    </div>
+                    <div class="form-group">
+                        <label>Category *</label>
+                        <select id="inventory-category" required>
+                            <option value="">Select Category</option>
+                            <option value="refrigerant">Refrigerant</option>
+                            <option value="parts">Parts</option>
+                            <option value="tools">Tools</option>
+                            <option value="consumables">Consumables</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Current Quantity *</label>
+                        <input type="number" id="inventory-quantity" required placeholder="50">
+                    </div>
+                    <div class="form-group">
+                        <label>Minimum Level *</label>
+                        <input type="number" id="inventory-minlevel" required placeholder="10">
+                    </div>
+                    <div class="form-group">
+                        <label>Unit Price *</label>
+                        <input type="number" id="inventory-price" required placeholder="145.00" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label>Location</label>
+                        <input type="text" id="inventory-location" placeholder="Warehouse A">
+                    </div>
+                    <div class="form-group">
+                        <label>Supplier</label>
+                        <input type="text" id="inventory-supplier" placeholder="HVAC Supply Co">
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button type="submit" class="btn btn-success">✅ Add Item</button>
+                        <button type="button" class="btn btn-secondary" onclick="closeModal()">❌ Cancel</button>
+                    </div>
+                </form>
+            `;
+            document.getElementById('modal').style.display = 'block';
+        }
+
+        function addInventory(event) {
+            event.preventDefault();
+            
+            const name = document.getElementById('inventory-name').value.trim();
+            const sku = document.getElementById('inventory-sku').value.trim();
+            const category = document.getElementById('inventory-category').value;
+            const quantity = parseInt(document.getElementById('inventory-quantity').value);
+            const minLevel = parseInt(document.getElementById('inventory-minlevel').value);
+            const price = parseFloat(document.getElementById('inventory-price').value);
+            const location = document.getElementById('inventory-location').value.trim();
+            const supplier = document.getElementById('inventory-supplier').value.trim();
+            
+            if (!name || !sku || !category || !quantity || !minLevel || !price) {
+                showAlert('Please fill in all required fields!', 'error');
+                return;
+            }
+            
+            const newItem = {
+                id: inventory.length + 1,
+                name: name,
+                sku: sku,
+                category: category,
+                quantity: quantity,
+                minLevel: minLevel,
+                price: price,
+                status: quantity <= minLevel ? "low" : "good",
+                location: location || "Main Warehouse",
+                supplier: supplier || "Various"
+            };
+            
+            inventory.push(newItem);
+            localStorage.setItem('inventory', JSON.stringify(inventory));
+            loadInventory();
+            closeModal();
+            showAlert('✅ Inventory item added successfully!', 'success');
+        }
+
+        function adjustInventory(itemId) {
+            const item = inventory.find(i => i.id === itemId);
+            const modalBody = document.getElementById('modal-body');
+            modalBody.innerHTML = `
+                <h3>⚙️ Adjust Inventory - ${item.name}</h3>
+                <div style="margin-bottom: 20px;">
+                    <p><strong>Current Quantity:</strong> ${item.quantity}</p>
+                    <p><strong>Minimum Level:</strong> ${item.minLevel}</p>
+                    <p><strong>Status:</strong> <span class="status-badge status-${item.status}">${item.status}</span></p>
+                </div>
+                <form id="adjust-inventory-form" onsubmit="saveInventoryAdjustment(event, ${item.id})">
+                    <div class="form-group">
+                        <label>Adjustment Type *</label>
+                        <select id="inventory-adjust-type" required>
+                            <option value="add">➕ Add Stock</option>
+                            <option value="remove">➖ Remove Stock</option>
+                            <option value="set">✅ Set New Quantity</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Quantity *</label>
+                        <input type="number" id="inventory-adjust-quantity" required placeholder="10" min="1">
+                    </div>
+                    <div class="form-group">
+                        <label>Reason *</label>
+                        <select id="inventory-adjust-reason" required>
+                            <option value="">Select Reason</option>
+                            <option value="job-used">Used on Job</option>
+                            <option value="purchase">New Purchase</option>
+                            <option value="return">Customer Return</option>
+                            <option value="damage">Damaged/Lost</option>
+                            <option value="adjustment">Inventory Adjustment</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Notes</label>
+                        <textarea id="inventory-adjust-notes" rows="2" placeholder="Additional notes..."></textarea>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button type="submit" class="btn btn-success">💾 Save Adjustment</button>
+                        <button type="button" class="btn btn-secondary" onclick="closeModal()">❌ Cancel</button>
+                    </div>
+                </form>
+            `;
+            document.getElementById('modal').style.display = 'block';
+        }
+
+        function saveInventoryAdjustment(event, itemId) {
+            event.preventDefault();
+            
+            const item = inventory.find(i => i.id === itemId);
+            const adjustType = document.getElementById('inventory-adjust-type').value;
+            const adjustQuantity = parseInt(document.getElementById('inventory-adjust-quantity').value);
+            const reason = document.getElementById('inventory-adjust-reason').value;
+            const notes = document.getElementById('inventory-adjust-notes').value.trim();
+            
+            if (!adjustQuantity || adjustQuantity <= 0 || !reason) {
+                showAlert('Please fill in all required fields!', 'error');
+                return;
+            }
+            
+            let newQuantity = item.quantity;
+            if (adjustType === 'add') {
+                newQuantity += adjustQuantity;
+            } else if (adjustType === 'remove') {
+                newQuantity -= adjustQuantity;
+                if (newQuantity < 0) newQuantity = 0;
+            } else if (adjustType === 'set') {
+                newQuantity = adjustQuantity;
+            }
+            
+            item.quantity = newQuantity;
+            item.status = newQuantity <= item.minLevel ? "low" : "good";
+            
+            localStorage.setItem('inventory', JSON.stringify(inventory));
+            loadInventory();
+            closeModal();
+            showAlert('✅ Inventory adjusted successfully!', 'success');
+        }
+
+        function viewInventoryDetails(itemId) {
+            const item = inventory.find(i => i.id === itemId);
+            const modalBody = document.getElementById('modal-body');
+            modalBody.innerHTML = `
+                <h3>📋 Inventory Details - ${item.name}</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div>
+                        <h4>Item Information</h4>
+                        <p><strong>SKU:</strong> ${item.sku}</p>
+                        <p><strong>Category:</strong> ${item.category}</p>
+                        <p><strong>Location:</strong> ${item.location}</p>
+                        <p><strong>Supplier:</strong> ${item.supplier}</p>
+                    </div>
+                    <div>
+                        <h4>Stock Information</h4>
+                        <p><strong>Current Stock:</strong> ${item.quantity}</p>
+                        <p><strong>Minimum Level:</strong> ${item.minLevel}</p>
+                        <p><strong>Status:</strong> <span class="status-badge status-${item.status}">${item.status}</span></p>
+                        <p><strong>Unit Price:</strong> $${item.price.toFixed(2)}</p>
+                    </div>
+                </div>
+                <div style="margin-top: 20px;">
+                    <h4>Stock Alert</h4>
+                    ${item.quantity <= item.minLevel ? 
+                        '<div class="alert alert-warning">⚠️ This item is low on stock and needs reordering.</div>' : 
+                        '<div class="alert alert-success">✅ Stock level is adequate.</div>'
+                    }
+                </div>
+                <div style="margin-top: 20px; display: flex; gap: 10px;">
+                    <button class="btn btn-secondary" onclick="adjustInventory(${item.id})">⚙️ Adjust Stock</button>
+                    <button class="btn btn-secondary" onclick="closeModal()">✅ Close</button>
+                </div>
+            `;
+            document.getElementById('modal').style.display = 'block';
+        }
+
+        // Invoice Functions
+        function loadInvoices() {
+            const tableBody = document.getElementById('invoices-table');
+            const statusFilter = document.getElementById('invoice-status-filter')?.value || 'all';
+            const dateFilter = document.getElementById('invoice-date-filter')?.value || '';
+            
+            let filteredInvoices = invoices.filter(invoice => {
+                const matchesStatus = statusFilter === 'all' || invoice.status === statusFilter;
+                const matchesDate = !dateFilter || invoice.date === dateFilter;
+                return matchesStatus && matchesDate;
+            });
+            
+            updateInvoiceSummary();
+            
+            tableBody.innerHTML = filteredInvoices.map(invoice => `
+                <tr>
+                    <td><strong>#${invoice.id}</strong></td>
+                    <td>
+                        <div style="font-weight: 600; color: #333;">${invoice.customerName}</div>
+                        <div style="font-size: 12px; color: #666;">Due: ${invoice.dueDate}</div>
+                    </td>
+                    <td>${invoice.date}</td>
+                    <td><strong>$${invoice.amount.toFixed(2)}</strong></td>
+                    <td><span class="status-badge status-${invoice.status}">${invoice.status}</span></td>
+                    <td>
+                        <button class="btn btn-small btn-secondary" onclick="viewInvoiceDetails(${invoice.id})">👁️ View</button>
+                        <button class="btn btn-small btn-success" onclick="sendInvoice(${invoice.id})">📧 Send</button>
+                        <button class="btn btn-small btn-secondary" onclick="downloadInvoice(${invoice.id})">📄 Download</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function updateInvoiceSummary() {
+            const total = invoices.reduce((sum, inv) => sum + inv.amount, 0);
+            const paid = invoices.filter(inv => inv.status === 'paid').reduce((sum, inv) => sum + inv.amount, 0);
+            const pending = invoices.filter(inv => inv.status === 'sent').reduce((sum, inv) => sum + inv.amount, 0);
+            const overdue = invoices.filter(inv => inv.status === 'overdue').reduce((sum, inv) => sum + inv.amount, 0);
+            
+            document.getElementById('total-invoices').textContent = '$' + total.toLocaleString();
+            document.getElementById('paid-invoices').textContent = '$' + paid.toLocaleString();
+            document.getElementById('pending-invoices').textContent = '$' + pending.toLocaleString();
+            document.getElementById('overdue-invoices').textContent = '$' + overdue.toLocaleString();
+        }
+
+        function showCreateInvoiceModal() {
+            const modalBody = document.getElementById('modal-body');
+            modalBody.innerHTML = `
+                <h3>💰 Create New Invoice</h3>
+                <form id="create-invoice-form" onsubmit="createInvoice(event)">
+                    <div class="form-group">
+                        <label>Customer *</label>
+                        <select id="invoice-customer" required>
+                            <option value="">Select Customer</option>
+                            ${customers.map(c => `<option value="${c.id}">${c.name}</option>`).join('')}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Invoice Items</label>
+                        <div id="invoice-items">
+                            <div class="invoice-item" style="display: flex; gap: 10px; margin-bottom: 10px;">
+                                <input type="text" placeholder="Service Description" style="flex: 2;" required>
+                                <input type="number" placeholder="Qty" value="1" style="flex: 1;" min="1" required>
+                                <input type="number" placeholder="Price" step="0.01" style="flex: 1;" min="0" required>
+                                <button type="button" class="btn btn-small btn-danger" onclick="removeInvoiceItem(this)">❌</button>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-small btn-secondary" onclick="addInvoiceItem()">➕ Add Item</button>
+                    </div>
+                    <div class="form-group">
+                        <label>Subtotal</label>
+                        <input type="number" id="invoice-subtotal" value="0" step="0.01" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Tax (%)</label>
+                        <input type="number" id="invoice-tax" value="8.5" step="0.1" onchange="calculateInvoiceTotal()">
+                    </div>
+                    <div class="form-group">
+                        <label>Total Amount</label>
+                        <input type="number" id="invoice-total" value="0" step="0.01" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Due Date</label>
+                        <input type="date" id="invoice-due-date" value="${new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]}" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Notes</label>
+                        <textarea id="invoice-notes" rows="3" placeholder="Additional notes..."></textarea>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button type="submit" class="btn btn-success">💾 Create Invoice</button>
+                        <button type="button" class="btn btn-secondary" onclick="closeModal()">❌ Cancel</button>
+                    </div>
+                </form>
+            `;
+            document.getElementById('modal').style.display = 'block';
+            calculateInvoiceTotal();
+        }
+
+        function addInvoiceItem() {
+            const itemsDiv = document.getElementById('invoice-items');
+            const newItem = document.createElement('div');
+            newItem.className = 'invoice-item';
+            newItem.style.cssText = 'display: flex; gap: 10px; margin-bottom: 10px;';
+            newItem.innerHTML = `
+                <input type="text" placeholder="Service Description" style="flex: 2;" required>
+                <input type="number" placeholder="Qty" value="1" style="flex: 1;" min="1" required>
+                <input type="number" placeholder="Price" step="0.01" style="flex: 1;" min="0" required>
+                <button type="button" class="btn btn-small btn-danger" onclick="removeInvoiceItem(this)">❌</button>
+            `;
+            itemsDiv.appendChild(newItem);
+        }
+
+        function removeInvoiceItem(button) {
+            button.parentElement.remove();
+            calculateInvoiceTotal();
+        }
+
+        function calculateInvoiceTotal() {
+            const items = document.querySelectorAll('.invoice-item');
+            let subtotal = 0;
+            
+            items.forEach(item => {
+                const qty = parseFloat(item.querySelector('input[type="number"]:nth-child(2)').value) || 0;
+                const price = parseFloat(item.querySelector('input[type="number"]:nth-child(3)').value) || 0;
+                subtotal += qty * price;
+            });
+            
+            const taxRate = parseFloat(document.getElementById('invoice-tax').value) || 0;
+            const taxAmount = subtotal * (taxRate / 100);
+            const total = subtotal + taxAmount;
+            
+            document.getElementById('invoice-subtotal').value = subtotal.toFixed(2);
+            document.getElementById('invoice-total').value = total.toFixed(2);
+        }
+
+        function createInvoice(event) {
+            event.preventDefault();
+            
+            const customerId = parseInt(document.getElementById('invoice-customer').value);
+            const dueDate = document.getElementById('invoice-due-date').value;
+            const notes = document.getElementById('invoice-notes').value.trim();
+            
+            if (!customerId) {
+                showAlert('Please select a customer!', 'error');
+                return;
+            }
+            
+            const customer = customers.find(c => c.id === customerId);
+            const items = [];
+            const itemElements = document.querySelectorAll('.invoice-item');
+            
+            itemElements.forEach(item => {
+                const description = item.querySelector('input[type="text"]').value.trim();
+                const quantity = parseInt(item.querySelector('input[type="number"]:nth-child(2)').value) || 0;
+                const price = parseFloat(item.querySelector('input[type="number"]:nth-child(3)').value) || 0;
+                
+                if (description && quantity > 0 && price > 0) {
+                    items.push({ description, quantity, price });
+                }
+            });
+            
+            if (items.length === 0) {
+                showAlert('Please add at least one invoice item!', 'error');
+                return;
+            }
+            
+            const subtotal = parseFloat(document.getElementById('invoice-subtotal').value);
+            const total = parseFloat(document.getElementById('invoice-total').value);
+            
+            const newInvoice = {
+                id: invoices.length + 1,
+                customerId: customerId,
+                customerName: customer.name,
+                date: new Date().toISOString().split('T')[0],
+                dueDate: dueDate,
+                amount: total,
+                status: "draft",
+                items: items,
+                notes: notes
+            };
+            
+            invoices.push(newInvoice);
+            localStorage.setItem('invoices', JSON.stringify(invoices));
+            loadInvoices();
+            closeModal();
+            showAlert('✅ Invoice created successfully!', 'success');
+        }
+
+        function viewInvoiceDetails(invoiceId) {
+            const invoice = invoices.find(inv => inv.id === invoiceId);
+            const customer = customers.find(c => c.id === invoice.customerId);
+            
+            const modalBody = document.getElementById('modal-body');
+            modalBody.innerHTML = `
+                <h3>🧾 Invoice Details - #${invoice.id}</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                    <div>
+                        <h4>Customer Information</h4>
+                        <p><strong>Customer:</strong> ${invoice.customerName}</p>
+                        <p><strong>Phone:</strong> ${customer.phone}</p>
+                        <p><strong>Address:</strong> ${customer.address}</p>
+                    </div>
+                    <div>
+                        <h4>Invoice Details</h4>
+                        <p><strong>Invoice Date:</strong> ${invoice.date}</p>
+                        <p><strong>Due Date:</strong> ${invoice.dueDate}</p>
+                        <p><strong>Status:</strong> <span class="status-badge status-${invoice.status}">${invoice.status}</span></p>
+                        <p><strong>Total Amount:</strong> $${invoice.amount.toFixed(2)}</p>
+                    </div>
+                </div>
+                <div style="margin-top: 20px;">
+                    <h4>Invoice Items</h4>
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="background: #f8f9fa;">
+                                <th style="padding: 10px; text-align: left;">Description</th>
+                                <th style="padding: 10px; text-align: center;">Qty</th>
+                                <th style="padding: 10px; text-align: right;">Price</th>
+                                <th style="padding: 10px; text-align: right;">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${invoice.items.map(item => `
+                                <tr style="border-bottom: 1px solid #e1e5e9;">
+                                    <td style="padding: 10px;">${item.description}</td>
+                                    <td style="padding: 10px; text-align: center;">${item.quantity}</td>
+                                    <td style="padding: 10px; text-align: right;">$${item.price.toFixed(2)}</td>
+                                    <td style="padding: 10px; text-align: right;">$${(item.quantity * item.price).toFixed(2)}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                        <tfoot>
+                            <tr style="font-weight: bold;">
+                                <td colspan="3" style="padding: 10px; text-align: right;">Total:</td>
+                                <td style="padding: 10px; text-align: right;">$${invoice.amount.toFixed(2)}</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                ${invoice.notes ? `
+                    <div style="margin-top: 20px;">
+                        <h4>Notes</h4>
+                        <p>${invoice.notes}</p>
+                    </div>
+                ` : ''}
+                <div style="margin-top: 20px; display: flex; gap: 10px;">
+                    <button class="btn btn-secondary" onclick="editInvoice(${invoice.id})">✏️ Edit Invoice</button>
+                    <button class="btn btn-success" onclick="sendInvoice(${invoice.id})">📧 Send Invoice</button>
+                    <button class="btn btn-secondary" onclick="downloadInvoice(${invoice.id})">📄 Download PDF</button>
+                    <button class="btn btn-secondary" onclick="closeModal()">✅ Close</button>
+                </div>
+            `;
+            document.getElementById('modal').style.display = 'block';
+        }
+
+        function sendInvoice(invoiceId) {
+            const invoice = invoices.find(inv => inv.id === invoiceId);
+            invoice.status = "sent";
+            invoice.sentDate = new Date().toISOString().split('T')[0];
+            
+            localStorage.setItem('invoices', JSON.stringify(invoices));
+            loadInvoices();
+            showAlert('✅ Invoice sent successfully!', 'success');
+        }
+
+        function downloadInvoice(invoiceId) {
+            const invoice = invoices.find(inv => inv.id === invoiceId);
+            const customer = customers.find(c => c.id === invoice.customerId);
+            
+            const invoiceText = `
+INVOICE #${invoice.id}
+===================
+
+BILL TO:
+${invoice.customerName}
+${customer.address}
+Phone: ${customer.phone}
+
+INVOICE DATE: ${invoice.date}
+DUE DATE: ${invoice.dueDate}
+
+DESCRIPTION                    QTY     PRICE      TOTAL
+${invoice.items.map(item => 
+    `${item.description.padEnd(30)} ${item.quantity.toString().padStart(4)} $${item.price.toFixed(2).padStart(8)} $${(item.quantity * item.price).toFixed(2).padStart(10)}`
+).join('\n')}
+
+SUBTOTAL:                                          $${invoice.items.reduce((sum, item) => sum + (item.quantity * item.price), 0).toFixed(2)}
+TOTAL:                                             $${invoice.amount.toFixed(2)}
+
+STATUS: ${invoice.status.toUpperCase()}
+${invoice.notes ? `NOTES: ${invoice.notes}` : ''}
+
+Thank you for your business!
+ServicePro Elite - Professional HVAC Services
+(555) 123-4567 | service@serviceproelite.com
+            `;
+            
+            const blob = new Blob([invoiceText], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `invoice-${invoice.id}-${invoice.customerName.replace(/\s+/g, '-').toLowerCase()}.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function editInvoice(invoiceId) {
+            showAlert('Invoice editing feature coming soon!', 'info');
+        }
+
+        // Calculator Functions
+        function loadCalculator() {
+            // Calculator loads external HVAC calculator
+            console.log('HVAC Calculator section loaded');
+        }
+
+        function launchCalculator(type) {
+            // Open calculator in new window and try to switch to specific tab
+            const newWindow = window.open('hvac-calculator.html', '_blank');
+            if (newWindow) {
+                // Try to switch to specific tab after window loads
+                setTimeout(() => {
+                    try {
+                        if (newWindow.showTab) {
+                            newWindow.showTab(type);
+                        }
+                    } catch (e) {
+                        console.log('Could not auto-switch tab in new window');
+                    }
+                }, 1500);
+            }
+        }
+
+        function quickCalc(calcType) {
+            const resultsDiv = document.getElementById('quick-calc-results');
+            let result = '';
+            
+            switch(calcType) {
+                case 'temp-split':
+                    const tempSplit = parseFloat(document.getElementById('quick-temp-split').value) || 0;
+                    if (tempSplit < 15) {
+                        result = '<div class="alert alert-error">❌ Low temperature split - Check airflow or refrigerant levels</div>';
+                    } else if (tempSplit > 22) {
+                        result = '<div class="alert alert-warning">⚠️ High temperature split - Check for restrictions</div>';
+                    } else {
+                        result = '<div class="alert alert-success">✅ Normal temperature split - System operating correctly</div>';
+                    }
+                    break;
+                    
+                case 'superheat':
+                    const superheat = parseFloat(document.getElementById('quick-superheat').value) || 0;
+                    if (superheat < 5) {
+                        result = '<div class="alert alert-error">❌ Low superheat - Possible overcharge</div>';
+                    } else if (superheat > 20) {
+                        result = '<div class="alert alert-warning">⚠️ High superheat - Possible undercharge</div>';
+                    } else {
+                        result = '<div class="alert alert-success">✅ Normal superheat - Charge is correct</div>';
+                    }
+                    break;
+                    
+                case 'amps':
+                    const ampPercentage = parseFloat(document.getElementById('quick-amps').value) || 0;
+                    if (ampPercentage > 110) {
+                        result = '<div class="alert alert-error">❌ High amp draw - Check for overload or low voltage</div>';
+                    } else if (ampPercentage < 70) {
+                        result = '<div class="alert alert-warning">⚠️ Low amp draw - Check for underload</div>';
+                    } else {
+                        result = '<div class="alert alert-success">✅ Normal amp draw - Motor operating correctly</div>';
+                    }
+                    break;
+            }
+            
+            resultsDiv.innerHTML = result;
+        }
+
+        // Report Functions
+        function loadReports() {
+            // Reports functionality
+        }
+
+        function generateReport(type) {
+            const resultsDiv = document.getElementById('report-results');
+            const contentDiv = document.getElementById('report-content');
+            
+            let reportContent = '';
+            
+            switch(type) {
+                case 'revenue':
+                    const monthlyRevenue = invoices.reduce((acc, inv) => {
+                        const month = inv.date.substring(0, 7);
+                        acc[month] = (acc[month] || 0) + inv.amount;
+                        return acc;
+                    }, {});
+                    
+                    reportContent = `
+                        <h4>💰 Monthly Revenue Report</h4>
+                        ${Object.entries(monthlyRevenue).map(([month, revenue]) => `
+                            <div class="chart-bar">
+                                <span class="chart-label">${month}</span>
+                                <div class="chart-progress">
+                                    <div class="chart-fill" style="width: ${Math.min(revenue / 10000 * 100, 100)}%"></div>
+                                </div>
+                                <span class="chart-value">$${revenue.toLocaleString()}</span>
+                            </div>
+                        `).join('')}
+                        <div style="margin-top: 20px;">
+                            <p><strong>Total Revenue:</strong> $${Object.values(monthlyRevenue).reduce((a, b) => a + b, 0).toLocaleString()}</p>
+                            <p><strong>Average Monthly:</strong> $${(Object.values(monthlyRevenue).reduce((a, b) => a + b, 0) / Object.keys(monthlyRevenue).length).toLocaleString()}</p>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'jobs':
+                    const jobStatusCounts = jobs.reduce((acc, job) => {
+                        acc[job.status] = (acc[job.status] || 0) + 1;
+                        return acc;
+                    }, {});
+                    
+                    reportContent = `
+                        <h4>📊 Job Performance Report</h4>
+                        ${Object.entries(jobStatusCounts).map(([status, count]) => `
+                            <div class="chart-bar">
+                                <span class="chart-label">${status.charAt(0).toUpperCase() + status.slice(1)}</span>
+                                <div class="chart-progress">
+                                    <div class="chart-fill" style="width: ${count / jobs.length * 100}%"></div>
+                                </div>
+                                <span class="chart-value">${count}</span>
+                            </div>
+                        `).join('')}
+                        <div style="margin-top: 20px;">
+                            <p><strong>Total Jobs:</strong> ${jobs.length}</p>
+                            <p><strong>Completion Rate:</strong> ${((jobStatusCounts.completed || 0) / jobs.length * 100).toFixed(1)}%</p>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'customers':
+                    const customerTags = customers.reduce((acc, customer) => {
+                        customer.tags.forEach(tag => {
+                            acc[tag] = (acc[tag] || 0) + 1;
+                        });
+                        return acc;
+                    }, {});
+                    
+                    reportContent = `
+                        <h4>👥 Customer Analytics Report</h4>
+                        ${Object.entries(customerTags).map(([tag, count]) => `
+                            <div class="chart-bar">
+                                <span class="chart-label">${tag}</span>
+                                <div class="chart-progress">
+                                    <div class="chart-fill" style="width: ${count / customers.length * 100}%"></div>
+                                </div>
+                                <span class="chart-value">${count}</span>
+                            </div>
+                        `).join('')}
+                        <div style="margin-top: 20px;">
+                            <p><strong>Total Customers:</strong> ${customers.length}</p>
+                            <p><strong>Average Tags per Customer:</strong> ${(customers.reduce((sum, c) => sum + c.tags.length, 0) / customers.length).toFixed(1)}</p>
+                        </div>
+                    `;
+                    break;
+            }
+            
+            contentDiv.innerHTML = reportContent;
+            resultsDiv.style.display = 'block';
+            showAlert(`✅ ${type.charAt(0).toUpperCase() + type.slice(1)} report generated!`, 'success');
+        }
+
+        function exportReport() {
+            const reportContent = document.getElementById('report-content').innerText;
+            const blob = new Blob([reportContent], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `report-${Date.now()}.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // Quick Add Functions
+        function showQuickAddModal(type) {
+            let modalContent = '';
+            
+            switch(type) {
+                case 'job':
+                    modalContent = `
+                        <h3>➕ Quick Add Job</h3>
+                        <form id="quick-add-job-form" onsubmit="quickAddJob(event)">
+                            <div class="form-group">
+                                <label>Customer *</label>
+                                <select id="quick-job-customer" required>
+                                    <option value="">Select Customer</option>
+                                    ${customers.map(c => `<option value="${c.id}">${c.name}</option>`).join('')}
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Service Type *</label>
+                                <input type="text" id="quick-job-service" placeholder="AC Repair" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Date *</label>
+                                <input type="date" id="quick-job-date" required>
+                            </div>
+                            <div style="display: flex; gap: 10px;">
+                                <button type="submit" class="btn btn-success">✅ Add Job</button>
+                                <button type="button" class="btn btn-secondary" onclick="closeModal()">❌ Cancel</button>
+                            </div>
+                        </form>
+                    `;
+                    break;
+                    
+                case 'customer':
+                    modalContent = `
+                        <h3>➕ Quick Add Customer</h3>
+                        <form id="quick-add-customer-form" onsubmit="quickAddCustomer(event)">
+                            <div class="form-group">
+                                <label>Name *</label>
+                                <input type="text" id="quick-customer-name" placeholder="John Smith" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Phone *</label>
+                                <input type="tel" id="quick-customer-phone" placeholder="(555) 123-4567" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Email</label>
+                                <input type="email" id="quick-customer-email" placeholder="john@email.com">
+                            </div>
+                            <div style="display: flex; gap: 10px;">
+                                <button type="submit" class="btn btn-success">✅ Add Customer</button>
+                                <button type="button" class="btn btn-secondary" onclick="closeModal()">❌ Cancel</button>
+                            </div>
+                        </form>
+                    `;
+                    break;
+                    
+                case 'invoice':
+                    modalContent = `
+                        <h3>➕ Quick Add Invoice</h3>
+                        <form id="quick-add-invoice-form" onsubmit="quickAddInvoice(event)">
+                            <div class="form-group">
+                                <label>Customer *</label>
+                                <select id="quick-invoice-customer" required>
+                                    <option value="">Select Customer</option>
+                                    ${customers.map(c => `<option value="${c.id}">${c.name}</option>`).join('')}
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Amount *</label>
+                                <input type="number" id="quick-invoice-amount" placeholder="250.00" step="0.01" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Description</label>
+                                <input type="text" id="quick-invoice-description" placeholder="Service description">
+                            </div>
+                            <div style="display: flex; gap: 10px;">
+                                <button type="submit" class="btn btn-success">✅ Create Invoice</button>
+                                <button type="button" class="btn btn-secondary" onclick="closeModal()">❌ Cancel</button>
+                            </div>
+                        </form>
+                    `;
+                    break;
+            }
+            
+            const modalBody = document.getElementById('modal-body');
+            modalBody.innerHTML = modalContent;
+            document.getElementById('modal').style.display = 'block';
+        }
+
+        function quickAddJob(event) {
+            event.preventDefault();
+            
+            const customerId = parseInt(document.getElementById('quick-job-customer').value);
+            const serviceType = document.getElementById('quick-job-service').value.trim();
+            const date = document.getElementById('quick-job-date').value;
+            
+            if (!customerId || !serviceType || !date) {
+                showAlert('Please fill in all required fields!', 'error');
+                return;
+            }
+            
+            const customer = customers.find(c => c.id === customerId);
+            const newJob = {
+                id: jobs.length + 1,
+                customerId: customerId,
+                customerName: customer.name,
+                serviceType: serviceType,
+                description: "Quick add job",
+                date: date,
+                time: "10:00",
+                status: "scheduled",
+                technician: "Unassigned",
+                amount: 0,
+                priority: "normal",
+                notes: "Created via quick add",
+                equipment: customer.equipment,
+                location: customer.address
+            };
+            
+            jobs.push(newJob);
+            localStorage.setItem('jobs', JSON.stringify(jobs));
+            loadJobs();
+            closeModal();
+            showAlert('✅ Job added successfully!', 'success');
+        }
+
+        function quickAddCustomer(event) {
+            event.preventDefault();
+            
+            const name = document.getElementById('quick-customer-name').value.trim();
+            const phone = document.getElementById('quick-customer-phone').value.trim();
+            const email = document.getElementById('quick-customer-email').value.trim();
+            
+            if (!name || !phone) {
+                showAlert('Please fill in all required fields!', 'error');
+                return;
+            }
+            
+            const newCustomer = {
+                id: customers.length + 1,
+                name: name,
+                email: email || "not-provided@temp.com",
+                phone: phone,
+                address: "Address to be updated",
+                equipment: "Equipment to be updated",
+                lastService: new Date().toISOString().split('T')[0],
+                status: "active",
+                tags: ["Quick Add"],
+                notes: "Created via quick add",
+                membership: null
+            };
+            
+            customers.push(newCustomer);
+            localStorage.setItem('customers', JSON.stringify(customers));
+            loadCustomers();
+            closeModal();
+            showAlert('✅ Customer added successfully!', 'success');
+        }
+
+        function quickAddInvoice(event) {
+            event.preventDefault();
+            
+            const customerId = parseInt(document.getElementById('quick-invoice-customer').value);
+            const amount = parseFloat(document.getElementById('quick-invoice-amount').value);
+            const description = document.getElementById('quick-invoice-description').value.trim();
+            
+            if (!customerId || !amount || amount <= 0) {
+                showAlert('Please fill in all required fields!', 'error');
+                return;
+            }
+            
+            const customer = customers.find(c => c.id === customerId);
+            const newInvoice = {
+                id: invoices.length + 1,
+                customerId: customerId,
+                customerName: customer.name,
+                date: new Date().toISOString().split('T')[0],
+                dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+                amount: amount,
+                status: "draft",
+                items: [
+                    { description: description || "Service provided", quantity: 1, price: amount }
+                ],
+                notes: "Created via quick add"
+            };
+            
+            invoices.push(newInvoice);
+            localStorage.setItem('invoices', JSON.stringify(invoices));
+            loadInvoices();
+            closeModal();
+            showAlert('✅ Invoice created successfully!', 'success');
+        }
+
+        // Utility Functions
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
+        }
+
+        function showAlert(message, type) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type}`;
+            alertDiv.textContent = message;
+            alertDiv.style.position = 'fixed';
+            alertDiv.style.top = '20px';
+            alertDiv.style.right = '20px';
+            alertDiv.style.zIndex = '10000';
+            alertDiv.style.minWidth = '300px';
+            alertDiv.style.textAlign = 'center';
+            
+            document.body.appendChild(alertDiv);
+            
+            setTimeout(() => {
+                alertDiv.remove();
+            }, 3000);
+        }
+
+        function exportCustomers() {
+            const data = JSON.stringify(customers, null, 2);
+            const blob = new Blob([data], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `customers-${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function exportJobs() {
+            const data = JSON.stringify(jobs, null, 2);
+            const blob = new Blob([data], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `jobs-${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function exportInventory() {
+            const data = JSON.stringify(inventory, null, 2);
+            const blob = new Blob([data], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `inventory-${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function exportInvoices() {
+            const data = JSON.stringify(invoices, null, 2);
+            const blob = new Blob([data], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `invoices-${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function filterJobs() {
+            loadJobs();
+        }
+
+        function filterInventory() {
+            loadInventory();
+        }
+
+        function filterInvoices() {
+            loadInvoices();
+        }
+
+        function searchCustomers() {
+            loadCustomers();
+        }
+
+        function sortCustomers() {
+            loadCustomers();
+        }
+
+        function viewWeekSchedule() {
+            showAlert('Week schedule view coming soon!', 'info');
+        }
+
+        function viewTechSchedule() {
+            showAlert('Technician schedule view coming soon!', 'info');
+        }
+
+        function viewEmergencyCalls() {
+            showAlert('Emergency calls view coming soon!', 'info');
+        }
+
+        // Initialize Application
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 ServicePro Elite Dashboard - Initializing Complete Platform...');
+            
+            // Load data from localStorage if available
+            const savedCustomers = localStorage.getItem('customers');
+            const savedJobs = localStorage.getItem('jobs');
+            const savedInventory = localStorage.getItem('inventory');
+            const savedInvoices = localStorage.getItem('invoices');
+            
+            if (savedCustomers) customers = JSON.parse(savedCustomers);
+            if (savedJobs) jobs = JSON.parse(savedJobs);
+            if (savedInventory) inventory = JSON.parse(savedInventory);
+            if (savedInvoices) invoices = JSON.parse(savedInvoices);
+            
+            // Load dashboard by default
+            loadDashboard();
+            
+            console.log('✅ ServicePro Elite Dashboard - Complete Platform Ready!');
+            console.log('📊 Dashboard: Loaded');
+            console.log('👥 Customers:', customers.length);
+            console.log('🔧 Jobs:', jobs.length);
+            console.log('📦 Inventory:', inventory.length);
+            console.log('💰 Invoices:', invoices.length);
+        });
+
+        // Add event listeners for real-time updates
+        window.addEventListener('beforeunload', function() {
+            // Save any unsaved data
+            localStorage.setItem('customers', JSON.stringify(customers));
+            localStorage.setItem('jobs', JSON.stringify(jobs));
+            localStorage.setItem('inventory', JSON.stringify(inventory));
+            localStorage.setItem('invoices', JSON.stringify(invoices));
+        });
+    </script>
+</body>
+</html>
