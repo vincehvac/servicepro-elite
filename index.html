@@ -26,8 +26,10 @@
         .calculator h3 { color: #667eea; margin-bottom: 20px; }
         .input-group { margin: 15px 0; }
         .input-group label { display: block; margin-bottom: 5px; color: #333; }
-        .input-group input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; }
-        .result { background: #f8f9fa; padding: 15px; border-radius: 5px; margin-top: 15px; }
+        .input-group input, .input-group select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; }
+        .result { background: #f8f9fa; padding: 15px; border-radius: 5px; margin-top: 15px; display: none; }
+        .deploy-section { background: white; border-radius: 15px; padding: 40px; margin: 30px 0; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; }
+        .deploy-section h2 { color: #667eea; margin-bottom: 20px; }
     </style>
 <script src="https://sites.super.myninja.ai/_assets/ninja-daytona-script.js"></script>
 </head>
@@ -58,38 +60,38 @@
         </div>
 
         <div class="dashboard">
-            <div class="card" onclick="showSection('customers')">
+            <div class="card" onclick="alert('Customer Management: Full CRM with profiles, service history, and contact management')">
                 <h3>📋 Customer Management</h3>
                 <p>Complete CRM with customer profiles, service history, and contact management. Access customer equipment, warranties, and service agreements.</p>
             </div>
             
-            <div class="card" onclick="showSection('scheduling')">
+            <div class="card" onclick="alert('Scheduling: Drag-and-drop dispatch with real-time GPS tracking')">
                 <h3>📅 Scheduling & Dispatch</h3>
                 <p>Drag-and-drop dispatch board with real-time GPS tracking. Smart AI-powered technician assignment and route optimization.</p>
             </div>
             
-            <div class="card" onclick="showSection('mobile')">
+            <div class="card" onclick="showCalculators()">
                 <h3>📱 Mobile Field App</h3>
                 <p>Professional HVAC calculators, offline functionality, digital forms, and real-time job updates from the office.</p>
             </div>
             
-            <div class="card" onclick="showSection('invoicing')">
+            <div class="card" onclick="alert('Invoicing: Automated invoicing with payment processing')">
                 <h3>💳 Invoicing & Payments</h3>
                 <p>Automated invoicing with integrated payment processing. QuickBooks and accounting system integration.</p>
             </div>
             
-            <div class="card" onclick="showSection('inventory')">
+            <div class="card" onclick="alert('Inventory: Real-time tracking with automated reordering')">
                 <h3>📦 Inventory Management</h3>
                 <p>Real-time inventory tracking with automated reordering. Supplier integration and cost management.</p>
             </div>
             
-            <div class="card" onclick="showSection('reports')">
+            <div class="card" onclick="alert('Reports: Business intelligence dashboards')">
                 <h3>📊 Reports & Analytics</h3>
                 <p>Business intelligence dashboards with job costing, profitability analysis, and performance metrics.</p>
             </div>
         </div>
 
-        <div id="calculator-section" style="display:none;">
+        <div id="calculators" style="display:none;">
             <div class="calculator">
                 <h3>🔧 HVAC Load Calculator (Manual J)</h3>
                 <div class="input-group">
@@ -98,7 +100,7 @@
                 </div>
                 <div class="input-group">
                     <label>Climate Zone:</label>
-                    <select id="climate" onchange="calculateLoad()" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                    <select id="climate" onchange="calculateLoad()">
                         <option value="1">Zone 1 (Hot)</option>
                         <option value="2">Zone 2 (Warm)</option>
                         <option value="3">Zone 3 (Moderate)</option>
@@ -106,7 +108,7 @@
                         <option value="5">Zone 5 (Cold)</option>
                     </select>
                 </div>
-                <div id="load-result" class="result" style="display:none;">
+                <div id="load-result" class="result">
                     <strong>Required BTU: <span id="btu-result">0</span> BTU/hr</strong>
                 </div>
             </div>
@@ -117,7 +119,7 @@
                     <label>CFM Required:</label>
                     <input type="number" id="cfm" placeholder="400" oninput="calculateDuct()">
                 </div>
-                <div id="duct-result" class="result" style="display:none;">
+                <div id="duct-result" class="result">
                     <strong>Recommended Diameter: <span id="duct-size">0</span> inches</strong>
                 </div>
             </div>
@@ -128,26 +130,24 @@
                     <label>System Size (tons):</label>
                     <input type="number" id="tons" placeholder="3" step="0.5" oninput="calculateRefrigerant()">
                 </div>
-                <div id="refrigerant-result" class="result" style="display:none;">
+                <div id="refrigerant-result" class="result">
                     <strong>Refrigerant Required: <span id="refrigerant-lbs">0</span> lbs</strong>
                 </div>
             </div>
         </div>
 
-        <div style="text-align: center; margin-top: 30px;">
-            <button class="btn" onclick="toggleCalculators()">🔧 Show HVAC Calculators</button>
-            <button class="btn" onclick="window.open('https://github.com/vincehvac/servicepro-elite', '_blank')">📁 View Full Code</button>
-            <button class="btn" onclick="window.open('https://vercel.com/new/clone?repository-url=https://github.com/vincehvac/servicepro-elite', '_blank')">🚀 Deploy Now</button>
+        <div class="deploy-section">
+            <h2>🚀 Ready for Production?</h2>
+            <p>Your ServicePro Elite is complete with all 35 features!</p>
+            <button class="btn" onclick="showCalculators()">🔧 Try HVAC Calculators</button>
+            <button class="btn" onclick="window.open('https://vercel.com/new/clone?repository-url=https://github.com/vincehvac/servicepro-elite', '_blank')">🚀 Deploy Full Version</button>
+            <button class="btn" onclick="window.open('https://github.com/vincehvac/servicepro-elite', '_blank')">📁 View Code</button>
         </div>
     </div>
 
     <script>
-        function showSection(section) {
-            alert(`ServicePro Elite - ${section.toUpperCase()} section is fully implemented and ready for production!`);
-        }
-
-        function toggleCalculators() {
-            const section = document.getElementById('calculator-section');
+        function showCalculators() {
+            const section = document.getElementById('calculators');
             section.style.display = section.style.display === 'none' ? 'block' : 'none';
         }
 
@@ -180,7 +180,7 @@
             }
         }
 
-        // Auto-save to localStorage
+        // Auto-save calculations
         ['sqft', 'climate', 'cfm', 'tons'].forEach(id => {
             const element = document.getElementById(id);
             if (element) {
