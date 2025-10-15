@@ -6,7 +6,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#667eea">
-    <title>ServicePro Elite - Mobile Tech App</title>
+    <title>ServicePro Elite - Field Tech App</title>
     <link rel="manifest" href="manifest.json">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -32,16 +32,16 @@
             z-index: 100;
             border-bottom: 1px solid rgba(255, 255, 255, 0.2);
         }
-        .logo { font-size: 20px; font-weight: bold; }
+        .logo { font-size: 18px; font-weight: bold; }
         .status { 
             display: flex; 
             align-items: center; 
-            gap: 10px;
-            font-size: 14px;
+            gap: 8px;
+            font-size: 13px;
         }
         .status-dot {
-            width: 10px;
-            height: 10px;
+            width: 8px;
+            height: 8px;
             border-radius: 50%;
             background: #4ade80;
             animation: pulse 2s infinite;
@@ -51,17 +51,46 @@
             50% { opacity: 0.5; }
         }
         
+        /* Active Job Timer */
+        .active-job-timer {
+            background: rgba(239, 68, 68, 0.2);
+            border: 2px solid #ef4444;
+            border-radius: 15px;
+            padding: 15px 20px;
+            margin: 15px 20px;
+            display: none;
+        }
+        .active-job-timer.active {
+            display: block;
+        }
+        .timer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .timer-display {
+            font-size: 32px;
+            font-weight: bold;
+            text-align: center;
+            margin: 10px 0;
+        }
+        .timer-controls {
+            display: flex;
+            gap: 10px;
+        }
+        
         /* Quick Actions */
         .quick-actions {
             padding: 20px;
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
         }
         .quick-action {
             background: rgba(255, 255, 255, 0.15);
-            border-radius: 15px;
-            padding: 25px 15px;
+            border-radius: 12px;
+            padding: 20px 10px;
             text-align: center;
             border: 2px solid rgba(255, 255, 255, 0.2);
             cursor: pointer;
@@ -72,11 +101,11 @@
             background: rgba(255, 255, 255, 0.25);
         }
         .quick-action-icon {
-            font-size: 36px;
-            margin-bottom: 10px;
+            font-size: 28px;
+            margin-bottom: 8px;
         }
         .quick-action-label {
-            font-size: 14px;
+            font-size: 12px;
             font-weight: 600;
         }
         
@@ -85,7 +114,7 @@
             padding: 20px;
         }
         .section-title {
-            font-size: 20px;
+            font-size: 18px;
             font-weight: bold;
             margin-bottom: 15px;
             display: flex;
@@ -95,49 +124,61 @@
         .job-card {
             background: rgba(255, 255, 255, 0.15);
             border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 15px;
+            padding: 18px;
+            margin-bottom: 12px;
             border: 2px solid rgba(255, 255, 255, 0.2);
         }
         .job-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
         }
         .job-id {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: bold;
         }
         .job-priority {
-            padding: 5px 12px;
+            padding: 4px 10px;
             border-radius: 20px;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: bold;
         }
         .priority-high { background: #ef4444; }
         .priority-medium { background: #f59e0b; }
         .priority-normal { background: #10b981; }
         .job-info {
-            margin: 10px 0;
-            font-size: 14px;
-            line-height: 1.8;
+            margin: 8px 0;
+            font-size: 13px;
+            line-height: 1.6;
         }
         .job-info strong {
             display: inline-block;
-            width: 80px;
+            width: 70px;
         }
+        .job-status {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+            margin-top: 8px;
+        }
+        .status-scheduled { background: rgba(59, 130, 246, 0.3); }
+        .status-enroute { background: rgba(251, 191, 36, 0.3); }
+        .status-onsite { background: rgba(16, 185, 129, 0.3); }
+        .status-completed { background: rgba(107, 114, 128, 0.3); }
         .job-actions {
             display: flex;
-            gap: 10px;
-            margin-top: 15px;
+            gap: 8px;
+            margin-top: 12px;
         }
         .btn {
             flex: 1;
-            padding: 12px;
+            padding: 10px;
             border: none;
-            border-radius: 10px;
-            font-size: 14px;
+            border-radius: 8px;
+            font-size: 13px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s;
@@ -150,11 +191,19 @@
             background: rgba(255, 255, 255, 0.2);
             color: white;
         }
+        .btn-success {
+            background: #10b981;
+            color: white;
+        }
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
         .btn:active {
             transform: scale(0.95);
         }
         
-        /* Calculator Modal */
+        /* Modal */
         .modal {
             display: none;
             position: fixed;
@@ -162,7 +211,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.8);
+            background: rgba(0, 0, 0, 0.9);
             z-index: 1000;
             overflow-y: auto;
         }
@@ -184,7 +233,7 @@
             margin-bottom: 20px;
         }
         .modal-title {
-            font-size: 22px;
+            font-size: 20px;
             font-weight: bold;
         }
         .close-btn {
@@ -204,25 +253,32 @@
             display: block;
             margin-bottom: 8px;
             font-weight: 500;
+            font-size: 14px;
         }
         .input-group input,
-        .input-group select {
+        .input-group select,
+        .input-group textarea {
             width: 100%;
             padding: 12px;
             border: 2px solid rgba(255, 255, 255, 0.3);
             border-radius: 10px;
-            font-size: 16px;
+            font-size: 15px;
             background: rgba(255, 255, 255, 0.1);
             color: white;
         }
-        .input-group input::placeholder {
+        .input-group input::placeholder,
+        .input-group textarea::placeholder {
             color: rgba(255, 255, 255, 0.6);
+        }
+        .input-group textarea {
+            min-height: 100px;
+            resize: vertical;
         }
         .result {
             background: rgba(255, 255, 255, 0.15);
-            padding: 20px;
+            padding: 18px;
             border-radius: 10px;
-            margin-top: 20px;
+            margin-top: 18px;
             border: 2px solid rgba(255, 255, 255, 0.2);
         }
         .result-item {
@@ -234,6 +290,85 @@
         }
         .result-value {
             font-weight: bold;
+        }
+        
+        /* Checklist */
+        .checklist {
+            margin: 15px 0;
+        }
+        .checklist-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .checklist-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+        }
+        
+        /* Signature Pad */
+        .signature-pad {
+            background: white;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+        #signatureCanvas {
+            width: 100%;
+            height: 200px;
+            border-radius: 10px;
+            touch-action: none;
+        }
+        
+        /* Photo Gallery */
+        .photo-gallery {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .photo-item {
+            aspect-ratio: 1;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            cursor: pointer;
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+        }
+        .photo-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        
+        /* Parts List */
+        .parts-list {
+            margin: 15px 0;
+        }
+        .part-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .part-remove {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
         }
         
         /* Bottom Navigation */
@@ -251,7 +386,7 @@
         }
         .nav-item {
             text-align: center;
-            padding: 10px;
+            padding: 8px;
             cursor: pointer;
             flex: 1;
             transition: all 0.3s;
@@ -260,11 +395,11 @@
             background: rgba(255, 255, 255, 0.1);
         }
         .nav-icon {
-            font-size: 24px;
-            margin-bottom: 5px;
+            font-size: 22px;
+            margin-bottom: 4px;
         }
         .nav-label {
-            font-size: 11px;
+            font-size: 10px;
         }
         
         /* Voice Recording */
@@ -275,12 +410,13 @@
             transform: translateX(-50%);
             background: #ef4444;
             color: white;
-            padding: 20px 40px;
+            padding: 18px 35px;
             border-radius: 50px;
-            font-size: 18px;
+            font-size: 16px;
             font-weight: bold;
             display: none;
             animation: recordPulse 1s infinite;
+            box-shadow: 0 10px 30px rgba(239, 68, 68, 0.5);
         }
         .voice-recording.active {
             display: block;
@@ -288,6 +424,52 @@
         @keyframes recordPulse {
             0%, 100% { transform: translateX(-50%) scale(1); }
             50% { transform: translateX(-50%) scale(1.05); }
+        }
+        
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+            overflow-x: auto;
+        }
+        .tab {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            white-space: nowrap;
+            font-size: 13px;
+            font-weight: 600;
+        }
+        .tab.active {
+            background: white;
+            color: #667eea;
+        }
+        
+        /* Success Message */
+        .success-toast {
+            position: fixed;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #10b981;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-weight: bold;
+            display: none;
+            z-index: 1001;
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.5);
+        }
+        .success-toast.active {
+            display: block;
+            animation: slideDown 0.3s ease-out;
+        }
+        @keyframes slideDown {
+            from { transform: translateX(-50%) translateY(-20px); opacity: 0; }
+            to { transform: translateX(-50%) translateY(0); opacity: 1; }
         }
     </style>
 <script src="https://sites.super.myninja.ai/_assets/ninja-daytona-script.js"></script>
@@ -302,6 +484,22 @@
         </div>
     </div>
 
+    <!-- Active Job Timer -->
+    <div id="activeJobTimer" class="active-job-timer">
+        <div class="timer-header">
+            <strong>Job #<span id="activeJobId">-</span> In Progress</strong>
+            <span id="jobStatus" class="job-status status-onsite">On Site</span>
+        </div>
+        <div class="timer-display" id="timerDisplay">00:00:00</div>
+        <div class="timer-controls">
+            <button class="btn btn-danger" onclick="pauseJob()">⏸ Pause</button>
+            <button class="btn btn-success" onclick="completeJob()">✓ Complete</button>
+        </div>
+    </div>
+
+    <!-- Success Toast -->
+    <div id="successToast" class="success-toast"></div>
+
     <!-- Quick Actions -->
     <div class="quick-actions">
         <div class="quick-action" onclick="openCalculator()">
@@ -310,15 +508,23 @@
         </div>
         <div class="quick-action" onclick="startVoiceEntry()">
             <div class="quick-action-icon">🎤</div>
-            <div class="quick-action-label">Voice Entry</div>
+            <div class="quick-action-label">Voice Note</div>
         </div>
         <div class="quick-action" onclick="takePhoto()">
             <div class="quick-action-icon">📷</div>
-            <div class="quick-action-label">Take Photo</div>
+            <div class="quick-action-label">Photo</div>
+        </div>
+        <div class="quick-action" onclick="scanBarcode()">
+            <div class="quick-action-icon">📱</div>
+            <div class="quick-action-label">Scan Part</div>
         </div>
         <div class="quick-action" onclick="getDirections()">
             <div class="quick-action-icon">🗺️</div>
-            <div class="quick-action-label">Directions</div>
+            <div class="quick-action-label">Navigate</div>
+        </div>
+        <div class="quick-action" onclick="viewInventory()">
+            <div class="quick-action-icon">📦</div>
+            <div class="quick-action-label">Parts</div>
         </div>
     </div>
 
@@ -326,10 +532,10 @@
     <div class="section">
         <div class="section-title">
             <span>Today's Jobs</span>
-            <span style="font-size: 14px; opacity: 0.8;">3 active</span>
+            <span style="font-size: 13px; opacity: 0.8;">3 scheduled</span>
         </div>
 
-        <div class="job-card">
+        <div class="job-card" id="job1001">
             <div class="job-header">
                 <div class="job-id">#1001</div>
                 <div class="job-priority priority-high">HIGH</div>
@@ -339,6 +545,7 @@
                 <div><strong>Type:</strong> AC Repair - No Cooling</div>
                 <div><strong>Address:</strong> 123 Main St, City</div>
                 <div><strong>Time:</strong> 10:00 AM - 11:00 AM</div>
+                <div><span class="job-status status-scheduled">Scheduled</span></div>
             </div>
             <div class="job-actions">
                 <button class="btn btn-primary" onclick="startJob(1001)">Start Job</button>
@@ -346,7 +553,7 @@
             </div>
         </div>
 
-        <div class="job-card">
+        <div class="job-card" id="job1002">
             <div class="job-header">
                 <div class="job-id">#1002</div>
                 <div class="job-priority priority-medium">MEDIUM</div>
@@ -356,6 +563,7 @@
                 <div><strong>Type:</strong> Maintenance - Annual Service</div>
                 <div><strong>Address:</strong> 456 Oak Ave, City</div>
                 <div><strong>Time:</strong> 1:00 PM - 2:00 PM</div>
+                <div><span class="job-status status-scheduled">Scheduled</span></div>
             </div>
             <div class="job-actions">
                 <button class="btn btn-primary" onclick="startJob(1002)">Start Job</button>
@@ -363,7 +571,7 @@
             </div>
         </div>
 
-        <div class="job-card">
+        <div class="job-card" id="job1003">
             <div class="job-header">
                 <div class="job-id">#1003</div>
                 <div class="job-priority priority-normal">NORMAL</div>
@@ -373,6 +581,7 @@
                 <div><strong>Type:</strong> Installation - 3 Ton AC</div>
                 <div><strong>Address:</strong> 789 Pine Rd, City</div>
                 <div><strong>Time:</strong> 3:00 PM - 5:00 PM</div>
+                <div><span class="job-status status-scheduled">Scheduled</span></div>
             </div>
             <div class="job-actions">
                 <button class="btn btn-primary" onclick="startJob(1003)">Start Job</button>
@@ -381,32 +590,143 @@
         </div>
     </div>
 
+    <!-- Job Details Modal -->
+    <div id="jobDetailsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Job Details</div>
+                <button class="close-btn" onclick="closeModal('jobDetailsModal')">×</button>
+            </div>
+            <div id="jobDetailsContent"></div>
+        </div>
+    </div>
+
+    <!-- Job Workflow Modal -->
+    <div id="jobWorkflowModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Job #<span id="workflowJobId"></span></div>
+                <button class="close-btn" onclick="closeModal('jobWorkflowModal')">×</button>
+            </div>
+
+            <div class="tabs">
+                <div class="tab active" onclick="switchWorkflowTab('notes')">Notes</div>
+                <div class="tab" onclick="switchWorkflowTab('photos')">Photos</div>
+                <div class="tab" onclick="switchWorkflowTab('parts')">Parts</div>
+                <div class="tab" onclick="switchWorkflowTab('checklist')">Checklist</div>
+                <div class="tab" onclick="switchWorkflowTab('signature')">Signature</div>
+            </div>
+
+            <!-- Notes Tab -->
+            <div id="notesTab" class="workflow-tab">
+                <div class="input-group">
+                    <label>Job Notes</label>
+                    <textarea id="jobNotes" placeholder="Enter job notes..."></textarea>
+                </div>
+                <button class="btn btn-secondary" onclick="startVoiceEntry()" style="width: 100%; margin-top: 10px;">
+                    🎤 Voice to Text
+                </button>
+            </div>
+
+            <!-- Photos Tab -->
+            <div id="photosTab" class="workflow-tab" style="display: none;">
+                <div class="photo-gallery" id="photoGallery">
+                    <div class="photo-item" onclick="takePhoto()">
+                        <span>📷</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Parts Tab -->
+            <div id="partsTab" class="workflow-tab" style="display: none;">
+                <div class="input-group">
+                    <label>Add Part</label>
+                    <select id="partSelect">
+                        <option value="">Select part...</option>
+                        <option value="R-410A">R-410A Refrigerant (15 lbs)</option>
+                        <option value="Filter">Air Filter 16x20</option>
+                        <option value="Capacitor">Run Capacitor 35/5</option>
+                        <option value="Contactor">Contactor 30A</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary" onclick="addPart()" style="width: 100%;">Add Part</button>
+                <div class="parts-list" id="partsList"></div>
+            </div>
+
+            <!-- Checklist Tab -->
+            <div id="checklistTab" class="workflow-tab" style="display: none;">
+                <div class="checklist" id="jobChecklist">
+                    <div class="checklist-item">
+                        <input type="checkbox" id="check1">
+                        <label for="check1">Check refrigerant levels</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="check2">
+                        <label for="check2">Inspect electrical connections</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="check3">
+                        <label for="check3">Clean condenser coils</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="check4">
+                        <label for="check4">Test system operation</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="check5">
+                        <label for="check5">Document findings</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Signature Tab -->
+            <div id="signatureTab" class="workflow-tab" style="display: none;">
+                <div class="input-group">
+                    <label>Customer Signature</label>
+                    <div class="signature-pad">
+                        <canvas id="signatureCanvas"></canvas>
+                    </div>
+                    <button class="btn btn-secondary" onclick="clearSignature()" style="width: 100%; margin-top: 10px;">
+                        Clear Signature
+                    </button>
+                </div>
+            </div>
+
+            <button class="btn btn-success" onclick="saveJobData()" style="width: 100%; margin-top: 20px;">
+                Save Progress
+            </button>
+        </div>
+    </div>
+
     <!-- Calculator Modal -->
     <div id="calculatorModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <div class="modal-title">Quick Calculator</div>
-                <button class="close-btn" onclick="closeCalculator()">×</button>
+                <div class="modal-title">HVAC Calculator</div>
+                <button class="close-btn" onclick="closeModal('calculatorModal')">×</button>
             </div>
 
             <div class="input-group">
                 <label>Calculator Type</label>
                 <select id="calcType" onchange="updateCalculatorFields()">
                     <option value="superheat">Superheat/Subcooling</option>
-                    <option value="airflow">Airflow</option>
+                    <option value="deltat">Delta T (Temperature Split)</option>
+                    <option value="airflow">Airflow CFM</option>
                     <option value="electrical">Electrical</option>
+                    <option value="static">Static Pressure</option>
                 </select>
             </div>
 
-            <div id="calculatorFields">
-                <!-- Dynamic fields will be inserted here -->
-            </div>
+            <div id="calculatorFields"></div>
 
             <button class="btn btn-primary" style="width: 100%; margin-top: 15px;" onclick="calculate()">Calculate</button>
 
             <div id="calculatorResult" class="result" style="display: none;">
                 <h4 style="margin-bottom: 15px;">Results</h4>
                 <div id="resultContent"></div>
+                <button class="btn btn-secondary" onclick="saveCalculation()" style="width: 100%; margin-top: 15px;">
+                    Save to Job
+                </button>
             </div>
         </div>
     </div>
@@ -426,7 +746,7 @@
             <div class="nav-icon">🔧</div>
             <div class="nav-label">Tools</div>
         </div>
-        <div class="nav-item" onclick="showInventory()">
+        <div class="nav-item" onclick="viewInventory()">
             <div class="nav-icon">📦</div>
             <div class="nav-label">Parts</div>
         </div>
@@ -437,7 +757,24 @@
     </div>
 
     <script>
-        // Check online/offline status
+        // Global state
+        let currentJob = null;
+        let jobTimer = null;
+        let jobStartTime = null;
+        let jobParts = [];
+        let jobPhotos = [];
+        let isDrawing = false;
+        let signatureCanvas = null;
+        let signatureCtx = null;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            updateOnlineStatus();
+            initializeSignaturePad();
+            loadJobData();
+        });
+
+        // Online/Offline Status
         function updateOnlineStatus() {
             const statusText = document.getElementById('statusText');
             if (navigator.onLine) {
@@ -450,14 +787,245 @@
         window.addEventListener('online', updateOnlineStatus);
         window.addEventListener('offline', updateOnlineStatus);
 
-        // Calculator Functions
-        function openCalculator() {
-            document.getElementById('calculatorModal').classList.add('active');
-            updateCalculatorFields();
+        // Job Management
+        function startJob(jobId) {
+            currentJob = jobId;
+            jobStartTime = Date.now();
+            
+            // Update UI
+            document.getElementById('activeJobTimer').classList.add('active');
+            document.getElementById('activeJobId').textContent = jobId;
+            document.getElementById('workflowJobId').textContent = jobId;
+            
+            // Update job card status
+            const jobCard = document.getElementById(`job${jobId}`);
+            const statusSpan = jobCard.querySelector('.job-status');
+            statusSpan.className = 'job-status status-onsite';
+            statusSpan.textContent = 'On Site';
+            
+            // Start timer
+            startTimer();
+            
+            // Open job workflow
+            openModal('jobWorkflowModal');
+            
+            showToast('Job started! Timer running.');
+            
+            // Save to localStorage
+            saveJobState();
         }
 
-        function closeCalculator() {
-            document.getElementById('calculatorModal').classList.remove('active');
+        function startTimer() {
+            jobTimer = setInterval(() => {
+                const elapsed = Date.now() - jobStartTime;
+                const hours = Math.floor(elapsed / 3600000);
+                const minutes = Math.floor((elapsed % 3600000) / 60000);
+                const seconds = Math.floor((elapsed % 60000) / 1000);
+                
+                document.getElementById('timerDisplay').textContent = 
+                    `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            }, 1000);
+        }
+
+        function pauseJob() {
+            if (jobTimer) {
+                clearInterval(jobTimer);
+                jobTimer = null;
+                showToast('Job paused');
+            }
+        }
+
+        function completeJob() {
+            if (!currentJob) return;
+            
+            // Check if signature is captured
+            if (!signatureCanvas || signatureCanvas.toDataURL() === signatureCanvas.toDataURL('image/png', 0)) {
+                if (!confirm('No signature captured. Complete job anyway?')) {
+                    return;
+                }
+            }
+            
+            // Stop timer
+            if (jobTimer) {
+                clearInterval(jobTimer);
+                jobTimer = null;
+            }
+            
+            // Calculate total time
+            const totalTime = Date.now() - jobStartTime;
+            const hours = Math.floor(totalTime / 3600000);
+            const minutes = Math.floor((totalTime % 3600000) / 60000);
+            
+            // Update job card
+            const jobCard = document.getElementById(`job${currentJob}`);
+            const statusSpan = jobCard.querySelector('.job-status');
+            statusSpan.className = 'job-status status-completed';
+            statusSpan.textContent = 'Completed';
+            
+            // Hide timer
+            document.getElementById('activeJobTimer').classList.remove('active');
+            
+            // Generate job summary
+            generateJobSummary(currentJob, hours, minutes);
+            
+            // Clear current job
+            currentJob = null;
+            jobStartTime = null;
+            
+            // Close modal
+            closeModal('jobWorkflowModal');
+            
+            showToast(`Job completed! Total time: ${hours}h ${minutes}m`);
+            
+            // Clear job state
+            clearJobState();
+        }
+
+        function generateJobSummary(jobId, hours, minutes) {
+            const summary = {
+                jobId: jobId,
+                completedAt: new Date().toISOString(),
+                duration: `${hours}h ${minutes}m`,
+                notes: document.getElementById('jobNotes').value,
+                parts: jobParts,
+                photos: jobPhotos,
+                signature: signatureCanvas ? signatureCanvas.toDataURL() : null
+            };
+            
+            // Save to localStorage
+            const completedJobs = JSON.parse(localStorage.getItem('completedJobs') || '[]');
+            completedJobs.push(summary);
+            localStorage.setItem('completedJobs', JSON.stringify(completedJobs));
+            
+            console.log('Job summary:', summary);
+        }
+
+        function viewJobDetails(jobId) {
+            const details = `
+                <div class="job-info">
+                    <h3>Job #${jobId}</h3>
+                    <p><strong>Customer:</strong> John Smith</p>
+                    <p><strong>Phone:</strong> (555) 123-4567</p>
+                    <p><strong>Email:</strong> john@email.com</p>
+                    <p><strong>Address:</strong> 123 Main St, City, ST 12345</p>
+                    <p><strong>Equipment:</strong> Carrier 3-ton AC, Model XYZ123</p>
+                    <p><strong>Last Service:</strong> 6 months ago</p>
+                    <p><strong>Notes:</strong> Customer prefers morning appointments</p>
+                </div>
+                <button class="btn btn-primary" onclick="closeModal('jobDetailsModal'); startJob(${jobId});" style="width: 100%; margin-top: 20px;">
+                    Start Job
+                </button>
+            `;
+            
+            document.getElementById('jobDetailsContent').innerHTML = details;
+            openModal('jobDetailsModal');
+        }
+
+        // Workflow Tabs
+        function switchWorkflowTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.workflow-tab').forEach(tab => {
+                tab.style.display = 'none';
+            });
+            
+            // Remove active class from all tab buttons
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(`${tabName}Tab`).style.display = 'block';
+            
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+        }
+
+        // Parts Management
+        function addPart() {
+            const partSelect = document.getElementById('partSelect');
+            const partName = partSelect.value;
+            
+            if (!partName) {
+                alert('Please select a part');
+                return;
+            }
+            
+            jobParts.push({
+                name: partName,
+                addedAt: new Date().toISOString()
+            });
+            
+            updatePartsList();
+            partSelect.value = '';
+            showToast('Part added');
+        }
+
+        function updatePartsList() {
+            const partsList = document.getElementById('partsList');
+            partsList.innerHTML = jobParts.map((part, index) => `
+                <div class="part-item">
+                    <span>${part.name}</span>
+                    <button class="part-remove" onclick="removePart(${index})">Remove</button>
+                </div>
+            `).join('');
+        }
+
+        function removePart(index) {
+            jobParts.splice(index, 1);
+            updatePartsList();
+            showToast('Part removed');
+        }
+
+        // Signature Pad
+        function initializeSignaturePad() {
+            signatureCanvas = document.getElementById('signatureCanvas');
+            if (!signatureCanvas) return;
+            
+            signatureCtx = signatureCanvas.getContext('2d');
+            signatureCanvas.width = signatureCanvas.offsetWidth;
+            signatureCanvas.height = 200;
+            
+            signatureCanvas.addEventListener('mousedown', startDrawing);
+            signatureCanvas.addEventListener('mousemove', draw);
+            signatureCanvas.addEventListener('mouseup', stopDrawing);
+            signatureCanvas.addEventListener('touchstart', startDrawing);
+            signatureCanvas.addEventListener('touchmove', draw);
+            signatureCanvas.addEventListener('touchend', stopDrawing);
+        }
+
+        function startDrawing(e) {
+            isDrawing = true;
+            const rect = signatureCanvas.getBoundingClientRect();
+            const x = (e.clientX || e.touches[0].clientX) - rect.left;
+            const y = (e.clientY || e.touches[0].clientY) - rect.top;
+            signatureCtx.beginPath();
+            signatureCtx.moveTo(x, y);
+        }
+
+        function draw(e) {
+            if (!isDrawing) return;
+            e.preventDefault();
+            const rect = signatureCanvas.getBoundingClientRect();
+            const x = (e.clientX || e.touches[0].clientX) - rect.left;
+            const y = (e.clientY || e.touches[0].clientY) - rect.top;
+            signatureCtx.lineTo(x, y);
+            signatureCtx.strokeStyle = '#000';
+            signatureCtx.lineWidth = 2;
+            signatureCtx.stroke();
+        }
+
+        function stopDrawing() {
+            isDrawing = false;
+        }
+
+        function clearSignature() {
+            signatureCtx.clearRect(0, 0, signatureCanvas.width, signatureCanvas.height);
+        }
+
+        // Calculator Functions
+        function openCalculator() {
+            openModal('calculatorModal');
+            updateCalculatorFields();
         }
 
         function updateCalculatorFields() {
@@ -468,37 +1036,67 @@
                 fieldsDiv.innerHTML = `
                     <div class="input-group">
                         <label>Suction Pressure (PSIG)</label>
-                        <input type="number" id="suctionPressure" placeholder="e.g., 65">
+                        <input type="number" id="suctionPressure" placeholder="e.g., 65" step="0.1">
                     </div>
                     <div class="input-group">
                         <label>Suction Temperature (°F)</label>
-                        <input type="number" id="suctionTemp" placeholder="e.g., 45">
+                        <input type="number" id="suctionTemp" placeholder="e.g., 45" step="0.1">
+                    </div>
+                    <div class="input-group">
+                        <label>Liquid Pressure (PSIG)</label>
+                        <input type="number" id="liquidPressure" placeholder="e.g., 250" step="0.1">
+                    </div>
+                    <div class="input-group">
+                        <label>Liquid Temperature (°F)</label>
+                        <input type="number" id="liquidTemp" placeholder="e.g., 105" step="0.1">
+                    </div>
+                `;
+            } else if (calcType === 'deltat') {
+                fieldsDiv.innerHTML = `
+                    <div class="input-group">
+                        <label>Return Air Temperature (°F)</label>
+                        <input type="number" id="returnTemp" placeholder="e.g., 75" step="0.1">
+                    </div>
+                    <div class="input-group">
+                        <label>Supply Air Temperature (°F)</label>
+                        <input type="number" id="supplyTemp" placeholder="e.g., 55" step="0.1">
                     </div>
                 `;
             } else if (calcType === 'airflow') {
                 fieldsDiv.innerHTML = `
                     <div class="input-group">
-                        <label>Return Air Temp (°F)</label>
-                        <input type="number" id="returnTemp" placeholder="e.g., 75">
+                        <label>System Capacity (Tons)</label>
+                        <input type="number" id="systemTons" placeholder="e.g., 3" step="0.5">
                     </div>
                     <div class="input-group">
-                        <label>Supply Air Temp (°F)</label>
-                        <input type="number" id="supplyTemp" placeholder="e.g., 55">
-                    </div>
-                    <div class="input-group">
-                        <label>System Tons</label>
-                        <input type="number" id="systemTons" placeholder="e.g., 3">
+                        <label>Temperature Split (°F)</label>
+                        <input type="number" id="tempSplit" placeholder="e.g., 20" step="0.1">
                     </div>
                 `;
             } else if (calcType === 'electrical') {
                 fieldsDiv.innerHTML = `
                     <div class="input-group">
                         <label>Voltage (V)</label>
-                        <input type="number" id="voltage" placeholder="e.g., 240">
+                        <input type="number" id="voltage" placeholder="e.g., 240" step="1">
                     </div>
                     <div class="input-group">
                         <label>Current (A)</label>
-                        <input type="number" id="current" placeholder="e.g., 15">
+                        <input type="number" id="current" placeholder="e.g., 15" step="0.1">
+                    </div>
+                    <div class="input-group">
+                        <label>Power Factor</label>
+                        <input type="number" id="powerFactor" placeholder="e.g., 0.85" step="0.01" value="0.85">
+                    </div>
+                `;
+            } else if (calcType === 'static') {
+                fieldsDiv.innerHTML = `
+                    <div class="input-group">
+                        <label>Total External Static Pressure (in. w.c.)</label>
+                        <input type="number" id="staticPressure" placeholder="e.g., 0.5" step="0.01">
+                    </div>
+                    <div class="input-group">
+                        <label>System CFM</label>
+                        <input type="number" id="systemCFM" placeholder="e.g., 1200" step="10">
                     </div>
                 `;
             }
@@ -509,21 +1107,47 @@
             let resultHTML = '';
 
             if (calcType === 'superheat') {
-                const pressure = parseFloat(document.getElementById('suctionPressure').value);
-                const temp = parseFloat(document.getElementById('suctionTemp').value);
+                const suctionPressure = parseFloat(document.getElementById('suctionPressure').value);
+                const suctionTemp = parseFloat(document.getElementById('suctionTemp').value);
+                const liquidPressure = parseFloat(document.getElementById('liquidPressure').value);
+                const liquidTemp = parseFloat(document.getElementById('liquidTemp').value);
                 
-                if (!pressure || !temp) {
+                if (!suctionPressure || !suctionTemp || !liquidPressure || !liquidTemp) {
                     alert('Please fill in all fields');
                     return;
                 }
 
-                const superheat = temp - (pressure * 0.8);
-                const status = superheat < 5 ? 'Low' : superheat > 25 ? 'High' : 'Normal';
+                const superheat = suctionTemp - (suctionPressure * 0.8);
+                const subcooling = (liquidPressure * 0.6) - liquidTemp;
+                const superheatStatus = superheat < 5 ? 'Low' : superheat > 25 ? 'High' : 'Normal';
+                const subcoolingStatus = subcooling < 5 ? 'Low' : subcooling > 20 ? 'High' : 'Normal';
                 
                 resultHTML = `
                     <div class="result-item">
                         <span>Superheat:</span>
-                        <span class="result-value">${superheat.toFixed(1)}°F</span>
+                        <span class="result-value">${superheat.toFixed(1)}°F (${superheatStatus})</span>
+                    </div>
+                    <div class="result-item">
+                        <span>Subcooling:</span>
+                        <span class="result-value">${subcooling.toFixed(1)}°F (${subcoolingStatus})</span>
+                    </div>
+                `;
+            } else if (calcType === 'deltat') {
+                const returnTemp = parseFloat(document.getElementById('returnTemp').value);
+                const supplyTemp = parseFloat(document.getElementById('supplyTemp').value);
+                
+                if (!returnTemp || !supplyTemp) {
+                    alert('Please fill in all fields');
+                    return;
+                }
+
+                const deltaT = returnTemp - supplyTemp;
+                const status = deltaT < 15 ? 'Low' : deltaT > 25 ? 'High' : 'Normal';
+                
+                resultHTML = `
+                    <div class="result-item">
+                        <span>Delta T:</span>
+                        <span class="result-value">${deltaT.toFixed(1)}°F</span>
                     </div>
                     <div class="result-item">
                         <span>Status:</span>
@@ -531,38 +1155,39 @@
                     </div>
                 `;
             } else if (calcType === 'airflow') {
-                const returnTemp = parseFloat(document.getElementById('returnTemp').value);
-                const supplyTemp = parseFloat(document.getElementById('supplyTemp').value);
                 const tons = parseFloat(document.getElementById('systemTons').value);
+                const tempSplit = parseFloat(document.getElementById('tempSplit').value);
                 
-                if (!returnTemp || !supplyTemp || !tons) {
+                if (!tons || !tempSplit) {
                     alert('Please fill in all fields');
                     return;
                 }
 
-                const tempSplit = Math.abs(returnTemp - supplyTemp);
                 const cfm = tons * 400;
+                const btuh = cfm * tempSplit * 1.08;
                 
                 resultHTML = `
                     <div class="result-item">
-                        <span>Temp Split:</span>
-                        <span class="result-value">${tempSplit.toFixed(1)}°F</span>
+                        <span>CFM:</span>
+                        <span class="result-value">${cfm.toFixed(0)} CFM</span>
                     </div>
                     <div class="result-item">
-                        <span>CFM:</span>
-                        <span class="result-value">${cfm} CFM</span>
+                        <span>BTUH:</span>
+                        <span class="result-value">${btuh.toFixed(0)} BTUH</span>
                     </div>
                 `;
             } else if (calcType === 'electrical') {
                 const voltage = parseFloat(document.getElementById('voltage').value);
                 const current = parseFloat(document.getElementById('current').value);
+                const pf = parseFloat(document.getElementById('powerFactor').value);
                 
                 if (!voltage || !current) {
-                    alert('Please fill in all fields');
+                    alert('Please fill in voltage and current');
                     return;
                 }
 
-                const power = voltage * current;
+                const power = voltage * current * pf;
+                const kw = power / 1000;
                 
                 resultHTML = `
                     <div class="result-item">
@@ -571,7 +1196,32 @@
                     </div>
                     <div class="result-item">
                         <span>kW:</span>
-                        <span class="result-value">${(power/1000).toFixed(2)} kW</span>
+                        <span class="result-value">${kw.toFixed(2)} kW</span>
+                    </div>
+                `;
+            } else if (calcType === 'static') {
+                const staticPressure = parseFloat(document.getElementById('staticPressure').value);
+                const cfm = parseFloat(document.getElementById('systemCFM').value);
+                
+                if (!staticPressure || !cfm) {
+                    alert('Please fill in all fields');
+                    return;
+                }
+
+                const status = staticPressure < 0.5 ? 'Good' : staticPressure > 0.8 ? 'High' : 'Acceptable';
+                
+                resultHTML = `
+                    <div class="result-item">
+                        <span>Static Pressure:</span>
+                        <span class="result-value">${staticPressure.toFixed(2)} in. w.c.</span>
+                    </div>
+                    <div class="result-item">
+                        <span>Status:</span>
+                        <span class="result-value">${status}</span>
+                    </div>
+                    <div class="result-item">
+                        <span>CFM:</span>
+                        <span class="result-value">${cfm} CFM</span>
                     </div>
                 `;
             }
@@ -580,52 +1230,114 @@
             document.getElementById('calculatorResult').style.display = 'block';
         }
 
+        function saveCalculation() {
+            showToast('Calculation saved to job');
+        }
+
         // Voice Entry
         function startVoiceEntry() {
             const voiceIndicator = document.getElementById('voiceRecording');
             voiceIndicator.classList.add('active');
             
-            // Simulate voice recording
             setTimeout(() => {
                 voiceIndicator.classList.remove('active');
-                alert('Voice entry: "Customer reports AC not cooling. Checked refrigerant levels, found system low on R-410A. Added 2 lbs refrigerant. System now cooling properly."');
+                const sampleText = "Customer reports AC not cooling. Checked refrigerant levels, found system low on R-410A. Added 2 lbs refrigerant. System now cooling properly.";
+                document.getElementById('jobNotes').value += (document.getElementById('jobNotes').value ? '\n\n' : '') + sampleText;
+                showToast('Voice note added');
             }, 3000);
         }
 
         // Photo
         function takePhoto() {
-            alert('📷 Camera would open here\n\nIn the full app, this would:\n• Open device camera\n• Take photo of equipment\n• Attach to job\n• Upload when online');
+            showToast('📷 Camera would open here. In full app, this captures photos and attaches to job.');
+        }
+
+        // Barcode Scanner
+        function scanBarcode() {
+            showToast('📱 Barcode scanner would open here. In full app, this scans part barcodes for quick lookup.');
         }
 
         // Directions
         function getDirections() {
-            alert('🗺️ Opening directions to next job...\n\nIn the full app, this would:\n• Open Google Maps\n• Show route to job location\n• Provide turn-by-turn navigation\n• Show traffic conditions');
+            if (currentJob) {
+                showToast('🗺️ Opening directions to job location...');
+            } else {
+                showToast('Please start a job first');
+            }
         }
 
-        // Job Functions
-        function startJob(jobId) {
-            alert(`Starting Job #${jobId}\n\n✓ Timer started\n✓ GPS location recorded\n✓ Customer notified\n\nReady to begin work!`);
-        }
-
-        function viewJobDetails(jobId) {
-            alert(`Job #${jobId} Details\n\nCustomer History:\n• Last service: 6 months ago\n• Equipment: Carrier 3-ton AC\n• Warranty: Active\n• Notes: Prefers morning appointments`);
+        // Inventory
+        function viewInventory() {
+            alert('📦 Truck Inventory:\n\nOn Truck:\n• R-410A: 15 lbs\n• Filters 16x20: 12\n• Capacitors: 8\n• Contactors: 5\n\nNeed to reorder: R-410A');
         }
 
         // Navigation Functions
         function showJobs() {
-            alert('Jobs view - showing all scheduled jobs');
-        }
-
-        function showInventory() {
-            alert('Parts Inventory:\n\nOn Truck:\n• R-410A: 15 lbs\n• Filters 16x20: 12\n• Capacitors: 8\n• Contactors: 5\n\nNeed to reorder: R-410A');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function showProfile() {
-            alert('Technician Profile:\n\nName: John Tech\nID: TECH-001\nToday: 3 jobs\nCompleted this week: 12\nRating: 4.9/5.0');
+            alert('👤 Technician Profile:\n\nName: John Tech\nID: TECH-001\nToday: 3 jobs\nCompleted this week: 12\nRating: 4.9/5.0');
         }
 
-        // Initialize
-        updateOnlineStatus();
+        // Modal Functions
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        // Save/Load Job Data
+        function saveJobData() {
+            const jobData = {
+                jobId: currentJob,
+                notes: document.getElementById('jobNotes').value,
+                parts: jobParts,
+                photos: jobPhotos,
+                timestamp: Date.now()
+            };
+            
+            localStorage.setItem(`job_${currentJob}`, JSON.stringify(jobData));
+            showToast('Progress saved');
+        }
+
+        function loadJobData() {
+            if (currentJob) {
+                const saved = localStorage.getItem(`job_${currentJob}`);
+                if (saved) {
+                    const data = JSON.parse(saved);
+                    document.getElementById('jobNotes').value = data.notes || '';
+                    jobParts = data.parts || [];
+                    jobPhotos = data.photos || [];
+                    updatePartsList();
+                }
+            }
+        }
+
+        function saveJobState() {
+            localStorage.setItem('activeJob', JSON.stringify({
+                jobId: currentJob,
+                startTime: jobStartTime
+            }));
+        }
+
+        function clearJobState() {
+            localStorage.removeItem('activeJob');
+            localStorage.removeItem(`job_${currentJob}`);
+        }
+
+        // Toast Notification
+        function showToast(message) {
+            const toast = document.getElementById('successToast');
+            toast.textContent = message;
+            toast.classList.add('active');
+            setTimeout(() => {
+                toast.classList.remove('active');
+            }, 3000);
+        }
+
         console.log('ServicePro Elite Mobile Tech App loaded');
     </script>
 </body>
