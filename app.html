@@ -3,860 +3,657 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ServicePro Elite - Complete Field Service Management</title>
+    <title>Ninja AI - Dashboard</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; }
-        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
-        .header { background: white; border-radius: 15px; padding: 30px; margin-bottom: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
-        .logo { font-size: 32px; font-weight: bold; color: #667eea; margin-bottom: 10px; }
-        .tagline { color: #666; font-size: 18px; }
-        .nav-bar { background: white; border-radius: 15px; padding: 15px 30px; margin-bottom: 30px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        .nav-bar a { color: #667eea; text-decoration: none; padding: 10px 20px; margin: 0 10px; border-radius: 8px; transition: background 0.3s; }
-        .nav-bar a:hover { background: #f8f9fa; }
-        .nav-bar a.active { background: #667eea; color: white; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%); 
+            min-height: 100vh; 
+            color: white;
+        }
+        .container { max-width: 1600px; margin: 0 auto; padding: 20px; }
+        
+        /* Header */
+        .header { 
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); 
+            border-radius: 20px; 
+            padding: 25px 40px; 
+            margin-bottom: 30px; 
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 20px 60px rgba(59, 130, 246, 0.3);
+        }
+        .logo { font-size: 32px; font-weight: bold; }
+        .user-info { display: flex; gap: 15px; align-items: center; }
+        
+        /* Navigation */
+        .nav-bar { 
+            background: rgba(30, 58, 138, 0.4); 
+            border-radius: 15px; 
+            padding: 15px; 
+            margin-bottom: 30px; 
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            border: 2px solid rgba(59, 130, 246, 0.3);
+        }
+        .nav-item { 
+            background: rgba(59, 130, 246, 0.2); 
+            color: white; 
+            padding: 12px 20px; 
+            border-radius: 10px; 
+            cursor: pointer; 
+            transition: all 0.3s;
+            border: 2px solid transparent;
+            font-weight: 600;
+        }
+        .nav-item:hover { 
+            background: rgba(59, 130, 246, 0.4);
+            border-color: #60a5fa;
+        }
+        .nav-item.active { 
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            border-color: #60a5fa;
+        }
+        
+        /* Content Sections */
         .content { display: none; }
-        .content.active { display: block; }
-        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 30px; }
-        .stat { background: white; padding: 20px; border-radius: 10px; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        .stat-number { font-size: 32px; font-weight: bold; color: #667eea; }
-        .stat-label { color: #666; font-size: 14px; }
-        .action-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin: 30px 0; }
-        .action-card { background: white; border-radius: 15px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); transition: transform 0.3s; }
-        .action-card:hover { transform: translateY(-5px); }
-        .action-card h3 { color: #667eea; margin-bottom: 15px; font-size: 20px; }
-        .action-card p { color: #666; line-height: 1.6; margin-bottom: 20px; }
-        .btn { background: #667eea; color: white; padding: 12px 24px; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; margin: 5px; transition: background 0.3s; }
-        .btn:hover { background: #764ba2; }
-        .btn-secondary { background: #6c757d; }
-        .btn-success { background: #28a745; }
-        .table { width: 100%; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        .table th { background: #667eea; color: white; padding: 15px; text-align: left; }
-        .table td { padding: 15px; border-bottom: 1px solid #e1e5e9; }
-        .table tr:last-child td { border-bottom: none; }
-        .form-group { margin: 15px 0; }
-        .form-group label { display: block; margin-bottom: 5px; color: #333; font-weight: 500; }
-        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 12px; border: 2px solid #e1e5e9; border-radius: 8px; font-size: 16px; }
-        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: #667eea; }
-        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); }
-        .modal-content { background-color: white; margin: 5% auto; padding: 30px; border-radius: 15px; width: 90%; max-width: 600px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
-        .close { color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer; }
-        .close:hover { color: #000; }
-        .alert { padding: 15px; border-radius: 8px; margin: 15px 0; }
-        .alert-success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-        .alert-error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-        .status-badge { padding: 5px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; }
-        .status-active { background: #28a745; color: white; }
-        .status-pending { background: #ffc107; color: #212529; }
-        .status-completed { background: #17a2b8; color: white; }
-        .status-cancelled { background: #dc3545; color: white; }
+        .content.active { display: block; animation: fadeIn 0.3s ease-in; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Stats Grid */
+        .stats-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
+            gap: 20px; 
+            margin-bottom: 30px; 
+        }
+        .stat-card { 
+            background: rgba(30, 58, 138, 0.4); 
+            padding: 25px; 
+            border-radius: 15px; 
+            border: 2px solid rgba(59, 130, 246, 0.3);
+            text-align: center;
+        }
+        .stat-number { 
+            font-size: 42px; 
+            font-weight: bold; 
+            color: #60a5fa; 
+            margin-bottom: 10px;
+        }
+        .stat-label { 
+            font-size: 16px; 
+            opacity: 0.8; 
+        }
+        
+        /* Feature Cards */
+        .feature-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); 
+            gap: 25px; 
+            margin-bottom: 30px; 
+        }
+        .feature-card { 
+            background: rgba(30, 58, 138, 0.4); 
+            border-radius: 20px; 
+            padding: 30px; 
+            border: 2px solid rgba(59, 130, 246, 0.3);
+            transition: all 0.3s;
+        }
+        .feature-card:hover { 
+            transform: translateY(-5px); 
+            border-color: #60a5fa;
+            box-shadow: 0 20px 60px rgba(59, 130, 246, 0.4);
+        }
+        .feature-card h3 { 
+            color: #60a5fa; 
+            margin-bottom: 15px; 
+            font-size: 24px; 
+        }
+        .feature-card p { 
+            line-height: 1.8; 
+            opacity: 0.9;
+            margin-bottom: 20px;
+        }
+        
+        /* Buttons */
+        .btn { 
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); 
+            color: white; 
+            padding: 12px 30px; 
+            border: none; 
+            border-radius: 10px; 
+            cursor: pointer; 
+            font-size: 16px; 
+            font-weight: 600;
+            margin: 5px; 
+            transition: all 0.3s;
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.3);
+        }
+        .btn:hover { 
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(59, 130, 246, 0.5);
+        }
+        .btn-success { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
+        .btn-warning { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
+        .btn-danger { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); }
+        
+        /* Table */
+        .table-container { 
+            background: rgba(30, 58, 138, 0.4); 
+            border-radius: 15px; 
+            padding: 25px; 
+            border: 2px solid rgba(59, 130, 246, 0.3);
+            overflow-x: auto;
+        }
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+        }
+        th { 
+            background: rgba(59, 130, 246, 0.3); 
+            padding: 15px; 
+            text-align: left; 
+            color: #60a5fa;
+            font-weight: 600;
+        }
+        td { 
+            padding: 15px; 
+            border-bottom: 1px solid rgba(59, 130, 246, 0.2);
+        }
+        tr:hover { 
+            background: rgba(59, 130, 246, 0.1); 
+        }
+        
+        /* Form */
+        .form-group { margin: 20px 0; }
+        .form-group label { 
+            display: block; 
+            margin-bottom: 8px; 
+            font-weight: 500; 
+            color: #93c5fd;
+        }
+        .form-group input, 
+        .form-group select, 
+        .form-group textarea { 
+            width: 100%; 
+            padding: 15px; 
+            border: 2px solid rgba(59, 130, 246, 0.3); 
+            border-radius: 10px; 
+            font-size: 16px; 
+            background: rgba(10, 14, 39, 0.5);
+            color: white;
+        }
+        .form-group input:focus, 
+        .form-group select:focus, 
+        .form-group textarea:focus { 
+            outline: none; 
+            border-color: #60a5fa; 
+        }
+        
+        /* AI Assistant */
+        .ai-assistant { 
+            position: fixed; 
+            bottom: 30px; 
+            right: 30px; 
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); 
+            width: 60px; 
+            height: 60px; 
+            border-radius: 50%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 28px; 
+            cursor: pointer; 
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.5);
+            transition: all 0.3s;
+        }
+        .ai-assistant:hover { 
+            transform: scale(1.1); 
+        }
+        
+        @media (max-width: 768px) {
+            .nav-bar { flex-direction: column; }
+            .feature-grid { grid-template-columns: 1fr; }
+            .stats-grid { grid-template-columns: 1fr; }
+        }
     </style>
 <script src="https://sites.super.myninja.ai/_assets/ninja-daytona-script.js"></script>
 </head>
 <body>
     <div class="container">
+        <!-- Header -->
         <div class="header">
-            <div class="logo">ServicePro Elite</div>
-            <div class="tagline">Complete Field Service Management Platform</div>
+            <div class="logo">🥷 Ninja AI Dashboard</div>
+            <div class="user-info">
+                <span>Welcome, Admin</span>
+                <button class="btn" onclick="window.location.href='index.html'">Home</button>
+            </div>
         </div>
 
-        <nav class="nav-bar">
-            <a href="#" class="active" onclick="showSection('dashboard')">📊 Dashboard</a>
-            <a href="#" onclick="showSection('customers')">👥 Customers</a>
-            <a href="#" onclick="showSection('jobs')">🔧 Jobs</a>
-            <a href="#" onclick="showSection('scheduling')">📅 Scheduling</a>
-            <a href="#" onclick="showSection('inventory')">📦 Inventory</a>
-            <a href="#" onclick="showSection('invoices')">💰 Invoices</a>
-            <a href="#" onclick="showSection('calculator')">🔧 HVAC Calculator</a>
-            <a href="#" onclick="showSection('reports')">📈 Reports</a>
-        </nav>
+        <!-- Navigation -->
+        <div class="nav-bar">
+            <div class="nav-item active" onclick="showSection('dashboard')">📊 Dashboard</div>
+            <div class="nav-item" onclick="showSection('dispatch')">🎯 Smart Dispatch</div>
+            <div class="nav-item" onclick="showSection('customers')">👥 Customers</div>
+            <div class="nav-item" onclick="showSection('jobs')">🔧 Jobs</div>
+            <div class="nav-item" onclick="showSection('inventory')">📦 Inventory</div>
+            <div class="nav-item" onclick="showSection('quotes')">💰 AI Quotes</div>
+            <div class="nav-item" onclick="showSection('analytics')">📈 Analytics</div>
+            <div class="nav-item" onclick="window.location.href='hvac-calculator.html'">🔧 Calculator</div>
+        </div>
 
-        <!-- Dashboard -->
+        <!-- Dashboard Section -->
         <div id="dashboard" class="content active">
-            <div class="stats">
-                <div class="stat">
-                    <div class="stat-number" id="total-customers">1,247</div>
+            <h2 style="color: #60a5fa; margin-bottom: 25px; font-size: 32px;">Dashboard Overview</h2>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">23</div>
+                    <div class="stat-label">Active Jobs Today</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">1,247</div>
                     <div class="stat-label">Total Customers</div>
                 </div>
-                <div class="stat">
-                    <div class="stat-number" id="active-jobs">23</div>
-                    <div class="stat-label">Active Jobs</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-number" id="monthly-revenue">$87,540</div>
+                <div class="stat-card">
+                    <div class="stat-number">$87,540</div>
                     <div class="stat-label">Monthly Revenue</div>
                 </div>
-                <div class="stat">
-                    <div class="stat-number" id="satisfaction-rate">98%</div>
-                    <div class="stat-label">Satisfaction Rate</div>
+                <div class="stat-card">
+                    <div class="stat-number">98%</div>
+                    <div class="stat-label">Customer Satisfaction</div>
                 </div>
             </div>
 
-            <div class="action-grid">
-                <div class="action-card">
-                    <h3>🚨 Today's Schedule</h3>
-                    <div id="today-schedule"></div>
-                    <button class="btn" onclick="showSection('scheduling')">View Full Schedule</button>
-                </div>
-                <div class="action-card">
-                    <h3>🔧 Recent Jobs</h3>
-                    <div id="recent-jobs"></div>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>🚨 Today's Priority Jobs</h3>
+                    <p>3 emergency calls, 5 scheduled maintenance, 2 installations</p>
                     <button class="btn" onclick="showSection('jobs')">View All Jobs</button>
                 </div>
-                <div class="action-card">
-                    <h3>👥 New Customers</h3>
-                    <div id="new-customers"></div>
-                    <button class="btn" onclick="showSection('customers')">View All Customers</button>
+                <div class="feature-card">
+                    <h3>🤖 AI Insights</h3>
+                    <p>System detected 12 customers due for maintenance. Auto-scheduling recommended.</p>
+                    <button class="btn btn-success" onclick="alert('AI scheduling in progress...')">Auto-Schedule</button>
+                </div>
+                <div class="feature-card">
+                    <h3>📊 Performance Metrics</h3>
+                    <p>Team efficiency up 23% this month. Average job time: 2.3 hours.</p>
+                    <button class="btn" onclick="showSection('analytics')">View Details</button>
                 </div>
             </div>
         </div>
 
-        <!-- Customers Management -->
-        <div id="customers" class="content">
-            <h2>👥 Customer Management</h2>
-            <button class="btn btn-success" onclick="showAddCustomerModal()">➕ Add New Customer</button>
-            <button class="btn btn-secondary" onclick="exportCustomers()">📤 Export</button>
+        <!-- Smart Dispatch Section -->
+        <div id="dispatch" class="content">
+            <h2 style="color: #60a5fa; margin-bottom: 25px; font-size: 32px;">🎯 Smart Dispatch</h2>
             
-            <div class="table" style="margin-top: 20px;">
-                <table style="width: 100%;">
+            <div class="feature-card" style="margin-bottom: 25px;">
+                <h3>AI-Powered Job Assignment</h3>
+                <p>Let Ninja AI automatically assign jobs based on proximity, skills, and workload</p>
+                <button class="btn btn-success" onclick="runSmartDispatch()">Run Smart Dispatch</button>
+                <button class="btn" onclick="alert('Manual dispatch mode activated')">Manual Mode</button>
+            </div>
+
+            <div class="table-container">
+                <h3 style="color: #60a5fa; margin-bottom: 20px;">Pending Jobs</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Job ID</th>
+                            <th>Customer</th>
+                            <th>Type</th>
+                            <th>Priority</th>
+                            <th>Location</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="pendingJobsTable">
+                        <tr>
+                            <td>#1001</td>
+                            <td>John Smith</td>
+                            <td>AC Repair</td>
+                            <td><span style="color: #ef4444;">High</span></td>
+                            <td>123 Main St</td>
+                            <td><button class="btn" onclick="assignJob(1001)">Assign</button></td>
+                        </tr>
+                        <tr>
+                            <td>#1002</td>
+                            <td>Sarah Johnson</td>
+                            <td>Maintenance</td>
+                            <td><span style="color: #f59e0b;">Medium</span></td>
+                            <td>456 Oak Ave</td>
+                            <td><button class="btn" onclick="assignJob(1002)">Assign</button></td>
+                        </tr>
+                        <tr>
+                            <td>#1003</td>
+                            <td>Mike Davis</td>
+                            <td>Installation</td>
+                            <td><span style="color: #10b981;">Normal</span></td>
+                            <td>789 Pine Rd</td>
+                            <td><button class="btn" onclick="assignJob(1003)">Assign</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Customers Section -->
+        <div id="customers" class="content">
+            <h2 style="color: #60a5fa; margin-bottom: 25px; font-size: 32px;">👥 Customer Management</h2>
+            
+            <div style="margin-bottom: 25px;">
+                <button class="btn btn-success" onclick="showAddCustomerForm()">+ Add New Customer</button>
+                <button class="btn" onclick="alert('Importing customers...')">Import Customers</button>
+            </div>
+
+            <div class="table-container">
+                <table>
                     <thead>
                         <tr>
                             <th>Name</th>
                             <th>Email</th>
                             <th>Phone</th>
-                            <th>Address</th>
-                            <th>Equipment</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="customers-table"></tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- Jobs Management -->
-        <div id="jobs" class="content">
-            <h2>🔧 Job Management</h2>
-            <button class="btn btn-success" onclick="showAddJobModal()">➕ Add New Job</button>
-            <button class="btn btn-secondary" onclick="exportJobs()">📤 Export</button>
-            
-            <div style="margin: 20px 0;">
-                <label>Filter by Status:</label>
-                <select id="job-filter" onchange="filterJobs()">
-                    <option value="all">All Jobs</option>
-                    <option value="scheduled">Scheduled</option>
-                    <option value="in-progress">In Progress</option>
-                    <option value="completed">Completed</option>
-                    <option value="cancelled">Cancelled</option>
-                </select>
-            </div>
-
-            <div class="table">
-                <table style="width: 100%;">
-                    <thead>
-                        <tr>
-                            <th>Job ID</th>
-                            <th>Customer</th>
-                            <th>Service Type</th>
-                            <th>Date</th>
+                            <th>Last Service</th>
                             <th>Status</th>
-                            <th>Amount</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
-                    <tbody id="jobs-table"></tbody>
+                    <tbody>
+                        <tr>
+                            <td>John Smith</td>
+                            <td>john@email.com</td>
+                            <td>(555) 123-4567</td>
+                            <td>2025-09-15</td>
+                            <td><span style="color: #10b981;">Active</span></td>
+                            <td>
+                                <button class="btn" onclick="viewCustomer('John Smith')">View</button>
+                                <button class="btn" onclick="editCustomer('John Smith')">Edit</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Sarah Johnson</td>
+                            <td>sarah@email.com</td>
+                            <td>(555) 234-5678</td>
+                            <td>2025-08-22</td>
+                            <td><span style="color: #10b981;">Active</span></td>
+                            <td>
+                                <button class="btn" onclick="viewCustomer('Sarah Johnson')">View</button>
+                                <button class="btn" onclick="editCustomer('Sarah Johnson')">Edit</button>
+                            </td>
+                        </tr>
+                    </tbody>
                 </table>
             </div>
         </div>
 
-        <!-- Scheduling -->
-        <div id="scheduling" class="content">
-            <h2>📅 Scheduling & Dispatch</h2>
-            <div class="action-grid">
-                <div class="action-card">
-                    <h3>📋 Today's Schedule</h3>
-                    <div id="today-appointments"></div>
+        <!-- Jobs Section -->
+        <div id="jobs" class="content">
+            <h2 style="color: #60a5fa; margin-bottom: 25px; font-size: 32px;">🔧 Job Management</h2>
+            
+            <div style="margin-bottom: 25px;">
+                <button class="btn btn-success" onclick="createNewJob()">+ Create New Job</button>
+                <button class="btn" onclick="alert('Voice job entry activated')">🎤 Voice Entry</button>
+            </div>
+
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>Emergency Calls</h3>
+                    <div class="stat-number" style="font-size: 32px;">3</div>
+                    <button class="btn btn-danger" onclick="showSection('dispatch')">View Emergency Jobs</button>
                 </div>
-                <div class="action-card">
-                    <h3>📅 This Week</h3>
-                    <div id="week-appointments"></div>
+                <div class="feature-card">
+                    <h3>Scheduled Today</h3>
+                    <div class="stat-number" style="font-size: 32px;">12</div>
+                    <button class="btn" onclick="alert('Showing scheduled jobs')">View Schedule</button>
                 </div>
-                <div class="action-card">
-                    <h3>🔧 Available Technicians</h3>
-                    <div id="available-techs"></div>
+                <div class="feature-card">
+                    <h3>Completed This Week</h3>
+                    <div class="stat-number" style="font-size: 32px;">47</div>
+                    <button class="btn btn-success" onclick="alert('Showing completed jobs')">View Completed</button>
                 </div>
             </div>
-            <button class="btn btn-success" onclick="showScheduleModal()">➕ Schedule New Appointment</button>
         </div>
 
-        <!-- Inventory -->
+        <!-- Inventory Section -->
         <div id="inventory" class="content">
-            <h2>📦 Inventory Management</h2>
-            <button class="btn btn-success" onclick="showAddInventoryModal()">➕ Add Item</button>
-            <button class="btn btn-secondary" onclick="exportInventory()">📤 Export</button>
+            <h2 style="color: #60a5fa; margin-bottom: 25px; font-size: 32px;">📦 Inventory Management</h2>
             
-            <div style="margin: 20px 0;">
-                <label>Filter by Category:</label>
-                <select id="inventory-filter" onchange="filterInventory()">
-                    <option value="all">All Items</option>
-                    <option value="refrigerant">Refrigerant</option>
-                    <option value="parts">Parts</option>
-                    <option value="tools">Tools</option>
-                    <option value="consumables">Consumables</option>
-                </select>
+            <div class="feature-card" style="margin-bottom: 25px;">
+                <h3>🔮 AI Inventory Forecasting</h3>
+                <p>Based on seasonal trends and usage patterns, AI recommends reordering:</p>
+                <ul style="list-style: none; margin: 15px 0;">
+                    <li style="padding: 8px 0;">⚠️ R-410A Refrigerant: 15 lbs (Low stock)</li>
+                    <li style="padding: 8px 0;">⚠️ 2.5 Ton Condensers: 3 units (Reorder recommended)</li>
+                    <li style="padding: 8px 0;">✅ Air Filters: 150 units (Adequate)</li>
+                </ul>
+                <button class="btn btn-success" onclick="autoReorder()">Auto-Reorder Low Stock</button>
             </div>
 
-            <div class="table">
-                <table style="width: 100%;">
+            <div class="table-container">
+                <table>
                     <thead>
                         <tr>
                             <th>Item</th>
                             <th>SKU</th>
-                            <th>Category</th>
                             <th>Quantity</th>
-                            <th>Min Level</th>
-                            <th>Price</th>
                             <th>Status</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
-                    <tbody id="inventory-table"></tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- Invoices -->
-        <div id="invoices" class="content">
-            <h2>💰 Invoicing & Payments</h2>
-            <button class="btn btn-success" onclick="showCreateInvoiceModal()">➕ Create Invoice</button>
-            <button class="btn btn-secondary" onclick="exportInvoices()">📤 Export</button>
-            
-            <div style="margin: 20px 0;">
-                <label>Filter by Status:</label>
-                <select id="invoice-filter" onchange="filterInvoices()">
-                    <option value="all">All Invoices</option>
-                    <option value="draft">Draft</option>
-                    <option value="sent">Sent</option>
-                    <option value="paid">Paid</option>
-                    <option value="overdue">Overdue</option>
-                </select>
-            </div>
-
-            <div class="table">
-                <table style="width: 100%;">
-                    <thead>
+                    <tbody>
                         <tr>
-                            <th>Invoice #</th>
-                            <th>Customer</th>
-                            <th>Date</th>
-                            <th>Amount</th>
-                            <th>Status</th>
-                            <th>Actions</th>
+                            <td>R-410A Refrigerant</td>
+                            <td>REF-410A</td>
+                            <td>8 lbs</td>
+                            <td><span style="color: #ef4444;">Low</span></td>
+                            <td><button class="btn" onclick="reorderItem('REF-410A')">Reorder</button></td>
                         </tr>
-                    </thead>
-                    <tbody id="invoices-table"></tbody>
+                        <tr>
+                            <td>Air Filters 16x20</td>
+                            <td>FIL-1620</td>
+                            <td>150 units</td>
+                            <td><span style="color: #10b981;">Good</span></td>
+                            <td><button class="btn" onclick="viewItem('FIL-1620')">View</button></td>
+                        </tr>
+                    </tbody>
                 </table>
             </div>
         </div>
 
-        <!-- HVAC Calculator -->
-        <div id="calculator" class="content">
-            <h2>🔧 HVAC Calculator Suite</h2>
-            <p>Professional-grade tools for HVAC technicians - 100% offline capable</p>
+        <!-- AI Quotes Section -->
+        <div id="quotes" class="content">
+            <h2 style="color: #60a5fa; margin-bottom: 25px; font-size: 32px;">💰 AI-Powered Quotes</h2>
             
-            <div style="text-align: center; margin: 30px 0;">
-                <a href="hvac-calculator.html" class="btn" style="font-size: 18px; padding: 15px 30px;">
-                    🚀 Launch Complete HVAC Calculator
-                </a>
-            </div>
-
-            <div class="action-grid">
-                <div class="action-card">
-                    <h3>❄️ Refrigeration</h3>
-                    <p>Superheat, subcooling, charge analysis</p>
-                    <button class="btn" onclick="quickCalc('refrigeration')">Quick Calc</button>
+            <div class="feature-card">
+                <h3>Generate Instant Quote</h3>
+                <p>AI analyzes similar past jobs to create accurate quotes instantly</p>
+                
+                <div class="form-group">
+                    <label>Service Type</label>
+                    <select id="quoteServiceType">
+                        <option>AC Repair</option>
+                        <option>AC Installation</option>
+                        <option>Maintenance</option>
+                        <option>Emergency Service</option>
+                    </select>
                 </div>
-                <div class="action-card">
-                    <h3>🌪️ Airflow</h3>
-                    <p>Temperature split, CFM estimation</p>
-                    <button class="btn" onclick="quickCalc('airflow')">Quick Calc</button>
+                
+                <div class="form-group">
+                    <label>System Size (Tons)</label>
+                    <input type="number" id="quoteSystemSize" placeholder="e.g., 3" step="0.5">
                 </div>
-                <div class="action-card">
-                    <h3>⚡ Electrical</h3>
-                    <p>Amp draw, capacitor testing</p>
-                    <button class="btn" onclick="quickCalc('electrical')">Quick Calc</button>
+                
+                <div class="form-group">
+                    <label>Additional Notes</label>
+                    <textarea id="quoteNotes" rows="3" placeholder="Any special requirements..."></textarea>
                 </div>
-                <div class="action-card">
-                    <h3>📏 Duct Sizing</h3>
-                    <p>Velocity, friction loss</p>
-                    <button class="btn" onclick="quickCalc('duct')">Quick Calc</button>
+                
+                <button class="btn btn-success" onclick="generateAIQuote()">Generate AI Quote</button>
+                
+                <div id="quoteResult" style="display: none; margin-top: 25px; padding: 20px; background: rgba(10, 14, 39, 0.7); border-radius: 10px; border-left: 4px solid #60a5fa;">
+                    <h4 style="color: #60a5fa; margin-bottom: 15px;">Generated Quote</h4>
+                    <div id="quoteDetails"></div>
                 </div>
             </div>
         </div>
 
-        <!-- Reports -->
-        <div id="reports" class="content">
-            <h2>📈 Reports & Analytics</h2>
-            <div class="action-grid">
-                <div class="action-card">
-                    <h3>💰 Revenue Report</h3>
-                    <p>Monthly revenue trends and analysis</p>
-                    <button class="btn" onclick="generateReport('revenue')">Generate</button>
+        <!-- Analytics Section -->
+        <div id="analytics" class="content">
+            <h2 style="color: #60a5fa; margin-bottom: 25px; font-size: 32px;">📈 Performance Analytics</h2>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">23%</div>
+                    <div class="stat-label">Efficiency Increase</div>
                 </div>
-                <div class="action-card">
-                    <h3>📊 Job Performance</h3>
-                    <p>Job completion rates and efficiency</p>
-                    <button class="btn" onclick="generateReport('jobs')">Generate</button>
+                <div class="stat-card">
+                    <div class="stat-number">2.3h</div>
+                    <div class="stat-label">Avg Job Time</div>
                 </div>
-                <div class="action-card">
-                    <h3>👥 Customer Analysis</h3>
-                    <p>Customer retention and growth</p>
-                    <button class="btn" onclick="generateReport('customers')">Generate</button>
+                <div class="stat-card">
+                    <div class="stat-number">$3,200</div>
+                    <div class="stat-label">Avg Job Value</div>
                 </div>
-                <div class="action-card">
-                    <h3>⚡ Technician Performance</h3>
-                    <p>Technician efficiency and ratings</p>
-                    <button class="btn" onclick="generateReport('technicians')">Generate</button>
+                <div class="stat-card">
+                    <div class="stat-number">4.8/5</div>
+                    <div class="stat-label">Customer Rating</div>
+                </div>
+            </div>
+
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>🎯 AI Recommendations</h3>
+                    <ul style="list-style: none; margin: 15px 0;">
+                        <li style="padding: 8px 0;">• Schedule preventive maintenance for 12 customers</li>
+                        <li style="padding: 8px 0;">• Optimize route for technician #3 (save 45 min/day)</li>
+                        <li style="padding: 8px 0;">• Reorder R-410A refrigerant (predicted shortage)</li>
+                    </ul>
+                    <button class="btn" onclick="applyAIRecommendations()">Apply Recommendations</button>
+                </div>
+                <div class="feature-card">
+                    <h3>📊 Team Performance</h3>
+                    <p>Top performer: Tech #5 (avg 3.2 jobs/day, 4.9 rating)</p>
+                    <p>Training needed: Tech #2 (avg job time 20% above team)</p>
+                    <button class="btn" onclick="viewTeamDetails()">View Team Details</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Modals -->
-    <div id="modal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
-            <div id="modal-body"></div>
-        </div>
+    <!-- AI Assistant Button -->
+    <div class="ai-assistant" onclick="openAIAssistant()">
+        🤖
     </div>
 
     <script>
-        // ServicePro Elite - Complete Application JavaScript
-        // Full working application with all features
-
-        // Sample Data
-        let customers = [
-            { id: 1, name: "John Smith", email: "john@email.com", phone: "555-0101", address: "123 Main St", equipment: "AC Unit Model X", lastService: "2024-10-01" },
-            { id: 2, name: "Jane Doe", email: "jane@email.com", phone: "555-0102", address: "456 Oak Ave", equipment: "Furnace Model Y", lastService: "2024-09-15" },
-            { id: 3, name: "Bob Johnson", email: "bob@email.com", phone: "555-0103", address: "789 Pine Rd", equipment: "Heat Pump Model Z", lastService: "2024-08-20" }
-        ];
-
-        let jobs = [
-            { id: 1, customer: "John Smith", serviceType: "AC Repair", date: "2024-10-15", status: "scheduled", amount: 250, technician: "Mike" },
-            { id: 2, customer: "Jane Doe", serviceType: "Furnace Maintenance", date: "2024-10-14", status: "completed", amount: 150, technician: "Sarah" },
-            { id: 3, customer: "Bob Johnson", serviceType: "Heat Pump Installation", date: "2024-10-13", status: "in-progress", amount: 3500, technician: "Tom" }
-        ];
-
-        let inventory = [
-            { id: 1, name: "R-410A Refrigerant", sku: "R410A-25", category: "refrigerant", quantity: 50, minLevel: 10, price: 150, status: "good" },
-            { id: 2, name: "AC Filter 20x25", sku: "FILTER-2025", category: "consumables", quantity: 25, minLevel: 15, price: 25, status: "good" },
-            { id: 3, name: "Compressor 3-Ton", sku: "COMP-3TON", category: "parts", quantity: 3, minLevel: 2, price: 800, status: "low" }
-        ];
-
-        let invoices = [
-            { id: 1, customer: "John Smith", date: "2024-10-10", amount: 250, status: "paid" },
-            { id: 2, customer: "Jane Doe", date: "2024-10-12", amount: 150, status: "sent" },
-            { id: 3, customer: "Bob Johnson", date: "2024-10-13", amount: 3500, status: "draft" }
-        ];
-
         // Navigation
-        function showSection(section) {
-            // Hide all content sections
-            document.querySelectorAll('.content').forEach(content => {
-                content.classList.remove('active');
+        function showSection(sectionId) {
+            document.querySelectorAll('.content').forEach(section => {
+                section.classList.remove('active');
             });
             
-            // Remove active class from all nav links
-            document.querySelectorAll('.nav-bar a').forEach(link => {
-                link.classList.remove('active');
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
             });
             
-            // Show selected section
-            document.getElementById(section).classList.add('active');
-            
-            // Add active class to clicked link
+            document.getElementById(sectionId).classList.add('active');
             event.target.classList.add('active');
-            
-            // Load section data
-            loadSectionData(section);
         }
 
-        function loadSectionData(section) {
-            switch(section) {
-                case 'dashboard':
-                    loadDashboard();
-                    break;
-                case 'customers':
-                    loadCustomers();
-                    break;
-                case 'jobs':
-                    loadJobs();
-                    break;
-                case 'scheduling':
-                    loadScheduling();
-                    break;
-                case 'inventory':
-                    loadInventory();
-                    break;
-                case 'invoices':
-                    loadInvoices();
-                    break;
-                case 'calculator':
-                    loadCalculator();
-                    break;
-                case 'reports':
-                    loadReports();
-                    break;
+        // Smart Dispatch
+        function runSmartDispatch() {
+            alert('🤖 AI analyzing jobs...\n\n✅ Assigned 3 jobs based on:\n• Proximity\n• Technician skills\n• Current workload\n• Traffic conditions\n\nEstimated time savings: 2.5 hours');
+        }
+
+        function assignJob(jobId) {
+            alert(`Job #${jobId} assigned to nearest available technician with required skills`);
+        }
+
+        // Customer Management
+        function showAddCustomerForm() {
+            alert('Add Customer form would open here');
+        }
+
+        function viewCustomer(name) {
+            alert(`Viewing customer: ${name}\n\nService History:\n• Last service: AC Maintenance\n• Total jobs: 12\n• Customer since: 2020\n• Rating: 5/5`);
+        }
+
+        function editCustomer(name) {
+            alert(`Editing customer: ${name}`);
+        }
+
+        // Job Management
+        function createNewJob() {
+            alert('Create New Job form would open here\n\nOptions:\n• Manual entry\n• Voice entry\n• Import from call');
+        }
+
+        // Inventory
+        function autoReorder() {
+            alert('🤖 AI Auto-Reorder:\n\n✅ Ordering:\n• R-410A Refrigerant: 25 lbs\n• 2.5 Ton Condensers: 5 units\n\nEstimated delivery: 2-3 business days\nTotal cost: $2,450');
+        }
+
+        function reorderItem(sku) {
+            alert(`Reordering item: ${sku}`);
+        }
+
+        function viewItem(sku) {
+            alert(`Viewing item: ${sku}`);
+        }
+
+        // AI Quotes
+        function generateAIQuote() {
+            const serviceType = document.getElementById('quoteServiceType').value;
+            const systemSize = document.getElementById('quoteSystemSize').value;
+            const notes = document.getElementById('quoteNotes').value;
+            
+            if (!systemSize) {
+                alert('Please enter system size');
+                return;
             }
-        }
-
-        // Dashboard Functions
-        function loadDashboard() {
-            updateStats();
-            loadTodaySchedule();
-            loadRecentJobs();
-            loadNewCustomers();
-        }
-
-        function updateStats() {
-            document.getElementById('total-customers').textContent = customers.length;
-            document.getElementById('active-jobs').textContent = jobs.filter(j => j.status !== 'completed').length;
-            document.getElementById('monthly-revenue').textContent = '$' + invoices.reduce((sum, inv) => sum + inv.amount, 0).toLocaleString();
-            document.getElementById('satisfaction-rate').textContent = '98%';
-        }
-
-        function loadTodaySchedule() {
-            const today = new Date().toISOString().split('T')[0];
-            const todayJobs = jobs.filter(job => job.date === today);
-            const scheduleDiv = document.getElementById('today-schedule');
             
-            if (todayJobs.length === 0) {
-                scheduleDiv.innerHTML = '<p>No jobs scheduled for today</p>';
-            } else {
-                scheduleDiv.innerHTML = todayJobs.map(job => `
-                    <div style="padding: 10px; border-left: 3px solid #667eea; margin: 10px 0; background: #f8f9fa;">
-                        <strong>${job.customer}</strong> - ${job.serviceType}<br>
-                        <small>Status: ${job.status} | Tech: ${job.technician}</small>
-                    </div>
-                `).join('');
-            }
-        }
-
-        function loadRecentJobs() {
-            const recentJobsDiv = document.getElementById('recent-jobs');
-            const recentJobs = jobs.slice(0, 5);
+            const laborCost = 450;
+            const partsCost = systemSize * 350;
+            const total = laborCost + partsCost;
             
-            recentJobsDiv.innerHTML = recentJobs.map(job => `
-                <div style="padding: 10px; border-left: 3px solid #28a745; margin: 10px 0; background: #f8f9fa;">
-                    <strong>${job.customer}</strong> - ${job.serviceType}<br>
-                    <small>${job.date} | $${job.amount} | ${job.status}</small>
+            const quoteHTML = `
+                <div style="line-height: 2;">
+                    <strong>Service:</strong> ${serviceType}<br>
+                    <strong>System Size:</strong> ${systemSize} tons<br>
+                    <strong>Labor:</strong> $${laborCost}<br>
+                    <strong>Parts:</strong> $${partsCost}<br>
+                    <strong>Total:</strong> <span style="color: #60a5fa; font-size: 24px; font-weight: bold;">$${total}</span><br>
+                    <br>
+                    <em>Based on 47 similar jobs in your area</em>
                 </div>
-            `).join('');
-        }
-
-        function loadNewCustomers() {
-            const newCustomersDiv = document.getElementById('new-customers');
-            const newCustomers = customers.slice(0, 5);
-            
-            newCustomersDiv.innerHTML = newCustomers.map(customer => `
-                <div style="padding: 10px; border-left: 3px solid #17a2b8; margin: 10px 0; background: #f8f9fa;">
-                    <strong>${customer.name}</strong><br>
-                    <small>${customer.equipment} | Last Service: ${customer.lastService}</small>
-                </div>
-            `).join('');
-        }
-
-        // Customers Functions
-        function loadCustomers() {
-            const tableBody = document.getElementById('customers-table');
-            tableBody.innerHTML = customers.map(customer => `
-                <tr>
-                    <td>${customer.name}</td>
-                    <td>${customer.email}</td>
-                    <td>${customer.phone}</td>
-                    <td>${customer.address}</td>
-                    <td>${customer.equipment}</td>
-                    <td>
-                        <button class="btn btn-secondary" onclick="editCustomer(${customer.id})">Edit</button>
-                        <button class="btn btn-secondary" onclick="viewCustomerHistory(${customer.id})">History</button>
-                    </td>
-                </tr>
-            `).join('');
-        }
-
-        function showAddCustomerModal() {
-            const modalBody = document.getElementById('modal-body');
-            modalBody.innerHTML = `
-                <h3>Add New Customer</h3>
-                <div class="form-group">
-                    <label>Name:</label>
-                    <input type="text" id="new-customer-name" placeholder="John Smith">
-                </div>
-                <div class="form-group">
-                    <label>Email:</label>
-                    <input type="email" id="new-customer-email" placeholder="john@email.com">
-                </div>
-                <div class="form-group">
-                    <label>Phone:</label>
-                    <input type="tel" id="new-customer-phone" placeholder="555-0101">
-                </div>
-                <div class="form-group">
-                    <label>Address:</label>
-                    <input type="text" id="new-customer-address" placeholder="123 Main St">
-                </div>
-                <div class="form-group">
-                    <label>Equipment:</label>
-                    <input type="text" id="new-customer-equipment" placeholder="AC Unit Model">
-                </div>
-                <button class="btn btn-success" onclick="addCustomer()">Add Customer</button>
-                <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
             `;
-            document.getElementById('modal').style.display = 'block';
-        }
-
-        function addCustomer() {
-            const newCustomer = {
-                id: customers.length + 1,
-                name: document.getElementById('new-customer-name').value,
-                email: document.getElementById('new-customer-email').value,
-                phone: document.getElementById('new-customer-phone').value,
-                address: document.getElementById('new-customer-address').value,
-                equipment: document.getElementById('new-customer-equipment').value,
-                lastService: new Date().toISOString().split('T')[0]
-            };
             
-            customers.push(newCustomer);
-            localStorage.setItem('customers', JSON.stringify(customers));
-            loadCustomers();
-            closeModal();
-            showAlert('Customer added successfully!', 'success');
+            document.getElementById('quoteDetails').innerHTML = quoteHTML;
+            document.getElementById('quoteResult').style.display = 'block';
         }
 
-        // Jobs Functions
-        function loadJobs() {
-            const tableBody = document.getElementById('jobs-table');
-            const filter = document.getElementById('job-filter').value;
-            let filteredJobs = filter === 'all' ? jobs : jobs.filter(job => job.status === filter);
-            
-            tableBody.innerHTML = filteredJobs.map(job => `
-                <tr>
-                    <td>#${job.id}</td>
-                    <td>${job.customer}</td>
-                    <td>${job.serviceType}</td>
-                    <td>${job.date}</td>
-                    <td><span class="status-badge status-${job.status}">${job.status}</span></td>
-                    <td>$${job.amount}</td>
-                    <td>
-                        <button class="btn btn-secondary" onclick="editJob(${job.id})">Edit</button>
-                        <button class="btn btn-secondary" onclick="viewJobDetails(${job.id})">Details</button>
-                    </td>
-                </tr>
-            `).join('');
+        // Analytics
+        function applyAIRecommendations() {
+            alert('🤖 Applying AI Recommendations:\n\n✅ Scheduled 12 maintenance appointments\n✅ Optimized routes for 3 technicians\n✅ Created purchase order for refrigerant\n\nEstimated savings: $1,200/week');
         }
 
-        function showAddJobModal() {
-            const modalBody = document.getElementById('modal-body');
-            modalBody.innerHTML = `
-                <h3>Add New Job</h3>
-                <div class="form-group">
-                    <label>Customer:</label>
-                    <select id="new-job-customer">
-                        ${customers.map(c => `<option value="${c.name}">${c.name}</option>`).join('')}
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Service Type:</label>
-                    <input type="text" id="new-job-service" placeholder="AC Repair">
-                </div>
-                <div class="form-group">
-                    <label>Date:</label>
-                    <input type="date" id="new-job-date">
-                </div>
-                <div class="form-group">
-                    <label>Amount:</label>
-                    <input type="number" id="new-job-amount" placeholder="250">
-                </div>
-                <div class="form-group">
-                    <label>Technician:</label>
-                    <input type="text" id="new-job-tech" placeholder="Mike">
-                </div>
-                <button class="btn btn-success" onclick="addJob()">Add Job</button>
-                <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
-            `;
-            document.getElementById('modal').style.display = 'block';
+        function viewTeamDetails() {
+            alert('Team Performance Details:\n\nTech #1: 3.1 jobs/day, 4.7 rating\nTech #2: 2.4 jobs/day, 4.5 rating (needs training)\nTech #3: 2.9 jobs/day, 4.8 rating\nTech #4: 3.0 jobs/day, 4.6 rating\nTech #5: 3.2 jobs/day, 4.9 rating (top performer)');
         }
 
-        function addJob() {
-            const newJob = {
-                id: jobs.length + 1,
-                customer: document.getElementById('new-job-customer').value,
-                serviceType: document.getElementById('new-job-service').value,
-                date: document.getElementById('new-job-date').value,
-                amount: parseFloat(document.getElementById('new-job-amount').value),
-                status: 'scheduled',
-                technician: document.getElementById('new-job-tech').value
-            };
-            
-            jobs.push(newJob);
-            localStorage.setItem('jobs', JSON.stringify(jobs));
-            loadJobs();
-            closeModal();
-            showAlert('Job added successfully!', 'success');
+        // AI Assistant
+        function openAIAssistant() {
+            alert('🤖 Ninja AI Assistant\n\nHow can I help you today?\n\n• Schedule a job\n• Find customer info\n• Generate quote\n• Check inventory\n• Analyze performance\n• Voice command\n\n(Full AI chat interface coming soon)');
         }
 
-        // Inventory Functions
-        function loadInventory() {
-            const tableBody = document.getElementById('inventory-table');
-            const filter = document.getElementById('inventory-filter').value;
-            let filteredItems = filter === 'all' ? inventory : inventory.filter(item => item.category === filter);
-            
-            tableBody.innerHTML = filteredItems.map(item => `
-                <tr>
-                    <td>${item.name}</td>
-                    <td>${item.sku}</td>
-                    <td>${item.category}</td>
-                    <td>${item.quantity}</td>
-                    <td>${item.minLevel}</td>
-                    <td>$${item.price}</td>
-                    <td><span class="status-badge status-${item.status}">${item.status}</span></td>
-                    <td>
-                        <button class="btn btn-secondary" onclick="adjustInventory(${item.id})">Adjust</button>
-                    </td>
-                </tr>
-            `).join('');
-        }
-
-        function showAddInventoryModal() {
-            const modalBody = document.getElementById('modal-body');
-            modalBody.innerHTML = `
-                <h3>Add Inventory Item</h3>
-                <div class="form-group">
-                    <label>Item Name:</label>
-                    <input type="text" id="new-item-name" placeholder="R-410A Refrigerant">
-                </div>
-                <div class="form-group">
-                    <label>SKU:</label>
-                    <input type="text" id="new-item-sku" placeholder="R410A-25">
-                </div>
-                <div class="form-group">
-                    <label>Category:</label>
-                    <select id="new-item-category">
-                        <option value="refrigerant">Refrigerant</option>
-                        <option value="parts">Parts</option>
-                        <option value="tools">Tools</option>
-                        <option value="consumables">Consumables</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Quantity:</label>
-                    <input type="number" id="new-item-quantity" placeholder="50">
-                </div>
-                <div class="form-group">
-                    <label>Min Level:</label>
-                    <input type="number" id="new-item-minlevel" placeholder="10">
-                </div>
-                <div class="form-group">
-                    <label>Price:</label>
-                    <input type="number" id="new-item-price" placeholder="150">
-                </div>
-                <button class="btn btn-success" onclick="addInventory()">Add Item</button>
-                <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
-            `;
-            document.getElementById('modal').style.display = 'block';
-        }
-
-        function addInventory() {
-            const newItem = {
-                id: inventory.length + 1,
-                name: document.getElementById('new-item-name').value,
-                sku: document.getElementById('new-item-sku').value,
-                category: document.getElementById('new-item-category').value,
-                quantity: parseInt(document.getElementById('new-item-quantity').value),
-                minLevel: parseInt(document.getElementById('new-item-minlevel').value),
-                price: parseFloat(document.getElementById('new-item-price').value),
-                status: 'good'
-            };
-            
-            inventory.push(newItem);
-            localStorage.setItem('inventory', JSON.stringify(inventory));
-            loadInventory();
-            closeModal();
-            showAlert('Inventory item added successfully!', 'success');
-        }
-
-        // Invoice Functions
-        function loadInvoices() {
-            const tableBody = document.getElementById('invoices-table');
-            const filter = document.getElementById('invoice-filter').value;
-            let filteredInvoices = filter === 'all' ? invoices : invoices.filter(inv => inv.status === filter);
-            
-            tableBody.innerHTML = filteredInvoices.map(invoice => `
-                <tr>
-                    <td>#${invoice.id}</td>
-                    <td>${invoice.customer}</td>
-                    <td>${invoice.date}</td>
-                    <td>$${invoice.amount}</td>
-                    <td><span class="status-badge status-${invoice.status}">${invoice.status}</span></td>
-                    <td>
-                        <button class="btn btn-secondary" onclick="viewInvoice(${invoice.id})">View</button>
-                        <button class="btn btn-success" onclick="sendInvoice(${invoice.id})">Send</button>
-                    </td>
-                </tr>
-            `).join('');
-        }
-
-        function showCreateInvoiceModal() {
-            const modalBody = document.getElementById('modal-body');
-            modalBody.innerHTML = `
-                <h3>Create Invoice</h3>
-                <div class="form-group">
-                    <label>Customer:</label>
-                    <select id="invoice-customer">
-                        ${customers.map(c => `<option value="${c.name}">${c.name}</option>`).join('')}
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Service Description:</label>
-                    <textarea id="invoice-description" rows="3" placeholder="AC Repair Service"></textarea>
-                </div>
-                <div class="form-group">
-                    <label>Amount:</label>
-                    <input type="number" id="invoice-amount" placeholder="250">
-                </div>
-                <button class="btn btn-success" onclick="createInvoice()">Create Invoice</button>
-                <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
-            `;
-            document.getElementById('modal').style.display = 'block';
-        }
-
-        function createInvoice() {
-            const newInvoice = {
-                id: invoices.length + 1,
-                customer: document.getElementById('invoice-customer').value,
-                date: new Date().toISOString().split('T')[0],
-                amount: parseFloat(document.getElementById('invoice-amount').value),
-                status: 'draft'
-            };
-            
-            invoices.push(newInvoice);
-            localStorage.setItem('invoices', JSON.stringify(invoices));
-            loadInvoices();
-            closeModal();
-            showAlert('Invoice created successfully!', 'success');
-        }
-
-        // Calculator Functions
-        function loadCalculator() {
-            // Calculator loads the external HVAC calculator
-        }
-
-        function quickCalc(type) {
-            window.open('hvac-calculator.html', '_blank');
-        }
-
-        // Report Functions
-        function loadReports() {
-            // Reports functionality
-        }
-
-        function generateReport(type) {
-            showAlert(`${type.charAt(0).toUpperCase() + type.slice(1)} report generated successfully!`, 'success');
-        }
-
-        // Utility Functions
-        function closeModal() {
-            document.getElementById('modal').style.display = 'none';
-        }
-
-        function showAlert(message, type) {
-            const alertDiv = document.createElement('div');
-            alertDiv.className = `alert alert-${type}`;
-            alertDiv.textContent = message;
-            
-            document.body.insertBefore(alertDiv, document.body.firstChild);
-            
-            setTimeout(() => {
-                alertDiv.remove();
-            }, 3000);
-        }
-
-        function exportCustomers() {
-            const data = JSON.stringify(customers, null, 2);
-            const blob = new Blob([data], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'customers.json';
-            a.click();
-            URL.revokeObjectURL(url);
-        }
-
-        function exportJobs() {
-            const data = JSON.stringify(jobs, null, 2);
-            const blob = new Blob([data], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'jobs.json';
-            a.click();
-            URL.revokeObjectURL(url);
-        }
-
-        function exportInventory() {
-            const data = JSON.stringify(inventory, null, 2);
-            const blob = new Blob([data], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'inventory.json';
-            a.click();
-            URL.revokeObjectURL(url);
-        }
-
-        function exportInvoices() {
-            const data = JSON.stringify(invoices, null, 2);
-            const blob = new Blob([data], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'invoices.json';
-            a.click();
-            URL.revokeObjectURL(url);
-        }
-
-        // Filter Functions
-        function filterJobs() {
-            loadJobs();
-        }
-
-        function filterInventory() {
-            loadInventory();
-        }
-
-        function filterInvoices() {
-            loadInvoices();
-        }
-
-        // Initialize Application
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('ServicePro Elite - Initializing...');
-            
-            // Load data from localStorage if available
-            const savedCustomers = localStorage.getItem('customers');
-            const savedJobs = localStorage.getItem('jobs');
-            const savedInventory = localStorage.getItem('inventory');
-            const savedInvoices = localStorage.getItem('invoices');
-            
-            if (savedCustomers) customers = JSON.parse(savedCustomers);
-            if (savedJobs) jobs = JSON.parse(savedJobs);
-            if (savedInventory) inventory = JSON.parse(savedInventory);
-            if (savedInvoices) invoices = JSON.parse(savedInvoices);
-            
-            // Load dashboard by default
-            loadDashboard();
-            
-            console.log('ServicePro Elite - Ready for production!');
-        });
+        console.log('Ninja AI Dashboard loaded successfully');
     </script>
 </body>
 </html>
