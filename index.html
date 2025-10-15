@@ -4,6 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ServicePro Elite - Smart Field-Service Management for HVAC Pros</title>
+    <link rel="stylesheet" href="global-styles.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#3b82f6">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="ServicePro Elite">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
@@ -568,7 +574,7 @@
 <script src="https://sites.super.myninja.ai/_assets/ninja-daytona-script.js"></script>
 </head>
 <body>
-    <div class="container">
+    <div class="container" id="main-content">
         <!-- Header with Role Selector -->
         <div class="header">
             <div class="role-selector">
@@ -1006,5 +1012,6 @@
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', initDashboard);
     </script>
+    <script src="global-components.js"></script>
 </body>
 </html>
