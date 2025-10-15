@@ -2,10 +2,23 @@
 // This file provides shared functionality across all applications
 
 // ============================================
-// GLOBAL NAVIGATION BAR (G-001)
+// GLOBAL NAVIGATION BAR - Task 1.4
 // ============================================
 function createGlobalNavigation() {
     const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+    const userName = localStorage.getItem('servicepro_user_name') || 'User';
+    const userEmail = localStorage.getItem('servicepro_user_email') || 'user@servicepro.com';
+    const userInitials = userName.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+    
+    // Get page title
+    const pageTitles = {
+        'index.html': 'Main Dashboard',
+        'hvac-calculator.html': 'HVAC Calculator',
+        'app.html': 'Desktop Dashboard',
+        'mobile-tech.html': 'Mobile Tech App',
+        'admin-dashboard.html': 'Admin Dashboard'
+    };
+    const pageTitle = pageTitles[currentPage] || 'ServicePro Elite';
     
     const nav = document.createElement('nav');
     nav.className = 'global-nav';
@@ -13,25 +26,40 @@ function createGlobalNavigation() {
         <div class="nav-container">
             <div class="nav-brand">
                 <span class="nav-logo">⚡</span>
-                <span class="nav-title">ServicePro Elite</span>
+                <span>ServicePro Elite</span>
             </div>
+            
+            <div class="nav-title">${pageTitle}</div>
+            
+            <div class="nav-actions">
+                <button class="theme-toggle" onclick="toggleDarkMode()" aria-label="Toggle dark mode">
+                    <span class="theme-icon">🌙</span>
+                </button>
+                <div class="user-profile" onclick="toggleUserDropdown()" role="button" tabindex="0" aria-label="User menu">
+                    <div class="user-avatar">${userInitials}</div>
+                    <span class="user-name">${userName}</span>
+                    <span class="user-dropdown-icon">▼</span>
+                </div>
+            </div>
+            
             <button class="nav-toggle" onclick="toggleMobileNav()" aria-label="Toggle navigation">
                 <span></span>
                 <span></span>
                 <span></span>
             </button>
-            <ul class="nav-links">
-                <li><a href="index.html" class="${currentPage === 'index.html' || currentPage === '' ? 'active' : ''}">🏠 Dashboard</a></li>
-                <li><a href="hvac-calculator.html" class="${currentPage === 'hvac-calculator.html' ? 'active' : ''}">🔧 Calculator</a></li>
-                <li><a href="app.html" class="${currentPage === 'app.html' ? 'active' : ''}">🖥️ Desktop</a></li>
-                <li><a href="mobile-tech.html" class="${currentPage === 'mobile-tech.html' ? 'active' : ''}">📱 Mobile</a></li>
-                <li><a href="admin-dashboard.html" class="${currentPage === 'admin-dashboard.html' ? 'active' : ''}">🛠️ Admin</a></li>
-            </ul>
-            <div class="nav-actions">
-                <button class="theme-toggle" onclick="toggleDarkMode()" aria-label="Toggle dark mode">
-                    <span class="theme-icon">🌙</span>
-                </button>
-            </div>
+        </div>
+        
+        <div class="user-dropdown" id="userDropdown">
+            <a href="index.html">🏠 Main Dashboard</a>
+            <a href="hvac-calculator.html">🔧 HVAC Calculator</a>
+            <a href="app.html">🖥️ Desktop Dashboard</a>
+            <a href="mobile-tech.html">📱 Mobile Tech App</a>
+            <a href="admin-dashboard.html">🛠️ Admin Dashboard</a>
+            <hr>
+            <a href="#" onclick="showProfileSettings(); return false;">⚙️ Settings</a>
+            <a href="#" onclick="showHelpCenter(); return false;">❓ Help Center</a>
+            <hr>
+            <button onclick="handleLogout()">🚪 Logout</button>
         </div>
     `;
     
@@ -40,6 +68,41 @@ function createGlobalNavigation() {
         document.body.insertBefore(nav, document.body.firstChild);
     } else {
         document.body.appendChild(nav);
+    }
+    
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(e) {
+        const dropdown = document.getElementById('userDropdown');
+        const profile = document.querySelector('.user-profile');
+        if (dropdown && !profile.contains(e.target) && !dropdown.contains(e.target)) {
+            dropdown.classList.remove('show');
+        }
+    });
+}
+
+function toggleUserDropdown() {
+    const dropdown = document.getElementById('userDropdown');
+    if (dropdown) {
+        dropdown.classList.toggle('show');
+    }
+}
+
+function showProfileSettings() {
+    showToast('Profile settings coming soon!', 'info');
+}
+
+function showHelpCenter() {
+    showToast('Help center coming soon!', 'info');
+}
+
+function handleLogout() {
+    if (confirm('Are you sure you want to logout?')) {
+        localStorage.removeItem('servicepro_authenticated');
+        localStorage.removeItem('servicepro_user_role');
+        showToast('Logged out successfully', 'success');
+        setTimeout(() => {
+            window.location.href = 'index.html';
+        }, 1000);
     }
 }
 
@@ -352,7 +415,7 @@ const OfflineStorage = {
 };
 
 // ============================================
-// ACCESSIBILITY HELPERS (G-005)
+// ACCESSIBILITY HELPERS - Tasks 1.6 & 1.7
 // ============================================
 function enhanceAccessibility() {
     // Add skip to main content link
@@ -360,29 +423,134 @@ function enhanceAccessibility() {
     skipLink.href = '#main-content';
     skipLink.className = 'skip-link';
     skipLink.textContent = 'Skip to main content';
+    skipLink.setAttribute('tabindex', '0');
     document.body.insertBefore(skipLink, document.body.firstChild);
     
     // Ensure all images have alt text
     document.querySelectorAll('img:not([alt])').forEach(img => {
-        img.setAttribute('alt', 'Image');
+        img.setAttribute('alt', img.title || 'Image');
     });
     
-    // Add aria-labels to buttons without text
+    // Add aria-labels to buttons without text or with icons only
     document.querySelectorAll('button:not([aria-label])').forEach(btn => {
-        if (!btn.textContent.trim()) {
-            btn.setAttribute('aria-label', 'Button');
+        if (!btn.textContent.trim() || btn.textContent.trim().match(/^[^\w\s]+$/)) {
+            const title = btn.getAttribute('title') || btn.getAttribute('data-tooltip') || 'Button';
+            btn.setAttribute('aria-label', title);
         }
     });
     
-    // Ensure form inputs have labels
+    // Add aria-labels to links without text
+    document.querySelectorAll('a:not([aria-label])').forEach(link => {
+        if (!link.textContent.trim() || link.textContent.trim().match(/^[^\w\s]+$/)) {
+            const title = link.getAttribute('title') || link.getAttribute('href') || 'Link';
+            link.setAttribute('aria-label', title);
+        }
+    });
+    
+    // Ensure form inputs have proper labels and aria attributes
     document.querySelectorAll('input, select, textarea').forEach(input => {
         if (!input.id) {
             input.id = 'input-' + Math.random().toString(36).substr(2, 9);
         }
         const label = document.querySelector(`label[for="${input.id}"]`);
         if (!label && !input.getAttribute('aria-label')) {
-            input.setAttribute('aria-label', input.placeholder || input.name || 'Input field');
+            const ariaLabel = input.placeholder || input.name || input.type || 'Input field';
+            input.setAttribute('aria-label', ariaLabel);
         }
+        
+        // Add aria-required for required fields
+        if (input.hasAttribute('required') && !input.hasAttribute('aria-required')) {
+            input.setAttribute('aria-required', 'true');
+        }
+        
+        // Add aria-invalid for fields with errors
+        if (input.classList.contains('error')) {
+            input.setAttribute('aria-invalid', 'true');
+        }
+    });
+    
+    // Add role attributes to interactive elements
+    document.querySelectorAll('[onclick]:not([role])').forEach(el => {
+        if (el.tagName !== 'BUTTON' && el.tagName !== 'A') {
+            el.setAttribute('role', 'button');
+            if (!el.hasAttribute('tabindex')) {
+                el.setAttribute('tabindex', '0');
+            }
+        }
+    });
+    
+    // Ensure proper heading hierarchy
+    const headings = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
+    headings.forEach(heading => {
+        if (!heading.id) {
+            const text = heading.textContent.trim().toLowerCase().replace(/\s+/g, '-');
+            heading.id = 'heading-' + text.substring(0, 30);
+        }
+    });
+    
+    // Add keyboard navigation support - Task 1.7
+    setupKeyboardNavigation();
+}
+
+// Task 1.7: Keyboard Navigation
+function setupKeyboardNavigation() {
+    // Handle Enter and Space on role="button" elements
+    document.querySelectorAll('[role="button"]').forEach(el => {
+        el.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                this.click();
+            }
+        });
+    });
+    
+    // Trap focus in modals
+    document.addEventListener('keydown', function(e) {
+        const modal = document.querySelector('.modal:not([style*="display: none"]), [role="dialog"]:not([style*="display: none"])');
+        if (modal && e.key === 'Tab') {
+            const focusableElements = modal.querySelectorAll(
+                'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+            );
+            const firstElement = focusableElements[0];
+            const lastElement = focusableElements[focusableElements.length - 1];
+            
+            if (e.shiftKey && document.activeElement === firstElement) {
+                e.preventDefault();
+                lastElement.focus();
+            } else if (!e.shiftKey && document.activeElement === lastElement) {
+                e.preventDefault();
+                firstElement.focus();
+            }
+        }
+    });
+    
+    // Escape key to close modals and dropdowns
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            // Close user dropdown
+            const dropdown = document.getElementById('userDropdown');
+            if (dropdown && dropdown.classList.contains('show')) {
+                dropdown.classList.remove('show');
+            }
+            
+            // Close any open modals
+            document.querySelectorAll('.modal, [role="dialog"]').forEach(modal => {
+                if (modal.style.display !== 'none') {
+                    modal.style.display = 'none';
+                }
+            });
+        }
+    });
+    
+    // Add visible focus indicators
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Tab') {
+            document.body.classList.add('keyboard-nav');
+        }
+    });
+    
+    document.addEventListener('mousedown', function() {
+        document.body.classList.remove('keyboard-nav');
     });
 }
 
@@ -451,6 +619,73 @@ function addTableFilter(tableId, filterInputId) {
 }
 
 // ============================================
+// LAZY LOADING - Task 1.9
+// ============================================
+function setupLazyLoading() {
+    // Use Intersection Observer for lazy loading images
+    if ('IntersectionObserver' in window) {
+        const imageObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const img = entry.target;
+                    if (img.dataset.src) {
+                        img.src = img.dataset.src;
+                        img.removeAttribute('data-src');
+                    }
+                    if (img.dataset.srcset) {
+                        img.srcset = img.dataset.srcset;
+                        img.removeAttribute('data-srcset');
+                    }
+                    img.classList.remove('lazy');
+                    img.classList.add('loaded');
+                    observer.unobserve(img);
+                }
+            });
+        }, {
+            rootMargin: '50px 0px',
+            threshold: 0.01
+        });
+        
+        // Observe all images with lazy class or data-src
+        document.querySelectorAll('img.lazy, img[data-src]').forEach(img => {
+            imageObserver.observe(img);
+        });
+    } else {
+        // Fallback for browsers without Intersection Observer
+        document.querySelectorAll('img[data-src]').forEach(img => {
+            img.src = img.dataset.src;
+            img.removeAttribute('data-src');
+        });
+    }
+}
+
+// ============================================
+// LOADING SPINNER - Task 1.10
+// ============================================
+function createLoadingSpinner(container, message = 'Loading...') {
+    const spinner = document.createElement('div');
+    spinner.className = 'component-loader';
+    spinner.innerHTML = `
+        <div class="spinner-wrapper">
+            <div class="spinner"></div>
+            <p class="spinner-message">${message}</p>
+        </div>
+    `;
+    
+    if (container) {
+        container.appendChild(spinner);
+    }
+    
+    return spinner;
+}
+
+function removeLoadingSpinner(spinner) {
+    if (spinner && spinner.parentNode) {
+        spinner.parentNode.removeChild(spinner);
+    }
+}
+
+// ============================================
 // INITIALIZATION
 // ============================================
 function initGlobalComponents() {
@@ -466,6 +701,9 @@ function initGlobalComponents() {
     // Enhance accessibility
     enhanceAccessibility();
     
+    // Setup lazy loading for images
+    setupLazyLoading();
+    
     // Initialize offline storage
     if ('indexedDB' in window) {
         OfflineStorage.init().catch(console.error);
@@ -475,6 +713,14 @@ function initGlobalComponents() {
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('/servicepro-elite/sw.js')
             .catch(err => console.log('Service worker registration failed:', err));
+    }
+    
+    // Set default user if not exists
+    if (!localStorage.getItem('servicepro_user_name')) {
+        localStorage.setItem('servicepro_user_name', 'Admin User');
+        localStorage.setItem('servicepro_user_email', 'admin@servicepro.com');
+        localStorage.setItem('servicepro_authenticated', 'true');
+        localStorage.setItem('servicepro_user_role', 'admin');
     }
 }
 
