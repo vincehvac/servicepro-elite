@@ -3,29 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ServicePro Elite - HVAC Calculator Suite</title>
+    <title>ServicePro Elite - Professional HVAC Calculator Suite</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --primary-blue: #3b82f6;
+            --dark-blue: #1e3a8a;
+            --light-blue: #60a5fa;
+            --success: #4ade80;
+            --warning: #fbbf24;
+            --danger: #ef4444;
+            --bg-dark: #0a0e27;
+            --bg-card: rgba(30, 58, 138, 0.4);
+        }
+        
         body { 
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
-            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%); 
+            background: linear-gradient(135deg, var(--bg-dark) 0%, #1a1f3a 100%); 
             min-height: 100vh; 
             color: white;
             padding: 20px;
         }
+        
         .container { max-width: 1400px; margin: 0 auto; }
         
+        /* Header */
         .header { 
-            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); 
+            background: linear-gradient(135deg, var(--dark-blue) 0%, var(--primary-blue) 100%); 
             border-radius: 20px; 
             padding: 30px; 
             margin-bottom: 30px; 
             text-align: center;
             box-shadow: 0 20px 60px rgba(59, 130, 246, 0.3);
+            position: relative;
         }
+        
         .logo { font-size: 36px; font-weight: bold; margin-bottom: 10px; }
         .tagline { font-size: 18px; opacity: 0.9; }
         
+        /* Unit Selector */
+        .unit-selector {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .unit-toggle {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .unit-toggle.active {
+            background: white;
+            color: var(--primary-blue);
+        }
+        
+        /* Navigation Tabs */
         .nav-tabs { 
             display: flex; 
             gap: 10px; 
@@ -33,8 +77,9 @@
             flex-wrap: wrap;
             justify-content: center;
         }
+        
         .nav-tab { 
-            background: rgba(30, 58, 138, 0.5); 
+            background: var(--bg-card);
             border: 2px solid rgba(59, 130, 246, 0.3); 
             color: white; 
             padding: 15px 25px; 
@@ -44,19 +89,23 @@
             font-size: 16px;
             font-weight: 600;
         }
+        
         .nav-tab:hover {
-            border-color: #60a5fa;
+            border-color: var(--light-blue);
             transform: translateY(-2px);
         }
+        
         .nav-tab.active { 
-            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); 
-            border-color: #60a5fa;
+            background: linear-gradient(135deg, var(--primary-blue) 0%, #2563eb 100%); 
+            border-color: var(--light-blue);
             box-shadow: 0 10px 30px rgba(59, 130, 246, 0.4);
         }
         
+        /* Tab Content */
         .tab-content { 
             display: none; 
         }
+        
         .tab-content.active { 
             display: block; 
             animation: fadeIn 0.3s ease-in;
@@ -67,30 +116,98 @@
             to { opacity: 1; transform: translateY(0); }
         }
         
+        /* Calculator Card */
         .calculator { 
-            background: rgba(30, 58, 138, 0.4); 
+            background: var(--bg-card);
             border-radius: 20px; 
             padding: 40px; 
             border: 2px solid rgba(59, 130, 246, 0.3);
             backdrop-filter: blur(10px);
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        .calculator h3 { 
-            color: #60a5fa; 
-            margin-bottom: 25px; 
-            font-size: 28px; 
+            max-width: 900px;
+            margin: 0 auto 30px;
         }
         
+        .calculator h3 { 
+            color: var(--light-blue);
+            margin-bottom: 25px; 
+            font-size: 28px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .calculator-description {
+            background: rgba(59, 130, 246, 0.1);
+            border-left: 4px solid var(--primary-blue);
+            padding: 15px;
+            margin-bottom: 25px;
+            border-radius: 8px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        /* Input Groups */
         .input-group { 
             margin: 20px 0; 
         }
+        
         .input-group label { 
             display: block; 
             margin-bottom: 8px; 
             font-weight: 500; 
             color: #93c5fd;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
+        
+        .help-icon {
+            cursor: help;
+            background: rgba(59, 130, 246, 0.3);
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            position: relative;
+        }
+        
+        .help-icon:hover .tooltip {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        .tooltip {
+            visibility: hidden;
+            opacity: 0;
+            position: absolute;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.95);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 13px;
+            white-space: nowrap;
+            z-index: 1000;
+            transition: opacity 0.3s;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        
+        .tooltip::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: rgba(0, 0, 0, 0.95) transparent transparent transparent;
+        }
+        
         .input-group input, 
         .input-group select, 
         .input-group textarea { 
@@ -101,45 +218,48 @@
             font-size: 16px; 
             background: rgba(10, 14, 39, 0.5);
             color: white;
-            transition: border-color 0.3s;
+            transition: all 0.3s;
         }
+        
         .input-group input:focus, 
         .input-group select:focus, 
         .input-group textarea:focus { 
             outline: none; 
-            border-color: #60a5fa; 
+            border-color: var(--light-blue);
+            background: rgba(10, 14, 39, 0.7);
         }
         
-        .result { 
-            background: rgba(10, 14, 39, 0.7); 
-            padding: 25px; 
-            border-radius: 15px; 
-            margin-top: 25px; 
-            border-left: 4px solid #60a5fa;
+        .input-group input.error {
+            border-color: var(--danger);
+            animation: shake 0.3s;
         }
-        .result h4 { 
-            color: #60a5fa; 
-            margin-bottom: 20px; 
-            font-size: 22px;
-        }
-        .result-item { 
-            display: flex; 
-            justify-content: space-between; 
-            margin: 15px 0; 
-            padding: 12px 0; 
-            border-bottom: 1px solid rgba(59, 130, 246, 0.2);
-            font-size: 16px;
-        }
-        .result-value { 
-            font-weight: bold; 
-            color: #93c5fd; 
-        }
-        .status-good { color: #4ade80; }
-        .status-bad { color: #f87171; }
-        .status-warning { color: #fbbf24; }
         
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+        
+        .error-message {
+            color: var(--danger);
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        .error-message.show {
+            display: block;
+        }
+        
+        .input-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        /* Buttons */
         .btn { 
-            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); 
+            background: linear-gradient(135deg, var(--primary-blue) 0%, #2563eb 100%); 
             color: white; 
             padding: 15px 35px; 
             border: none; 
@@ -151,153 +271,585 @@
             transition: all 0.3s;
             box-shadow: 0 10px 30px rgba(59, 130, 246, 0.3);
         }
+        
         .btn:hover { 
             transform: translateY(-3px);
             box-shadow: 0 15px 40px rgba(59, 130, 246, 0.5);
         }
+        
         .btn-secondary {
             background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
         }
         
-        .offline-indicator { 
-            background: rgba(74, 222, 128, 0.2); 
-            color: #4ade80; 
-            padding: 12px 25px; 
-            border-radius: 25px; 
-            display: inline-block; 
-            font-size: 14px; 
-            margin: 15px 0;
-            border: 2px solid #4ade80;
+        .btn-success {
+            background: linear-gradient(135deg, var(--success) 0%, #22c55e 100%);
         }
         
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        /* Results */
+        .result { 
+            background: rgba(59, 130, 246, 0.1); 
+            border: 2px solid rgba(59, 130, 246, 0.3); 
+            border-radius: 15px; 
+            padding: 30px; 
+            margin-top: 30px;
+            display: none;
+        }
+        
+        .result h4 { 
+            color: var(--light-blue);
+            margin-bottom: 20px; 
+            font-size: 24px; 
+        }
+        
+        .result-item { 
+            display: flex; 
+            justify-content: space-between; 
+            padding: 15px; 
+            border-bottom: 1px solid rgba(59, 130, 246, 0.2);
+            font-size: 16px;
+        }
+        
+        .result-item:last-child {
+            border-bottom: none;
+        }
+        
+        .result-value { 
+            font-weight: bold; 
+            color: var(--success);
+            font-size: 18px;
+        }
+        
+        .status-indicator {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            display: inline-block;
+        }
+        
+        .status-good { background: rgba(74, 222, 128, 0.2); color: var(--success); }
+        .status-warning { background: rgba(251, 191, 36, 0.2); color: var(--warning); }
+        .status-danger { background: rgba(239, 68, 68, 0.2); color: var(--danger); }
+        
+        /* Sync Status */
+        .sync-status {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--bg-card);
+            border: 2px solid rgba(59, 130, 246, 0.3);
+            border-radius: 12px;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+        }
+        
+        .sync-icon {
+            width: 20px;
+            height: 20px;
+            border: 3px solid var(--primary-blue);
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Responsive */
         @media (max-width: 768px) {
-            .nav-tabs { flex-direction: column; }
-            .nav-tab { width: 100%; text-align: center; }
+            .container { padding: 10px; }
+            .header { padding: 20px; }
+            .logo { font-size: 28px; }
             .calculator { padding: 25px; }
+            .input-row { grid-template-columns: 1fr; }
+            .nav-tabs { gap: 8px; }
+            .nav-tab { padding: 12px 20px; font-size: 14px; }
+            .unit-selector {
+                position: static;
+                justify-content: center;
+                margin-top: 15px;
+            }
+            .btn { padding: 12px 25px; font-size: 16px; }
         }
     </style>
 <script src="https://sites.super.myninja.ai/_assets/ninja-daytona-script.js"></script>
 </head>
 <body>
     <div class="container">
+        <!-- Header -->
         <div class="header">
-            <div class="logo">🥷 ServicePro Elite - HVAC Calculator Suite</div>
-            <div class="tagline">Professional Tools for HVAC Technicians</div>
-            <div class="offline-indicator">📱 100% OFFLINE CAPABLE - Works without internet</div>
+            <div class="unit-selector">
+                <span style="font-size: 14px; font-weight: 600;">Units:</span>
+                <button class="unit-toggle active" onclick="setUnits('imperial')">Imperial</button>
+                <button class="unit-toggle" onclick="setUnits('metric')">Metric</button>
+            </div>
+            <div class="logo">🔧 ServicePro Elite</div>
+            <div class="tagline">Professional HVAC Calculator Suite</div>
         </div>
 
+        <!-- Navigation Tabs -->
         <div class="nav-tabs">
             <button class="nav-tab active" onclick="switchTab('refrigeration')">❄️ Refrigeration</button>
             <button class="nav-tab" onclick="switchTab('airflow')">🌪️ Airflow</button>
             <button class="nav-tab" onclick="switchTab('electrical')">⚡ Electrical</button>
-            <button class="nav-tab" onclick="switchTab('duct')">📏 Duct</button>
+            <button class="nav-tab" onclick="switchTab('duct')">📏 Duct Sizing</button>
+            <button class="nav-tab" onclick="switchTab('load')">🏠 Load Calc</button>
+            <button class="nav-tab" onclick="switchTab('energy')">💡 Energy</button>
+            <button class="nav-tab" onclick="switchTab('leakage')">🔍 Duct Leakage</button>
+            <button class="nav-tab" onclick="switchTab('pressure')">📊 Pressure Drop</button>
             <button class="nav-tab" onclick="switchTab('log')">📝 Service Log</button>
         </div>
 
-        <!-- ❄️ REFRIGERATION TAB -->
+        <!-- Refrigeration Calculator -->
         <div id="refrigeration" class="tab-content active">
             <div class="calculator">
-                <h3>❄️ Superheat/Subcooling Calculator</h3>
+                <h3>❄️ Refrigeration Calculator</h3>
+                <div class="calculator-description">
+                    Calculate superheat and subcooling to diagnose refrigerant charge issues. Proper refrigerant charge is critical for system efficiency and longevity.
+                </div>
+                
                 <div class="input-group">
-                    <label>Suction Pressure (PSIG)</label>
-                    <input type="number" id="suctionPressure" placeholder="e.g., 65" step="0.1">
+                    <label>
+                        Suction Line Temperature (°F)
+                        <span class="help-icon">?
+                            <span class="tooltip">Temperature at compressor suction line</span>
+                        </span>
+                    </label>
+                    <input type="number" id="suctionTemp" step="0.1" placeholder="Enter temperature">
+                    <div class="error-message" id="suctionTempError">Please enter a valid temperature</div>
                 </div>
+                
                 <div class="input-group">
-                    <label>Suction Temperature (°F)</label>
-                    <input type="number" id="suctionTemp" placeholder="e.g., 45" step="0.1">
+                    <label>
+                        Suction Pressure (PSIG)
+                        <span class="help-icon">?
+                            <span class="tooltip">Pressure reading at suction line</span>
+                        </span>
+                    </label>
+                    <input type="number" id="suctionPressure" step="0.1" placeholder="Enter pressure">
+                    <div class="error-message" id="suctionPressureError">Please enter a valid pressure</div>
                 </div>
+                
                 <div class="input-group">
-                    <label>Liquid Line Temperature (°F)</label>
-                    <input type="number" id="liquidTemp" placeholder="e.g., 105" step="0.1">
+                    <label>
+                        Liquid Line Temperature (°F)
+                        <span class="help-icon">?
+                            <span class="tooltip">Temperature at liquid line</span>
+                        </span>
+                    </label>
+                    <input type="number" id="liquidTemp" step="0.1" placeholder="Enter temperature">
                 </div>
+                
                 <div class="input-group">
-                    <label>Liquid Line Pressure (PSIG)</label>
-                    <input type="number" id="liquidPressure" placeholder="e.g., 250" step="0.1">
+                    <label>
+                        Liquid Pressure (PSIG)
+                        <span class="help-icon">?
+                            <span class="tooltip">Pressure reading at liquid line</span>
+                        </span>
+                    </label>
+                    <input type="number" id="liquidPressure" step="0.1" placeholder="Enter pressure">
                 </div>
-                <div class="input-group">
-                    <label>Refrigerant Type</label>
-                    <select id="refrigerantType">
-                        <option value="R-410A">R-410A</option>
-                        <option value="R-22">R-22</option>
-                        <option value="R-134a">R-134a</option>
-                        <option value="R-404A">R-404A</option>
-                    </select>
+                
+                <div class="btn-group">
+                    <button class="btn" onclick="calculateRefrigeration()">Calculate</button>
+                    <button class="btn btn-secondary" onclick="clearRefrigeration()">Clear</button>
+                    <button class="btn btn-success" onclick="saveCalculation('refrigeration')">💾 Save</button>
                 </div>
-                <button class="btn" onclick="calculateRefrigeration()">Calculate</button>
-                <div id="refrigerationResult" class="result" style="display:none;">
-                    <h4>Calculation Results</h4>
-                    <div id="refrigerationResults"></div>
-                </div>
+                
+                <div id="refrigerationResult" class="result"></div>
             </div>
         </div>
 
-        <!-- 🌪️ AIRFLOW TAB -->
+        <!-- Load Calculation (NEW) -->
+        <div id="load" class="tab-content">
+            <div class="calculator">
+                <h3>🏠 Load Calculation</h3>
+                <div class="calculator-description">
+                    Calculate heating and cooling loads for proper equipment sizing. Accurate load calculations prevent oversizing and ensure optimal comfort and efficiency.
+                </div>
+                
+                <div class="input-row">
+                    <div class="input-group">
+                        <label>
+                            Square Footage
+                            <span class="help-icon">?
+                                <span class="tooltip">Total conditioned space area</span>
+                            </span>
+                        </label>
+                        <input type="number" id="sqft" placeholder="Enter square feet">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>
+                            Ceiling Height (ft)
+                            <span class="help-icon">?
+                                <span class="tooltip">Average ceiling height</span>
+                            </span>
+                        </label>
+                        <input type="number" id="ceilingHeight" value="8" placeholder="8">
+                    </div>
+                </div>
+                
+                <div class="input-row">
+                    <div class="input-group">
+                        <label>Insulation Level</label>
+                        <select id="insulationLevel">
+                            <option value="poor">Poor (R-11 or less)</option>
+                            <option value="average" selected>Average (R-13 to R-19)</option>
+                            <option value="good">Good (R-20 to R-30)</option>
+                            <option value="excellent">Excellent (R-30+)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>Window Area (sq ft)</label>
+                        <input type="number" id="windowArea" placeholder="Total window area">
+                    </div>
+                </div>
+                
+                <div class="input-row">
+                    <div class="input-group">
+                        <label>Number of Occupants</label>
+                        <input type="number" id="occupants" value="4" placeholder="4">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>Climate Zone</label>
+                        <select id="climateZone">
+                            <option value="1">Zone 1 (Very Hot)</option>
+                            <option value="2">Zone 2 (Hot)</option>
+                            <option value="3" selected>Zone 3 (Warm)</option>
+                            <option value="4">Zone 4 (Mixed)</option>
+                            <option value="5">Zone 5 (Cool)</option>
+                            <option value="6">Zone 6 (Cold)</option>
+                            <option value="7">Zone 7 (Very Cold)</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="btn-group">
+                    <button class="btn" onclick="calculateLoad()">Calculate Load</button>
+                    <button class="btn btn-secondary" onclick="clearLoad()">Clear</button>
+                    <button class="btn btn-success" onclick="saveCalculation('load')">💾 Save</button>
+                </div>
+                
+                <div id="loadResult" class="result"></div>
+            </div>
+        </div>
+
+        <!-- Energy Consumption (NEW) -->
+        <div id="energy" class="tab-content">
+            <div class="calculator">
+                <h3>💡 Energy Consumption Estimator</h3>
+                <div class="calculator-description">
+                    Estimate energy consumption and operating costs for HVAC equipment. Use this to provide customers with accurate cost projections.
+                </div>
+                
+                <div class="input-row">
+                    <div class="input-group">
+                        <label>Equipment Type</label>
+                        <select id="equipmentType">
+                            <option value="ac">Air Conditioner</option>
+                            <option value="furnace">Gas Furnace</option>
+                            <option value="heatpump">Heat Pump</option>
+                            <option value="boiler">Boiler</option>
+                        </select>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>
+                            Capacity (BTU/h)
+                            <span class="help-icon">?
+                                <span class="tooltip">Equipment rated capacity</span>
+                            </span>
+                        </label>
+                        <input type="number" id="capacity" placeholder="e.g., 36000">
+                    </div>
+                </div>
+                
+                <div class="input-row">
+                    <div class="input-group">
+                        <label>
+                            SEER/AFUE Rating
+                            <span class="help-icon">?
+                                <span class="tooltip">Efficiency rating of equipment</span>
+                            </span>
+                        </label>
+                        <input type="number" id="efficiency" step="0.1" placeholder="e.g., 16">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>Hours of Operation per Day</label>
+                        <input type="number" id="hoursPerDay" value="8" placeholder="8">
+                    </div>
+                </div>
+                
+                <div class="input-row">
+                    <div class="input-group">
+                        <label>Days per Month</label>
+                        <input type="number" id="daysPerMonth" value="30" placeholder="30">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>Energy Cost ($/kWh or $/therm)</label>
+                        <input type="number" id="energyCost" step="0.01" value="0.12" placeholder="0.12">
+                    </div>
+                </div>
+                
+                <div class="btn-group">
+                    <button class="btn" onclick="calculateEnergy()">Calculate Energy</button>
+                    <button class="btn btn-secondary" onclick="clearEnergy()">Clear</button>
+                    <button class="btn btn-success" onclick="saveCalculation('energy')">💾 Save</button>
+                </div>
+                
+                <div id="energyResult" class="result"></div>
+            </div>
+        </div>
+
+        <!-- Duct Leakage Testing (NEW) -->
+        <div id="leakage" class="tab-content">
+            <div class="calculator">
+                <h3>🔍 Duct Leakage Testing</h3>
+                <div class="calculator-description">
+                    Calculate duct leakage rates and determine if ductwork meets efficiency standards. Proper duct sealing can improve system efficiency by 20% or more.
+                </div>
+                
+                <div class="input-row">
+                    <div class="input-group">
+                        <label>
+                            Test Pressure (Pa)
+                            <span class="help-icon">?
+                                <span class="tooltip">Standard test pressure is 25 Pa</span>
+                            </span>
+                        </label>
+                        <input type="number" id="testPressure" value="25" placeholder="25">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>
+                            Measured CFM at Test Pressure
+                            <span class="help-icon">?
+                                <span class="tooltip">Airflow measured during test</span>
+                            </span>
+                        </label>
+                        <input type="number" id="measuredCFM" placeholder="Enter CFM">
+                    </div>
+                </div>
+                
+                <div class="input-row">
+                    <div class="input-group">
+                        <label>Conditioned Floor Area (sq ft)</label>
+                        <input type="number" id="floorArea" placeholder="Enter area">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>Duct Location</label>
+                        <select id="ductLocation">
+                            <option value="conditioned">Inside Conditioned Space</option>
+                            <option value="unconditioned" selected>Outside Conditioned Space</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="btn-group">
+                    <button class="btn" onclick="calculateLeakage()">Calculate Leakage</button>
+                    <button class="btn btn-secondary" onclick="clearLeakage()">Clear</button>
+                    <button class="btn btn-success" onclick="saveCalculation('leakage')">💾 Save</button>
+                </div>
+                
+                <div id="leakageResult" class="result"></div>
+            </div>
+        </div>
+
+        <!-- Pressure Drop (NEW) -->
+        <div id="pressure" class="tab-content">
+            <div class="calculator">
+                <h3>📊 Pressure Drop Calculator</h3>
+                <div class="calculator-description">
+                    Calculate pressure drop in ductwork to ensure proper system design. Excessive pressure drop reduces airflow and system efficiency.
+                </div>
+                
+                <div class="input-row">
+                    <div class="input-group">
+                        <label>
+                            Duct Length (ft)
+                            <span class="help-icon">?
+                                <span class="tooltip">Total length of duct run</span>
+                            </span>
+                        </label>
+                        <input type="number" id="ductLength" placeholder="Enter length">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>Duct Diameter (inches)</label>
+                        <input type="number" id="ductDiameter" placeholder="Enter diameter">
+                    </div>
+                </div>
+                
+                <div class="input-row">
+                    <div class="input-group">
+                        <label>
+                            Airflow (CFM)
+                            <span class="help-icon">?
+                                <span class="tooltip">Design airflow through duct</span>
+                            </span>
+                        </label>
+                        <input type="number" id="airflowCFM" placeholder="Enter CFM">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>Number of Elbows</label>
+                        <input type="number" id="numElbows" value="0" placeholder="0">
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <label>Duct Material</label>
+                    <select id="ductMaterial">
+                        <option value="smooth">Smooth (Sheet Metal)</option>
+                        <option value="flex" selected>Flexible Duct</option>
+                        <option value="rough">Rough (Fibrous)</option>
+                    </select>
+                </div>
+                
+                <div class="btn-group">
+                    <button class="btn" onclick="calculatePressureDrop()">Calculate Pressure Drop</button>
+                    <button class="btn btn-secondary" onclick="clearPressure()">Clear</button>
+                    <button class="btn btn-success" onclick="saveCalculation('pressure')">💾 Save</button>
+                </div>
+                
+                <div id="pressureResult" class="result"></div>
+            </div>
+        </div>
+
+        <!-- Airflow Calculator -->
         <div id="airflow" class="tab-content">
             <div class="calculator">
                 <h3>🌪️ Airflow Calculator</h3>
+                <div class="calculator-description">
+                    Calculate temperature split, CFM, and BTUH for proper airflow verification. Correct airflow is essential for comfort and efficiency.
+                </div>
+                
+                <div class="input-row">
+                    <div class="input-group">
+                        <label>
+                            Supply Air Temperature (°F)
+                            <span class="help-icon">?
+                                <span class="tooltip">Temperature at supply register</span>
+                            </span>
+                        </label>
+                        <input type="number" id="supplyTemp" step="0.1" placeholder="Enter temperature">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>
+                            Return Air Temperature (°F)
+                            <span class="help-icon">?
+                                <span class="tooltip">Temperature at return grille</span>
+                            </span>
+                        </label>
+                        <input type="number" id="returnTemp" step="0.1" placeholder="Enter temperature">
+                    </div>
+                </div>
+                
                 <div class="input-group">
-                    <label>Return Air Temperature (°F)</label>
-                    <input type="number" id="returnTemp" placeholder="e.g., 75" step="0.1">
+                    <label>
+                        System Capacity (BTU/h)
+                        <span class="help-icon">?
+                            <span class="tooltip">Rated capacity of equipment</span>
+                        </span>
+                    </label>
+                    <input type="number" id="systemCapacity" placeholder="e.g., 36000">
                 </div>
-                <div class="input-group">
-                    <label>Supply Air Temperature (°F)</label>
-                    <input type="number" id="supplyTemp" placeholder="e.g., 55" step="0.1">
+                
+                <div class="btn-group">
+                    <button class="btn" onclick="calculateAirflow()">Calculate</button>
+                    <button class="btn btn-secondary" onclick="clearAirflow()">Clear</button>
+                    <button class="btn btn-success" onclick="saveCalculation('airflow')">💾 Save</button>
                 </div>
-                <div class="input-group">
-                    <label>System Capacity (Tons)</label>
-                    <input type="number" id="systemTons" placeholder="e.g., 3" step="0.5" min="1" max="20">
-                </div>
-                <button class="btn" onclick="calculateAirflow()">Calculate Airflow</button>
-                <div id="airflowResult" class="result" style="display:none;">
-                    <h4>Calculation Results</h4>
-                    <div id="airflowResults"></div>
-                </div>
+                
+                <div id="airflowResult" class="result"></div>
             </div>
         </div>
 
-        <!-- ⚡ ELECTRICAL TAB -->
+        <!-- Electrical Calculator -->
         <div id="electrical" class="tab-content">
             <div class="calculator">
-                <h3>⚡ Electrical Load Calculator</h3>
-                <div class="input-group">
-                    <label>Voltage (Volts)</label>
-                    <input type="number" id="voltage" placeholder="e.g., 240" step="1">
+                <h3>⚡ Electrical Calculator</h3>
+                <div class="calculator-description">
+                    Calculate electrical parameters for HVAC equipment. Ensure proper electrical sizing and safety compliance.
                 </div>
+                
                 <div class="input-group">
-                    <label>Current (Amps)</label>
-                    <input type="number" id="current" placeholder="e.g., 15" step="0.1">
-                </div>
-                <div class="input-group">
-                    <label>Power Factor</label>
-                    <input type="number" id="powerFactor" placeholder="e.g., 0.85" step="0.01" min="0" max="1" value="0.85">
-                </div>
-                <div class="input-group">
-                    <label>Phase</label>
-                    <select id="phase">
-                        <option value="1">Single Phase</option>
-                        <option value="3">Three Phase</option>
+                    <label>Phase Type</label>
+                    <select id="phaseType" onchange="updateElectricalFields()">
+                        <option value="single">Single Phase</option>
+                        <option value="three">Three Phase</option>
                     </select>
                 </div>
-                <button class="btn" onclick="calculateElectrical()">Calculate Power</button>
-                <div id="electricalResult" class="result" style="display:none;">
-                    <h4>Calculation Results</h4>
-                    <div id="electricalResults"></div>
+                
+                <div class="input-row">
+                    <div class="input-group">
+                        <label>
+                            Voltage (V)
+                            <span class="help-icon">?
+                                <span class="tooltip">Supply voltage to equipment</span>
+                            </span>
+                        </label>
+                        <input type="number" id="voltage" placeholder="e.g., 240">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>
+                            Current (A)
+                            <span class="help-icon">?
+                                <span class="tooltip">Measured or rated current</span>
+                            </span>
+                        </label>
+                        <input type="number" id="current" step="0.1" placeholder="Enter amperage">
+                    </div>
                 </div>
+                
+                <div class="input-group" id="powerFactorGroup">
+                    <label>
+                        Power Factor
+                        <span class="help-icon">?
+                            <span class="tooltip">Typically 0.85-0.95 for motors</span>
+                        </span>
+                    </label>
+                    <input type="number" id="powerFactor" step="0.01" value="0.9" min="0" max="1" placeholder="0.9">
+                </div>
+                
+                <div class="btn-group">
+                    <button class="btn" onclick="calculateElectrical()">Calculate</button>
+                    <button class="btn btn-secondary" onclick="clearElectrical()">Clear</button>
+                    <button class="btn btn-success" onclick="saveCalculation('electrical')">💾 Save</button>
+                </div>
+                
+                <div id="electricalResult" class="result"></div>
             </div>
         </div>
 
-        <!-- 📏 DUCT TAB -->
+        <!-- Duct Sizing Calculator -->
         <div id="duct" class="tab-content">
             <div class="calculator">
                 <h3>📏 Duct Sizing Calculator</h3>
-                <div class="input-group">
-                    <label>CFM (Cubic Feet per Minute)</label>
-                    <input type="number" id="ductCfm" placeholder="e.g., 1200" step="10">
+                <div class="calculator-description">
+                    Calculate proper duct dimensions for optimal airflow. Properly sized ducts prevent noise, reduce energy consumption, and ensure comfort.
                 </div>
-                <div class="input-group">
-                    <label>Velocity (FPM)</label>
-                    <input type="number" id="velocity" placeholder="e.g., 800" step="10">
-                </div>
+                
                 <div class="input-group">
                     <label>Duct Shape</label>
                     <select id="ductShape" onchange="updateDuctFields()">
@@ -305,375 +857,887 @@
                         <option value="rectangular">Rectangular</option>
                     </select>
                 </div>
-                <div id="ductDimensions">
-                    <!-- Dynamic fields will be inserted here -->
+                
+                <div class="input-row">
+                    <div class="input-group">
+                        <label>
+                            Required CFM
+                            <span class="help-icon">?
+                                <span class="tooltip">Design airflow for this duct</span>
+                            </span>
+                        </label>
+                        <input type="number" id="ductCFM" placeholder="Enter CFM">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>
+                            Target Velocity (FPM)
+                            <span class="help-icon">?
+                                <span class="tooltip">Recommended: 600-900 FPM</span>
+                            </span>
+                        </label>
+                        <input type="number" id="targetVelocity" value="700" placeholder="700">
+                    </div>
                 </div>
-                <button class="btn" onclick="calculateDuct()">Calculate Duct Size</button>
-                <div id="ductResult" class="result" style="display:none;">
-                    <h4>Calculation Results</h4>
-                    <div id="ductResults"></div>
+                
+                <div id="rectangularInputs" style="display: none;">
+                    <div class="input-group">
+                        <label>Aspect Ratio (Width:Height)</label>
+                        <select id="aspectRatio">
+                            <option value="1">1:1 (Square)</option>
+                            <option value="1.5">3:2</option>
+                            <option value="2" selected>2:1</option>
+                            <option value="3">3:1</option>
+                            <option value="4">4:1</option>
+                        </select>
+                    </div>
                 </div>
+                
+                <div class="btn-group">
+                    <button class="btn" onclick="calculateDuct()">Calculate Size</button>
+                    <button class="btn btn-secondary" onclick="clearDuct()">Clear</button>
+                    <button class="btn btn-success" onclick="saveCalculation('duct')">💾 Save</button>
+                </div>
+                
+                <div id="ductResult" class="result"></div>
             </div>
         </div>
 
-        <!-- 📝 SERVICE LOG TAB -->
+        <!-- Service Log -->
         <div id="log" class="tab-content">
             <div class="calculator">
                 <h3>📝 Service Log</h3>
-                <div class="input-group">
-                    <label>Service Date</label>
-                    <input type="date" id="serviceDate">
+                <div class="calculator-description">
+                    Save service notes and calculations for future reference. All data is stored locally and syncs with your dashboard.
                 </div>
-                <div class="input-group">
-                    <label>Customer Name</label>
-                    <input type="text" id="customerName" placeholder="Enter customer name">
+                
+                <div class="input-row">
+                    <div class="input-group">
+                        <label>Service Date</label>
+                        <input type="date" id="serviceDate">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>Customer Name</label>
+                        <input type="text" id="customerName" placeholder="Enter customer name">
+                    </div>
                 </div>
-                <div class="input-group">
-                    <label>Unit Type</label>
-                    <select id="unitType">
-                        <option value="AC">Air Conditioner</option>
-                        <option value="HP">Heat Pump</option>
-                        <option value="Furnace">Furnace</option>
-                        <option value="Boiler">Boiler</option>
-                        <option value="Package">Package Unit</option>
-                    </select>
+                
+                <div class="input-row">
+                    <div class="input-group">
+                        <label>Unit Type</label>
+                        <select id="unitType">
+                            <option value="AC">Air Conditioner</option>
+                            <option value="Furnace">Furnace</option>
+                            <option value="Heat Pump">Heat Pump</option>
+                            <option value="Package Unit">Package Unit</option>
+                            <option value="Mini Split">Mini Split</option>
+                        </select>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>Service Type</label>
+                        <select id="serviceType">
+                            <option value="Maintenance">Maintenance</option>
+                            <option value="Repair">Repair</option>
+                            <option value="Installation">Installation</option>
+                            <option value="Diagnostic">Diagnostic</option>
+                        </select>
+                    </div>
                 </div>
-                <div class="input-group">
-                    <label>Service Type</label>
-                    <select id="serviceType">
-                        <option value="Maintenance">Maintenance</option>
-                        <option value="Repair">Repair</option>
-                        <option value="Installation">Installation</option>
-                        <option value="Inspection">Inspection</option>
-                        <option value="Emergency">Emergency</option>
-                    </select>
-                </div>
+                
                 <div class="input-group">
                     <label>Technician Notes</label>
-                    <textarea id="techNotes" rows="5" placeholder="Enter detailed service notes..."></textarea>
+                    <textarea id="techNotes" rows="6" placeholder="Enter service details, findings, and recommendations..."></textarea>
                 </div>
-                <button class="btn" onclick="saveServiceLog()">Save Service Log</button>
-                <button class="btn btn-secondary" onclick="viewServiceLog()">View Service History</button>
-                <div id="serviceLogResult" class="result" style="display:none;">
-                    <h4>Service History</h4>
-                    <div id="serviceLogResults"></div>
+                
+                <div class="btn-group">
+                    <button class="btn btn-success" onclick="saveServiceLog()">💾 Save Log</button>
+                    <button class="btn" onclick="viewServiceLog()">📋 View History</button>
+                    <button class="btn btn-secondary" onclick="clearServiceLog()">Clear</button>
                 </div>
+                
+                <div id="serviceLogResult" class="result"></div>
             </div>
         </div>
 
-        <div style="text-align: center; margin-top: 40px;">
-            <button class="btn btn-secondary" onclick="window.location.href='index.html'">← Back to Home</button>
-            <button class="btn" onclick="window.location.href='app.html'">Open Dashboard →</button>
+        <!-- Sync Status Indicator -->
+        <div class="sync-status" id="syncStatus" style="display: none;">
+            <div class="sync-icon"></div>
+            <span id="syncText">Syncing with dashboard...</span>
         </div>
     </div>
 
     <script>
-        // Tab Switching Function - FIXED
-        function switchTab(tabName) {
-            console.log('Switching to tab:', tabName);
+        // Global variables
+        let currentUnits = 'imperial';
+        let savedCalculations = JSON.parse(localStorage.getItem('hvac_calculations') || '[]');
+        
+        // Unit conversion functions
+        function setUnits(units) {
+            currentUnits = units;
+            document.querySelectorAll('.unit-toggle').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
             
+            // Update all labels based on unit system
+            updateUnitLabels();
+        }
+        
+        function updateUnitLabels() {
+            // This would update all temperature, pressure, and dimension labels
+            // based on the selected unit system
+            console.log('Units set to:', currentUnits);
+        }
+        
+        // Tab switching
+        function switchTab(tabName) {
             // Hide all tabs
-            const allTabs = document.querySelectorAll('.tab-content');
-            allTabs.forEach(tab => {
+            document.querySelectorAll('.tab-content').forEach(tab => {
                 tab.classList.remove('active');
-                tab.style.display = 'none';
             });
             
-            // Remove active class from all buttons
-            const allButtons = document.querySelectorAll('.nav-tab');
-            allButtons.forEach(btn => {
-                btn.classList.remove('active');
+            // Remove active class from all nav tabs
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
             });
             
             // Show selected tab
-            const selectedTab = document.getElementById(tabName);
-            if (selectedTab) {
-                selectedTab.classList.add('active');
-                selectedTab.style.display = 'block';
-            }
+            document.getElementById(tabName).classList.add('active');
             
-            // Add active class to clicked button
+            // Add active class to clicked nav tab
             event.target.classList.add('active');
         }
-
+        
+        // Input validation
+        function validateInput(inputId, min, max) {
+            const input = document.getElementById(inputId);
+            const value = parseFloat(input.value);
+            const errorMsg = document.getElementById(inputId + 'Error');
+            
+            if (isNaN(value) || value < min || value > max) {
+                input.classList.add('error');
+                if (errorMsg) {
+                    errorMsg.classList.add('show');
+                }
+                return false;
+            }
+            
+            input.classList.remove('error');
+            if (errorMsg) {
+                errorMsg.classList.remove('show');
+            }
+            return true;
+        }
+        
+        // Save calculation to local storage and sync
+        function saveCalculation(type) {
+            const calculation = {
+                type: type,
+                timestamp: new Date().toISOString(),
+                data: getCurrentCalculationData(type)
+            };
+            
+            savedCalculations.unshift(calculation);
+            if (savedCalculations.length > 100) {
+                savedCalculations = savedCalculations.slice(0, 100);
+            }
+            
+            localStorage.setItem('hvac_calculations', JSON.stringify(savedCalculations));
+            
+            // Show sync status
+            showSyncStatus('Calculation saved and synced!');
+            
+            // Sync with dashboard
+            syncWithDashboard(calculation);
+        }
+        
+        function getCurrentCalculationData(type) {
+            // Get current input values based on calculator type
+            const data = { type: type };
+            
+            switch(type) {
+                case 'refrigeration':
+                    data.suctionTemp = document.getElementById('suctionTemp').value;
+                    data.suctionPressure = document.getElementById('suctionPressure').value;
+                    data.liquidTemp = document.getElementById('liquidTemp').value;
+                    data.liquidPressure = document.getElementById('liquidPressure').value;
+                    break;
+                case 'load':
+                    data.sqft = document.getElementById('sqft').value;
+                    data.ceilingHeight = document.getElementById('ceilingHeight').value;
+                    data.insulationLevel = document.getElementById('insulationLevel').value;
+                    break;
+                // Add other calculator types as needed
+            }
+            
+            return data;
+        }
+        
+        function syncWithDashboard(calculation) {
+            // Store in a format that the dashboard can access
+            let dashboardData = JSON.parse(localStorage.getItem('servicepro_calculator_sync') || '[]');
+            dashboardData.unshift(calculation);
+            if (dashboardData.length > 50) {
+                dashboardData = dashboardData.slice(0, 50);
+            }
+            localStorage.setItem('servicepro_calculator_sync', JSON.stringify(dashboardData));
+        }
+        
+        function showSyncStatus(message) {
+            const syncStatus = document.getElementById('syncStatus');
+            const syncText = document.getElementById('syncText');
+            
+            syncText.textContent = message;
+            syncStatus.style.display = 'flex';
+            
+            setTimeout(() => {
+                syncStatus.style.display = 'none';
+            }, 3000);
+        }
+        
         // Refrigeration Calculator
         function calculateRefrigeration() {
-            const suctionPressure = parseFloat(document.getElementById('suctionPressure').value);
             const suctionTemp = parseFloat(document.getElementById('suctionTemp').value);
+            const suctionPressure = parseFloat(document.getElementById('suctionPressure').value);
             const liquidTemp = parseFloat(document.getElementById('liquidTemp').value);
             const liquidPressure = parseFloat(document.getElementById('liquidPressure').value);
-            const refrigerantType = document.getElementById('refrigerantType').value;
             
-            if (!suctionPressure || !suctionTemp || !liquidTemp || !liquidPressure) {
-                alert('Please fill in all fields');
+            if (isNaN(suctionTemp) || isNaN(suctionPressure) || isNaN(liquidTemp) || isNaN(liquidPressure)) {
+                alert('Please fill in all fields with valid numbers');
                 return;
             }
             
-            // Simplified calculations (in production, use proper PT charts)
-            const saturationTemp = suctionPressure * 0.8; // Approximate
-            const superheat = suctionTemp - saturationTemp;
-            const condensingTemp = liquidPressure * 0.6; // Approximate
-            const subcooling = condensingTemp - liquidTemp;
+            // Simplified calculations (in production, use proper refrigerant tables)
+            const suctionSatTemp = (suctionPressure * 0.5) + 32; // Simplified
+            const liquidSatTemp = (liquidPressure * 0.4) + 80; // Simplified
             
-            let superheatStatus = 'good';
-            let superheatText = 'Normal';
-            if (superheat < 5) {
-                superheatStatus = 'bad';
-                superheatText = 'Low - Possible flooding';
-            } else if (superheat > 25) {
-                superheatStatus = 'warning';
-                superheatText = 'High - Possible starving';
+            const superheat = suctionTemp - suctionSatTemp;
+            const subcooling = liquidSatTemp - liquidTemp;
+            
+            let superheatStatus = '';
+            let subcoolingStatus = '';
+            
+            if (superheat >= 10 && superheat <= 20) {
+                superheatStatus = '<span class="status-indicator status-good">✓ Good</span>';
+            } else if (superheat < 10) {
+                superheatStatus = '<span class="status-indicator status-warning">⚠ Low (Possible Overcharge)</span>';
+            } else {
+                superheatStatus = '<span class="status-indicator status-danger">✗ High (Possible Undercharge)</span>';
             }
             
-            let subcoolingStatus = 'good';
-            let subcoolingText = 'Normal';
-            if (subcooling < 5) {
-                subcoolingStatus = 'warning';
-                subcoolingText = 'Low - Check charge';
-            } else if (subcooling > 20) {
-                subcoolingStatus = 'bad';
-                subcoolingText = 'High - Overcharged';
+            if (subcooling >= 10 && subcooling <= 15) {
+                subcoolingStatus = '<span class="status-indicator status-good">✓ Good</span>';
+            } else if (subcooling < 10) {
+                subcoolingStatus = '<span class="status-indicator status-warning">⚠ Low (Possible Undercharge)</span>';
+            } else {
+                subcoolingStatus = '<span class="status-indicator status-danger">✗ High (Possible Overcharge)</span>';
             }
             
             const resultsHTML = `
+                <h4>Refrigeration Results</h4>
                 <div class="result-item">
                     <span>Superheat:</span>
-                    <span class="result-value status-${superheatStatus}">${superheat.toFixed(1)}°F</span>
+                    <span class="result-value">${superheat.toFixed(1)}°F</span>
                 </div>
                 <div class="result-item">
-                    <span>Superheat Status:</span>
-                    <span class="result-value status-${superheatStatus}">${superheatText}</span>
+                    <span>Status:</span>
+                    ${superheatStatus}
                 </div>
                 <div class="result-item">
                     <span>Subcooling:</span>
-                    <span class="result-value status-${subcoolingStatus}">${subcooling.toFixed(1)}°F</span>
+                    <span class="result-value">${subcooling.toFixed(1)}°F</span>
                 </div>
                 <div class="result-item">
-                    <span>Subcooling Status:</span>
-                    <span class="result-value status-${subcoolingStatus}">${subcoolingText}</span>
+                    <span>Status:</span>
+                    ${subcoolingStatus}
                 </div>
-                <div class="result-item">
-                    <span>Refrigerant:</span>
-                    <span class="result-value">${refrigerantType}</span>
+                <div style="margin-top: 20px; padding: 15px; background: rgba(59, 130, 246, 0.1); border-radius: 8px; font-size: 14px;">
+                    <strong>Recommendations:</strong><br>
+                    ${superheat < 10 || subcooling > 15 ? '• System may be overcharged. Consider recovering refrigerant.<br>' : ''}
+                    ${superheat > 20 || subcooling < 10 ? '• System may be undercharged. Check for leaks and add refrigerant if needed.<br>' : ''}
+                    ${superheat >= 10 && superheat <= 20 && subcooling >= 10 && subcooling <= 15 ? '• Refrigerant charge is within acceptable range.<br>' : ''}
+                    • Always verify with manufacturer specifications.
                 </div>
             `;
             
-            document.getElementById('refrigerationResults').innerHTML = resultsHTML;
+            document.getElementById('refrigerationResult').innerHTML = resultsHTML;
             document.getElementById('refrigerationResult').style.display = 'block';
         }
-
+        
+        function clearRefrigeration() {
+            document.getElementById('suctionTemp').value = '';
+            document.getElementById('suctionPressure').value = '';
+            document.getElementById('liquidTemp').value = '';
+            document.getElementById('liquidPressure').value = '';
+            document.getElementById('refrigerationResult').style.display = 'none';
+        }
+        
+        // Load Calculation
+        function calculateLoad() {
+            const sqft = parseFloat(document.getElementById('sqft').value);
+            const ceilingHeight = parseFloat(document.getElementById('ceilingHeight').value);
+            const insulationLevel = document.getElementById('insulationLevel').value;
+            const windowArea = parseFloat(document.getElementById('windowArea').value) || 0;
+            const occupants = parseInt(document.getElementById('occupants').value) || 4;
+            const climateZone = parseInt(document.getElementById('climateZone').value);
+            
+            if (isNaN(sqft) || sqft <= 0) {
+                alert('Please enter a valid square footage');
+                return;
+            }
+            
+            // Insulation factors
+            const insulationFactors = {
+                poor: 1.3,
+                average: 1.0,
+                good: 0.85,
+                excellent: 0.7
+            };
+            
+            // Climate zone factors
+            const climateFactors = [1.4, 1.3, 1.2, 1.0, 0.9, 0.8, 0.7];
+            
+            // Base calculation (simplified)
+            let coolingLoad = sqft * 25; // Base BTU/hr per sq ft
+            coolingLoad *= insulationFactors[insulationLevel];
+            coolingLoad *= climateFactors[climateZone - 1];
+            coolingLoad += windowArea * 100; // Window heat gain
+            coolingLoad += occupants * 400; // Occupant heat gain
+            
+            let heatingLoad = sqft * 30; // Base BTU/hr for heating
+            heatingLoad *= insulationFactors[insulationLevel];
+            heatingLoad *= (1 / climateFactors[climateZone - 1]); // Inverse for heating
+            
+            const coolingTons = coolingLoad / 12000;
+            const heatingTons = heatingLoad / 12000;
+            
+            const resultsHTML = `
+                <h4>Load Calculation Results</h4>
+                <div class="result-item">
+                    <span>Cooling Load:</span>
+                    <span class="result-value">${coolingLoad.toFixed(0)} BTU/h (${coolingTons.toFixed(2)} tons)</span>
+                </div>
+                <div class="result-item">
+                    <span>Heating Load:</span>
+                    <span class="result-value">${heatingLoad.toFixed(0)} BTU/h (${heatingTons.toFixed(2)} tons)</span>
+                </div>
+                <div class="result-item">
+                    <span>Recommended AC Size:</span>
+                    <span class="result-value">${Math.ceil(coolingTons)} ton unit</span>
+                </div>
+                <div class="result-item">
+                    <span>Recommended Furnace:</span>
+                    <span class="result-value">${Math.ceil(heatingLoad / 1000) * 10}K BTU/h</span>
+                </div>
+                <div style="margin-top: 20px; padding: 15px; background: rgba(59, 130, 246, 0.1); border-radius: 8px; font-size: 14px;">
+                    <strong>Notes:</strong><br>
+                    • This is a simplified calculation. For accurate sizing, perform a Manual J load calculation.<br>
+                    • Consider local building codes and manufacturer specifications.<br>
+                    • Oversizing can lead to short cycling and poor humidity control.<br>
+                    • Undersizing results in inadequate comfort and excessive runtime.
+                </div>
+            `;
+            
+            document.getElementById('loadResult').innerHTML = resultsHTML;
+            document.getElementById('loadResult').style.display = 'block';
+        }
+        
+        function clearLoad() {
+            document.getElementById('sqft').value = '';
+            document.getElementById('ceilingHeight').value = '8';
+            document.getElementById('windowArea').value = '';
+            document.getElementById('occupants').value = '4';
+            document.getElementById('loadResult').style.display = 'none';
+        }
+        
+        // Energy Consumption Calculator
+        function calculateEnergy() {
+            const equipmentType = document.getElementById('equipmentType').value;
+            const capacity = parseFloat(document.getElementById('capacity').value);
+            const efficiency = parseFloat(document.getElementById('efficiency').value);
+            const hoursPerDay = parseFloat(document.getElementById('hoursPerDay').value);
+            const daysPerMonth = parseFloat(document.getElementById('daysPerMonth').value);
+            const energyCost = parseFloat(document.getElementById('energyCost').value);
+            
+            if (isNaN(capacity) || isNaN(efficiency) || isNaN(hoursPerDay) || isNaN(energyCost)) {
+                alert('Please fill in all required fields');
+                return;
+            }
+            
+            let monthlyConsumption, monthlyCost, annualCost;
+            
+            if (equipmentType === 'ac' || equipmentType === 'heatpump') {
+                // Electric equipment (kWh)
+                const watts = (capacity / efficiency) * 1000;
+                const kWh = (watts / 1000) * hoursPerDay * daysPerMonth;
+                monthlyConsumption = kWh;
+                monthlyCost = kWh * energyCost;
+                annualCost = monthlyCost * 12;
+            } else {
+                // Gas equipment (therms)
+                const thermsPerHour = capacity / (efficiency * 100000);
+                const thermsPerMonth = thermsPerHour * hoursPerDay * daysPerMonth;
+                monthlyConsumption = thermsPerMonth;
+                monthlyCost = thermsPerMonth * energyCost;
+                annualCost = monthlyCost * 12;
+            }
+            
+            const unit = (equipmentType === 'ac' || equipmentType === 'heatpump') ? 'kWh' : 'therms';
+            
+            const resultsHTML = `
+                <h4>Energy Consumption Results</h4>
+                <div class="result-item">
+                    <span>Monthly Consumption:</span>
+                    <span class="result-value">${monthlyConsumption.toFixed(2)} ${unit}</span>
+                </div>
+                <div class="result-item">
+                    <span>Monthly Cost:</span>
+                    <span class="result-value">$${monthlyCost.toFixed(2)}</span>
+                </div>
+                <div class="result-item">
+                    <span>Annual Cost:</span>
+                    <span class="result-value">$${annualCost.toFixed(2)}</span>
+                </div>
+                <div style="margin-top: 20px; padding: 15px; background: rgba(59, 130, 246, 0.1); border-radius: 8px; font-size: 14px;">
+                    <strong>Energy Savings Tips:</strong><br>
+                    • Upgrade to higher efficiency equipment to reduce costs<br>
+                    • Regular maintenance improves efficiency by 5-15%<br>
+                    • Programmable thermostats can save 10-30% on energy bills<br>
+                    • Proper insulation and air sealing reduce load
+                </div>
+            `;
+            
+            document.getElementById('energyResult').innerHTML = resultsHTML;
+            document.getElementById('energyResult').style.display = 'block';
+        }
+        
+        function clearEnergy() {
+            document.getElementById('capacity').value = '';
+            document.getElementById('efficiency').value = '';
+            document.getElementById('hoursPerDay').value = '8';
+            document.getElementById('daysPerMonth').value = '30';
+            document.getElementById('energyCost').value = '0.12';
+            document.getElementById('energyResult').style.display = 'none';
+        }
+        
+        // Duct Leakage Calculator
+        function calculateLeakage() {
+            const testPressure = parseFloat(document.getElementById('testPressure').value);
+            const measuredCFM = parseFloat(document.getElementById('measuredCFM').value);
+            const floorArea = parseFloat(document.getElementById('floorArea').value);
+            const ductLocation = document.getElementById('ductLocation').value;
+            
+            if (isNaN(measuredCFM) || isNaN(floorArea)) {
+                alert('Please enter measured CFM and floor area');
+                return;
+            }
+            
+            const cfm25 = measuredCFM * Math.sqrt(25 / testPressure);
+            const leakageRate = cfm25 / floorArea;
+            
+            // Standards: <6 CFM25/100 sq ft for conditioned, <8 for unconditioned
+            const standard = ductLocation === 'conditioned' ? 6 : 8;
+            const percentage = (leakageRate / standard) * 100;
+            
+            let status, statusClass;
+            if (leakageRate <= standard * 0.75) {
+                status = 'Excellent';
+                statusClass = 'status-good';
+            } else if (leakageRate <= standard) {
+                status = 'Acceptable';
+                statusClass = 'status-good';
+            } else if (leakageRate <= standard * 1.25) {
+                status = 'Marginal';
+                statusClass = 'status-warning';
+            } else {
+                status = 'Excessive';
+                statusClass = 'status-danger';
+            }
+            
+            const resultsHTML = `
+                <h4>Duct Leakage Results</h4>
+                <div class="result-item">
+                    <span>CFM25:</span>
+                    <span class="result-value">${cfm25.toFixed(1)} CFM</span>
+                </div>
+                <div class="result-item">
+                    <span>Leakage Rate:</span>
+                    <span class="result-value">${leakageRate.toFixed(2)} CFM25/100 sq ft</span>
+                </div>
+                <div class="result-item">
+                    <span>Standard:</span>
+                    <span class="result-value">${standard} CFM25/100 sq ft</span>
+                </div>
+                <div class="result-item">
+                    <span>Status:</span>
+                    <span class="status-indicator ${statusClass}">${status}</span>
+                </div>
+                <div style="margin-top: 20px; padding: 15px; background: rgba(59, 130, 246, 0.1); border-radius: 8px; font-size: 14px;">
+                    <strong>Recommendations:</strong><br>
+                    ${leakageRate > standard ? '• Duct sealing recommended to improve efficiency<br>' : ''}
+                    ${leakageRate > standard ? '• Focus on connections, joints, and penetrations<br>' : ''}
+                    ${leakageRate <= standard ? '• Ductwork meets efficiency standards<br>' : ''}
+                    • Proper sealing can improve efficiency by 20% or more<br>
+                    • Use mastic or approved tape, not duct tape
+                </div>
+            `;
+            
+            document.getElementById('leakageResult').innerHTML = resultsHTML;
+            document.getElementById('leakageResult').style.display = 'block';
+        }
+        
+        function clearLeakage() {
+            document.getElementById('testPressure').value = '25';
+            document.getElementById('measuredCFM').value = '';
+            document.getElementById('floorArea').value = '';
+            document.getElementById('leakageResult').style.display = 'none';
+        }
+        
+        // Pressure Drop Calculator
+        function calculatePressureDrop() {
+            const ductLength = parseFloat(document.getElementById('ductLength').value);
+            const ductDiameter = parseFloat(document.getElementById('ductDiameter').value);
+            const airflowCFM = parseFloat(document.getElementById('airflowCFM').value);
+            const numElbows = parseInt(document.getElementById('numElbows').value) || 0;
+            const ductMaterial = document.getElementById('ductMaterial').value;
+            
+            if (isNaN(ductLength) || isNaN(ductDiameter) || isNaN(airflowCFM)) {
+                alert('Please fill in all required fields');
+                return;
+            }
+            
+            // Friction factors
+            const frictionFactors = {
+                smooth: 0.01,
+                flex: 0.03,
+                rough: 0.05
+            };
+            
+            const velocity = (airflowCFM * 144) / (Math.PI * Math.pow(ductDiameter / 2, 2));
+            const velocityPressure = Math.pow(velocity / 4005, 2);
+            
+            // Friction loss per 100 ft
+            const frictionLoss = frictionFactors[ductMaterial] * (ductLength / 100) * velocityPressure;
+            
+            // Elbow losses (simplified)
+            const elbowLoss = numElbows * 0.25 * velocityPressure;
+            
+            const totalPressureDrop = frictionLoss + elbowLoss;
+            
+            let status, statusClass;
+            if (totalPressureDrop <= 0.1) {
+                status = 'Excellent';
+                statusClass = 'status-good';
+            } else if (totalPressureDrop <= 0.15) {
+                status = 'Acceptable';
+                statusClass = 'status-good';
+            } else if (totalPressureDrop <= 0.2) {
+                status = 'Marginal';
+                statusClass = 'status-warning';
+            } else {
+                status = 'Excessive';
+                statusClass = 'status-danger';
+            }
+            
+            const resultsHTML = `
+                <h4>Pressure Drop Results</h4>
+                <div class="result-item">
+                    <span>Air Velocity:</span>
+                    <span class="result-value">${velocity.toFixed(0)} FPM</span>
+                </div>
+                <div class="result-item">
+                    <span>Friction Loss:</span>
+                    <span class="result-value">${frictionLoss.toFixed(3)} in. w.c.</span>
+                </div>
+                <div class="result-item">
+                    <span>Fitting Loss:</span>
+                    <span class="result-value">${elbowLoss.toFixed(3)} in. w.c.</span>
+                </div>
+                <div class="result-item">
+                    <span>Total Pressure Drop:</span>
+                    <span class="result-value">${totalPressureDrop.toFixed(3)} in. w.c.</span>
+                </div>
+                <div class="result-item">
+                    <span>Status:</span>
+                    <span class="status-indicator ${statusClass}">${status}</span>
+                </div>
+                <div style="margin-top: 20px; padding: 15px; background: rgba(59, 130, 246, 0.1); border-radius: 8px; font-size: 14px;">
+                    <strong>Recommendations:</strong><br>
+                    ${velocity > 900 ? '• Velocity is high. Consider larger duct size to reduce noise<br>' : ''}
+                    ${totalPressureDrop > 0.15 ? '• Pressure drop is high. Increase duct size or reduce length<br>' : ''}
+                    ${totalPressureDrop <= 0.15 ? '• Pressure drop is within acceptable range<br>' : ''}
+                    • Target velocity: 600-900 FPM for supply ducts<br>
+                    • Minimize elbows and use long-radius fittings
+                </div>
+            `;
+            
+            document.getElementById('pressureResult').innerHTML = resultsHTML;
+            document.getElementById('pressureResult').style.display = 'block';
+        }
+        
+        function clearPressure() {
+            document.getElementById('ductLength').value = '';
+            document.getElementById('ductDiameter').value = '';
+            document.getElementById('airflowCFM').value = '';
+            document.getElementById('numElbows').value = '0';
+            document.getElementById('pressureResult').style.display = 'none';
+        }
+        
         // Airflow Calculator
         function calculateAirflow() {
-            const returnTemp = parseFloat(document.getElementById('returnTemp').value);
             const supplyTemp = parseFloat(document.getElementById('supplyTemp').value);
-            const systemTons = parseFloat(document.getElementById('systemTons').value);
+            const returnTemp = parseFloat(document.getElementById('returnTemp').value);
+            const systemCapacity = parseFloat(document.getElementById('systemCapacity').value);
             
-            if (!returnTemp || !supplyTemp || !systemTons) {
+            if (isNaN(supplyTemp) || isNaN(returnTemp) || isNaN(systemCapacity)) {
                 alert('Please fill in all fields');
                 return;
             }
             
             const tempSplit = Math.abs(returnTemp - supplyTemp);
-            const cfm = systemTons * 400; // Standard 400 CFM per ton
-            const btuh = cfm * tempSplit * 1.08;
-            const sensibleHeat = btuh * 0.75;
-            const latentHeat = btuh * 0.25;
+            const cfm = systemCapacity / (1.08 * tempSplit);
+            const cfmPerTon = cfm / (systemCapacity / 12000);
             
-            let splitStatus = 'good';
-            let splitText = 'Normal';
-            if (tempSplit < 15) {
-                splitStatus = 'warning';
-                splitText = 'Low - Check airflow';
-            } else if (tempSplit > 25) {
-                splitStatus = 'warning';
-                splitText = 'High - Check system';
+            let splitStatus, cfmStatus;
+            
+            // Cooling: 18-22°F split, Heating: 40-70°F split
+            const isCooling = supplyTemp < returnTemp;
+            
+            if (isCooling) {
+                if (tempSplit >= 18 && tempSplit <= 22) {
+                    splitStatus = '<span class="status-indicator status-good">✓ Good</span>';
+                } else if (tempSplit < 18) {
+                    splitStatus = '<span class="status-indicator status-warning">⚠ Low (Check airflow)</span>';
+                } else {
+                    splitStatus = '<span class="status-indicator status-warning">⚠ High (Check charge)</span>';
+                }
+            } else {
+                if (tempSplit >= 40 && tempSplit <= 70) {
+                    splitStatus = '<span class="status-indicator status-good">✓ Good</span>';
+                } else {
+                    splitStatus = '<span class="status-indicator status-warning">⚠ Check system</span>';
+                }
+            }
+            
+            if (cfmPerTon >= 350 && cfmPerTon <= 450) {
+                cfmStatus = '<span class="status-indicator status-good">✓ Good</span>';
+            } else if (cfmPerTon < 350) {
+                cfmStatus = '<span class="status-indicator status-warning">⚠ Low (Restricted airflow)</span>';
+            } else {
+                cfmStatus = '<span class="status-indicator status-warning">⚠ High (Check ductwork)</span>';
             }
             
             const resultsHTML = `
+                <h4>Airflow Results</h4>
                 <div class="result-item">
                     <span>Temperature Split:</span>
-                    <span class="result-value status-${splitStatus}">${tempSplit.toFixed(1)}°F</span>
+                    <span class="result-value">${tempSplit.toFixed(1)}°F</span>
                 </div>
                 <div class="result-item">
-                    <span>Split Status:</span>
-                    <span class="result-value status-${splitStatus}">${splitText}</span>
+                    <span>Status:</span>
+                    ${splitStatus}
                 </div>
                 <div class="result-item">
-                    <span>Estimated CFM:</span>
+                    <span>Calculated CFM:</span>
                     <span class="result-value">${cfm.toFixed(0)} CFM</span>
                 </div>
                 <div class="result-item">
-                    <span>Total BTUH:</span>
-                    <span class="result-value">${btuh.toFixed(0)} BTUH</span>
+                    <span>CFM per Ton:</span>
+                    <span class="result-value">${cfmPerTon.toFixed(0)} CFM/ton</span>
                 </div>
                 <div class="result-item">
-                    <span>Sensible Heat:</span>
-                    <span class="result-value">${sensibleHeat.toFixed(0)} BTUH</span>
+                    <span>Status:</span>
+                    ${cfmStatus}
                 </div>
-                <div class="result-item">
-                    <span>Latent Heat:</span>
-                    <span class="result-value">${latentHeat.toFixed(0)} BTUH</span>
+                <div style="margin-top: 20px; padding: 15px; background: rgba(59, 130, 246, 0.1); border-radius: 8px; font-size: 14px;">
+                    <strong>Recommendations:</strong><br>
+                    ${cfmPerTon < 350 ? '• Check for dirty filters, blocked coils, or undersized ductwork<br>' : ''}
+                    ${tempSplit < 18 && isCooling ? '• Low split may indicate low airflow or refrigerant issues<br>' : ''}
+                    ${tempSplit > 22 && isCooling ? '• High split may indicate low refrigerant charge<br>' : ''}
+                    • Target: 400 CFM per ton for optimal performance<br>
+                    • Verify with actual airflow measurements when possible
                 </div>
             `;
             
-            document.getElementById('airflowResults').innerHTML = resultsHTML;
+            document.getElementById('airflowResult').innerHTML = resultsHTML;
             document.getElementById('airflowResult').style.display = 'block';
         }
-
+        
+        function clearAirflow() {
+            document.getElementById('supplyTemp').value = '';
+            document.getElementById('returnTemp').value = '';
+            document.getElementById('systemCapacity').value = '';
+            document.getElementById('airflowResult').style.display = 'none';
+        }
+        
         // Electrical Calculator
+        function updateElectricalFields() {
+            const phaseType = document.getElementById('phaseType').value;
+            const powerFactorGroup = document.getElementById('powerFactorGroup');
+            
+            if (phaseType === 'three') {
+                powerFactorGroup.style.display = 'block';
+            } else {
+                powerFactorGroup.style.display = 'none';
+            }
+        }
+        
         function calculateElectrical() {
+            const phaseType = document.getElementById('phaseType').value;
             const voltage = parseFloat(document.getElementById('voltage').value);
             const current = parseFloat(document.getElementById('current').value);
-            const powerFactor = parseFloat(document.getElementById('powerFactor').value);
-            const phase = parseInt(document.getElementById('phase').value);
+            const powerFactor = parseFloat(document.getElementById('powerFactor').value) || 1;
             
-            if (!voltage || !current) {
-                alert('Please fill in voltage and current');
+            if (isNaN(voltage) || isNaN(current)) {
+                alert('Please enter voltage and current');
                 return;
             }
             
-            const pf = powerFactor || 1.0;
             let power, apparentPower;
             
-            if (phase === 1) {
-                power = voltage * current * pf;
+            if (phaseType === 'single') {
                 apparentPower = voltage * current;
+                power = apparentPower; // For single phase, assuming PF = 1
             } else {
-                power = Math.sqrt(3) * voltage * current * pf;
                 apparentPower = Math.sqrt(3) * voltage * current;
+                power = apparentPower * powerFactor;
             }
             
-            const reactivePower = Math.sqrt(Math.pow(apparentPower, 2) - Math.pow(power, 2));
-            const watts = power;
-            const kilowatts = power / 1000;
+            const powerKW = power / 1000;
+            const powerHP = powerKW * 1.341;
             
             const resultsHTML = `
-                <div class="result-item">
-                    <span>Real Power:</span>
-                    <span class="result-value">${watts.toFixed(1)} W (${kilowatts.toFixed(2)} kW)</span>
-                </div>
+                <h4>Electrical Results</h4>
                 <div class="result-item">
                     <span>Apparent Power:</span>
-                    <span class="result-value">${apparentPower.toFixed(1)} VA</span>
+                    <span class="result-value">${apparentPower.toFixed(0)} VA</span>
                 </div>
                 <div class="result-item">
-                    <span>Reactive Power:</span>
-                    <span class="result-value">${reactivePower.toFixed(1)} VAR</span>
+                    <span>Real Power:</span>
+                    <span class="result-value">${power.toFixed(0)} W (${powerKW.toFixed(2)} kW)</span>
                 </div>
+                <div class="result-item">
+                    <span>Horsepower:</span>
+                    <span class="result-value">${powerHP.toFixed(2)} HP</span>
+                </div>
+                ${phaseType === 'three' ? `
                 <div class="result-item">
                     <span>Power Factor:</span>
-                    <span class="result-value">${pf.toFixed(2)}</span>
+                    <span class="result-value">${powerFactor}</span>
                 </div>
-                <div class="result-item">
-                    <span>Phase:</span>
-                    <span class="result-value">${phase === 1 ? 'Single' : 'Three'} Phase</span>
+                ` : ''}
+                <div style="margin-top: 20px; padding: 15px; background: rgba(59, 130, 246, 0.1); border-radius: 8px; font-size: 14px;">
+                    <strong>Safety Notes:</strong><br>
+                    • Always verify voltage and amperage ratings<br>
+                    • Use properly sized wire and breakers<br>
+                    • Follow NEC and local electrical codes<br>
+                    • Consult a licensed electrician for installations
                 </div>
             `;
             
-            document.getElementById('electricalResults').innerHTML = resultsHTML;
+            document.getElementById('electricalResult').innerHTML = resultsHTML;
             document.getElementById('electricalResult').style.display = 'block';
         }
-
-        // Duct Calculator
+        
+        function clearElectrical() {
+            document.getElementById('voltage').value = '';
+            document.getElementById('current').value = '';
+            document.getElementById('powerFactor').value = '0.9';
+            document.getElementById('electricalResult').style.display = 'none';
+        }
+        
+        // Duct Sizing Calculator
         function updateDuctFields() {
-            const shape = document.getElementById('ductShape').value;
-            const dimensionsDiv = document.getElementById('ductDimensions');
+            const ductShape = document.getElementById('ductShape').value;
+            const rectangularInputs = document.getElementById('rectangularInputs');
             
-            if (shape === 'round') {
-                dimensionsDiv.innerHTML = `
-                    <div class="input-group">
-                        <label>Diameter (inches) - Optional</label>
-                        <input type="number" id="diameter" placeholder="Leave blank to calculate" step="0.1">
-                    </div>
-                `;
+            if (ductShape === 'rectangular') {
+                rectangularInputs.style.display = 'block';
             } else {
-                dimensionsDiv.innerHTML = `
-                    <div class="input-group">
-                        <label>Width (inches) - Optional</label>
-                        <input type="number" id="width" placeholder="Leave blank to calculate" step="0.1">
-                    </div>
-                    <div class="input-group">
-                        <label>Height (inches) - Optional</label>
-                        <input type="number" id="height" placeholder="Leave blank to calculate" step="0.1">
-                    </div>
-                `;
+                rectangularInputs.style.display = 'none';
             }
         }
-
+        
         function calculateDuct() {
-            const cfm = parseFloat(document.getElementById('ductCfm').value);
-            const velocity = parseFloat(document.getElementById('velocity').value);
-            const shape = document.getElementById('ductShape').value;
+            const ductShape = document.getElementById('ductShape').value;
+            const ductCFM = parseFloat(document.getElementById('ductCFM').value);
+            const targetVelocity = parseFloat(document.getElementById('targetVelocity').value);
             
-            if (!cfm || !velocity) {
-                alert('Please enter CFM and velocity');
+            if (isNaN(ductCFM) || isNaN(targetVelocity)) {
+                alert('Please enter CFM and target velocity');
                 return;
             }
             
-            const area = cfm / velocity; // Area in square feet
-            let diameter = 0;
-            let width = 0;
-            let height = 0;
+            let resultsHTML = '<h4>Duct Sizing Results</h4>';
             
-            if (shape === 'round') {
-                const diameterInput = document.getElementById('diameter');
-                if (diameterInput && diameterInput.value) {
-                    diameter = parseFloat(diameterInput.value);
-                } else {
-                    diameter = Math.sqrt(area * 144 / Math.PI) * 2; // Calculate diameter in inches
-                }
-            } else {
-                const widthInput = document.getElementById('width');
-                const heightInput = document.getElementById('height');
+            if (ductShape === 'round') {
+                const area = (ductCFM * 144) / targetVelocity;
+                const diameter = Math.sqrt((4 * area) / Math.PI);
+                const standardSizes = [4, 5, 6, 7, 8, 9, 10, 12, 14, 16, 18, 20, 22, 24];
+                const recommendedSize = standardSizes.find(size => size >= diameter) || standardSizes[standardSizes.length - 1];
                 
-                if (widthInput && widthInput.value && heightInput && heightInput.value) {
-                    width = parseFloat(widthInput.value);
-                    height = parseFloat(heightInput.value);
-                } else {
-                    const ratio = 1.5; // Common aspect ratio
-                    height = Math.sqrt(area * 144 / ratio);
-                    width = height * ratio;
-                }
+                resultsHTML += `
+                    <div class="result-item">
+                        <span>Calculated Diameter:</span>
+                        <span class="result-value">${diameter.toFixed(1)} inches</span>
+                    </div>
+                    <div class="result-item">
+                        <span>Recommended Size:</span>
+                        <span class="result-value">${recommendedSize}" round duct</span>
+                    </div>
+                    <div class="result-item">
+                        <span>Actual Velocity:</span>
+                        <span class="result-value">${((ductCFM * 144) / (Math.PI * Math.pow(recommendedSize / 2, 2))).toFixed(0)} FPM</span>
+                    </div>
+                `;
+            } else {
+                const aspectRatio = parseFloat(document.getElementById('aspectRatio').value);
+                const area = (ductCFM * 144) / targetVelocity;
+                const height = Math.sqrt(area / aspectRatio);
+                const width = height * aspectRatio;
+                
+                resultsHTML += `
+                    <div class="result-item">
+                        <span>Calculated Width:</span>
+                        <span class="result-value">${width.toFixed(1)} inches</span>
+                    </div>
+                    <div class="result-item">
+                        <span>Calculated Height:</span>
+                        <span class="result-value">${height.toFixed(1)} inches</span>
+                    </div>
+                    <div class="result-item">
+                        <span>Recommended Size:</span>
+                        <span class="result-value">${Math.ceil(width)}" × ${Math.ceil(height)}"</span>
+                    </div>
+                    <div class="result-item">
+                        <span>Actual Velocity:</span>
+                        <span class="result-value">${((ductCFM * 144) / (Math.ceil(width) * Math.ceil(height))).toFixed(0)} FPM</span>
+                    </div>
+                `;
             }
             
-            const resultsHTML = `
-                <div class="result-item">
-                    <span>Required Area:</span>
-                    <span class="result-value">${area.toFixed(2)} sq ft</span>
-                </div>
-                <div class="result-item">
-                    <span>Duct Shape:</span>
-                    <span class="result-value">${shape.charAt(0).toUpperCase() + shape.slice(1)}</span>
-                </div>
-                ${shape === 'round' ? `
-                <div class="result-item">
-                    <span>Diameter:</span>
-                    <span class="result-value">${diameter.toFixed(1)} inches</span>
-                </div>
-                ` : `
-                <div class="result-item">
-                    <span>Width:</span>
-                    <span class="result-value">${width.toFixed(1)} inches</span>
-                </div>
-                <div class="result-item">
-                    <span>Height:</span>
-                    <span class="result-value">${height.toFixed(1)} inches</span>
-                </div>
-                `}
-                <div class="result-item">
-                    <span>Velocity:</span>
-                    <span class="result-value">${velocity} FPM</span>
-                </div>
-                <div class="result-item">
-                    <span>CFM:</span>
-                    <span class="result-value">${cfm} CFM</span>
+            resultsHTML += `
+                <div style="margin-top: 20px; padding: 15px; background: rgba(59, 130, 246, 0.1); border-radius: 8px; font-size: 14px;">
+                    <strong>Design Guidelines:</strong><br>
+                    • Supply ducts: 600-900 FPM<br>
+                    • Return ducts: 500-700 FPM<br>
+                    • Main trunks: 700-1000 FPM<br>
+                    • Higher velocities increase noise and pressure drop
                 </div>
             `;
             
-            document.getElementById('ductResults').innerHTML = resultsHTML;
+            document.getElementById('ductResult').innerHTML = resultsHTML;
             document.getElementById('ductResult').style.display = 'block';
         }
-
+        
+        function clearDuct() {
+            document.getElementById('ductCFM').value = '';
+            document.getElementById('targetVelocity').value = '700';
+            document.getElementById('ductResult').style.display = 'none';
+        }
+        
         // Service Log Functions
         function saveServiceLog() {
             const date = document.getElementById('serviceDate').value;
@@ -697,30 +1761,32 @@
                 timestamp: new Date().toLocaleString()
             };
             
-            let serviceLogs = JSON.parse(localStorage.getItem('ninja_ai_service_logs') || '[]');
+            let serviceLogs = JSON.parse(localStorage.getItem('servicepro_service_logs') || '[]');
             serviceLogs.unshift(logEntry);
             
             if (serviceLogs.length > 100) {
                 serviceLogs = serviceLogs.slice(0, 100);
             }
             
-            localStorage.setItem('ninja_ai_service_logs', JSON.stringify(serviceLogs));
+            localStorage.setItem('servicepro_service_logs', JSON.stringify(serviceLogs));
             
-            alert('✅ Service log saved successfully!');
+            showSyncStatus('Service log saved and synced with dashboard!');
+            
+            // Clear form
             document.getElementById('techNotes').value = '';
             document.getElementById('customerName').value = '';
         }
-
+        
         function viewServiceLog() {
-            const serviceLogs = JSON.parse(localStorage.getItem('ninja_ai_service_logs') || '[]');
+            const serviceLogs = JSON.parse(localStorage.getItem('servicepro_service_logs') || '[]');
             
             if (serviceLogs.length === 0) {
                 alert('No service logs found');
                 return;
             }
             
-            let logsHTML = '';
-            serviceLogs.forEach(log => {
+            let logsHTML = '<h4>Service History</h4>';
+            serviceLogs.slice(0, 10).forEach(log => {
                 logsHTML += `
                     <div style="border: 2px solid rgba(59, 130, 246, 0.3); padding: 20px; margin: 15px 0; border-radius: 10px; background: rgba(10, 14, 39, 0.5);">
                         <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
@@ -736,10 +1802,20 @@
                 `;
             });
             
-            document.getElementById('serviceLogResults').innerHTML = logsHTML;
+            if (serviceLogs.length > 10) {
+                logsHTML += `<p style="text-align: center; opacity: 0.7; margin-top: 15px;">Showing 10 most recent logs. Total: ${serviceLogs.length}</p>`;
+            }
+            
+            document.getElementById('serviceLogResult').innerHTML = logsHTML;
             document.getElementById('serviceLogResult').style.display = 'block';
         }
-
+        
+        function clearServiceLog() {
+            document.getElementById('customerName').value = '';
+            document.getElementById('techNotes').value = '';
+            document.getElementById('serviceLogResult').style.display = 'none';
+        }
+        
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
             console.log('ServicePro Elite HVAC Calculator initialized');
@@ -748,8 +1824,9 @@
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('serviceDate').value = today;
             
-            // Initialize duct fields
+            // Initialize fields
             updateDuctFields();
+            updateElectricalFields();
         });
     </script>
 </body>
