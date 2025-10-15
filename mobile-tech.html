@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#667eea">
+    <title>ServicePro Elite - Mobile Tech App</title>
+    <link rel="manifest" href="manifest.json">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            min-height: 100vh; 
+            color: white;
+            overflow-x: hidden;
+            padding-bottom: 80px;
+        }
+        
+        /* Header */
+        .header { 
+            background: rgba(255, 255, 255, 0.1); 
+            padding: 15px 20px; 
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .logo { font-size: 20px; font-weight: bold; }
+        .status { 
+            display: flex; 
+            align-items: center; 
+            gap: 10px;
+            font-size: 14px;
+        }
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #4ade80;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        /* Quick Actions */
+        .quick-actions {
+            padding: 20px;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+        .quick-action {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 15px;
+            padding: 25px 15px;
+            text-align: center;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .quick-action:active {
+            transform: scale(0.95);
+            background: rgba(255, 255, 255, 0.25);
+        }
+        .quick-action-icon {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+        .quick-action-label {
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        /* Today's Jobs */
+        .section {
+            padding: 20px;
+        }
+        .section-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .job-card {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+        .job-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .job-id {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .job-priority {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .priority-high { background: #ef4444; }
+        .priority-medium { background: #f59e0b; }
+        .priority-normal { background: #10b981; }
+        .job-info {
+            margin: 10px 0;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+        .job-info strong {
+            display: inline-block;
+            width: 80px;
+        }
+        .job-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn-primary {
+            background: white;
+            color: #667eea;
+        }
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+        .btn:active {
+            transform: scale(0.95);
+        }
+        
+        /* Calculator Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+        .modal.active {
+            display: block;
+        }
+        .modal-content {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 20px;
+            padding: 25px;
+            border-radius: 20px;
+            max-width: 500px;
+            margin: 20px auto;
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .modal-title {
+            font-size: 22px;
+            font-weight: bold;
+        }
+        .close-btn {
+            font-size: 28px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: white;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+        }
+        .input-group {
+            margin: 15px 0;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        .input-group input,
+        .input-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            font-size: 16px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        .input-group input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        .result {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .result-value {
+            font-weight: bold;
+        }
+        
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .nav-item {
+            text-align: center;
+            padding: 10px;
+            cursor: pointer;
+            flex: 1;
+            transition: all 0.3s;
+        }
+        .nav-item:active {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        .nav-icon {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        .nav-label {
+            font-size: 11px;
+        }
+        
+        /* Voice Recording */
+        .voice-recording {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #ef4444;
+            color: white;
+            padding: 20px 40px;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: bold;
+            display: none;
+            animation: recordPulse 1s infinite;
+        }
+        .voice-recording.active {
+            display: block;
+        }
+        @keyframes recordPulse {
+            0%, 100% { transform: translateX(-50%) scale(1); }
+            50% { transform: translateX(-50%) scale(1.05); }
+        }
+    </style>
+<script src="https://sites.super.myninja.ai/_assets/ninja-daytona-script.js"></script>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="logo">⚡ ServicePro Elite</div>
+        <div class="status">
+            <span class="status-dot"></span>
+            <span id="statusText">Online</span>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="quick-actions">
+        <div class="quick-action" onclick="openCalculator()">
+            <div class="quick-action-icon">🔧</div>
+            <div class="quick-action-label">Calculator</div>
+        </div>
+        <div class="quick-action" onclick="startVoiceEntry()">
+            <div class="quick-action-icon">🎤</div>
+            <div class="quick-action-label">Voice Entry</div>
+        </div>
+        <div class="quick-action" onclick="takePhoto()">
+            <div class="quick-action-icon">📷</div>
+            <div class="quick-action-label">Take Photo</div>
+        </div>
+        <div class="quick-action" onclick="getDirections()">
+            <div class="quick-action-icon">🗺️</div>
+            <div class="quick-action-label">Directions</div>
+        </div>
+    </div>
+
+    <!-- Today's Jobs -->
+    <div class="section">
+        <div class="section-title">
+            <span>Today's Jobs</span>
+            <span style="font-size: 14px; opacity: 0.8;">3 active</span>
+        </div>
+
+        <div class="job-card">
+            <div class="job-header">
+                <div class="job-id">#1001</div>
+                <div class="job-priority priority-high">HIGH</div>
+            </div>
+            <div class="job-info">
+                <div><strong>Customer:</strong> John Smith</div>
+                <div><strong>Type:</strong> AC Repair - No Cooling</div>
+                <div><strong>Address:</strong> 123 Main St, City</div>
+                <div><strong>Time:</strong> 10:00 AM - 11:00 AM</div>
+            </div>
+            <div class="job-actions">
+                <button class="btn btn-primary" onclick="startJob(1001)">Start Job</button>
+                <button class="btn btn-secondary" onclick="viewJobDetails(1001)">Details</button>
+            </div>
+        </div>
+
+        <div class="job-card">
+            <div class="job-header">
+                <div class="job-id">#1002</div>
+                <div class="job-priority priority-medium">MEDIUM</div>
+            </div>
+            <div class="job-info">
+                <div><strong>Customer:</strong> Sarah Johnson</div>
+                <div><strong>Type:</strong> Maintenance - Annual Service</div>
+                <div><strong>Address:</strong> 456 Oak Ave, City</div>
+                <div><strong>Time:</strong> 1:00 PM - 2:00 PM</div>
+            </div>
+            <div class="job-actions">
+                <button class="btn btn-primary" onclick="startJob(1002)">Start Job</button>
+                <button class="btn btn-secondary" onclick="viewJobDetails(1002)">Details</button>
+            </div>
+        </div>
+
+        <div class="job-card">
+            <div class="job-header">
+                <div class="job-id">#1003</div>
+                <div class="job-priority priority-normal">NORMAL</div>
+            </div>
+            <div class="job-info">
+                <div><strong>Customer:</strong> Mike Davis</div>
+                <div><strong>Type:</strong> Installation - 3 Ton AC</div>
+                <div><strong>Address:</strong> 789 Pine Rd, City</div>
+                <div><strong>Time:</strong> 3:00 PM - 5:00 PM</div>
+            </div>
+            <div class="job-actions">
+                <button class="btn btn-primary" onclick="startJob(1003)">Start Job</button>
+                <button class="btn btn-secondary" onclick="viewJobDetails(1003)">Details</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Calculator Modal -->
+    <div id="calculatorModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Quick Calculator</div>
+                <button class="close-btn" onclick="closeCalculator()">×</button>
+            </div>
+
+            <div class="input-group">
+                <label>Calculator Type</label>
+                <select id="calcType" onchange="updateCalculatorFields()">
+                    <option value="superheat">Superheat/Subcooling</option>
+                    <option value="airflow">Airflow</option>
+                    <option value="electrical">Electrical</option>
+                </select>
+            </div>
+
+            <div id="calculatorFields">
+                <!-- Dynamic fields will be inserted here -->
+            </div>
+
+            <button class="btn btn-primary" style="width: 100%; margin-top: 15px;" onclick="calculate()">Calculate</button>
+
+            <div id="calculatorResult" class="result" style="display: none;">
+                <h4 style="margin-bottom: 15px;">Results</h4>
+                <div id="resultContent"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Voice Recording Indicator -->
+    <div id="voiceRecording" class="voice-recording">
+        🎤 Recording...
+    </div>
+
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+        <div class="nav-item" onclick="showJobs()">
+            <div class="nav-icon">📋</div>
+            <div class="nav-label">Jobs</div>
+        </div>
+        <div class="nav-item" onclick="openCalculator()">
+            <div class="nav-icon">🔧</div>
+            <div class="nav-label">Tools</div>
+        </div>
+        <div class="nav-item" onclick="showInventory()">
+            <div class="nav-icon">📦</div>
+            <div class="nav-label">Parts</div>
+        </div>
+        <div class="nav-item" onclick="showProfile()">
+            <div class="nav-icon">👤</div>
+            <div class="nav-label">Profile</div>
+        </div>
+    </div>
+
+    <script>
+        // Check online/offline status
+        function updateOnlineStatus() {
+            const statusText = document.getElementById('statusText');
+            if (navigator.onLine) {
+                statusText.textContent = 'Online';
+            } else {
+                statusText.textContent = 'Offline';
+            }
+        }
+
+        window.addEventListener('online', updateOnlineStatus);
+        window.addEventListener('offline', updateOnlineStatus);
+
+        // Calculator Functions
+        function openCalculator() {
+            document.getElementById('calculatorModal').classList.add('active');
+            updateCalculatorFields();
+        }
+
+        function closeCalculator() {
+            document.getElementById('calculatorModal').classList.remove('active');
+        }
+
+        function updateCalculatorFields() {
+            const calcType = document.getElementById('calcType').value;
+            const fieldsDiv = document.getElementById('calculatorFields');
+
+            if (calcType === 'superheat') {
+                fieldsDiv.innerHTML = `
+                    <div class="input-group">
+                        <label>Suction Pressure (PSIG)</label>
+                        <input type="number" id="suctionPressure" placeholder="e.g., 65">
+                    </div>
+                    <div class="input-group">
+                        <label>Suction Temperature (°F)</label>
+                        <input type="number" id="suctionTemp" placeholder="e.g., 45">
+                    </div>
+                `;
+            } else if (calcType === 'airflow') {
+                fieldsDiv.innerHTML = `
+                    <div class="input-group">
+                        <label>Return Air Temp (°F)</label>
+                        <input type="number" id="returnTemp" placeholder="e.g., 75">
+                    </div>
+                    <div class="input-group">
+                        <label>Supply Air Temp (°F)</label>
+                        <input type="number" id="supplyTemp" placeholder="e.g., 55">
+                    </div>
+                    <div class="input-group">
+                        <label>System Tons</label>
+                        <input type="number" id="systemTons" placeholder="e.g., 3">
+                    </div>
+                `;
+            } else if (calcType === 'electrical') {
+                fieldsDiv.innerHTML = `
+                    <div class="input-group">
+                        <label>Voltage (V)</label>
+                        <input type="number" id="voltage" placeholder="e.g., 240">
+                    </div>
+                    <div class="input-group">
+                        <label>Current (A)</label>
+                        <input type="number" id="current" placeholder="e.g., 15">
+                    </div>
+                `;
+            }
+        }
+
+        function calculate() {
+            const calcType = document.getElementById('calcType').value;
+            let resultHTML = '';
+
+            if (calcType === 'superheat') {
+                const pressure = parseFloat(document.getElementById('suctionPressure').value);
+                const temp = parseFloat(document.getElementById('suctionTemp').value);
+                
+                if (!pressure || !temp) {
+                    alert('Please fill in all fields');
+                    return;
+                }
+
+                const superheat = temp - (pressure * 0.8);
+                const status = superheat < 5 ? 'Low' : superheat > 25 ? 'High' : 'Normal';
+                
+                resultHTML = `
+                    <div class="result-item">
+                        <span>Superheat:</span>
+                        <span class="result-value">${superheat.toFixed(1)}°F</span>
+                    </div>
+                    <div class="result-item">
+                        <span>Status:</span>
+                        <span class="result-value">${status}</span>
+                    </div>
+                `;
+            } else if (calcType === 'airflow') {
+                const returnTemp = parseFloat(document.getElementById('returnTemp').value);
+                const supplyTemp = parseFloat(document.getElementById('supplyTemp').value);
+                const tons = parseFloat(document.getElementById('systemTons').value);
+                
+                if (!returnTemp || !supplyTemp || !tons) {
+                    alert('Please fill in all fields');
+                    return;
+                }
+
+                const tempSplit = Math.abs(returnTemp - supplyTemp);
+                const cfm = tons * 400;
+                
+                resultHTML = `
+                    <div class="result-item">
+                        <span>Temp Split:</span>
+                        <span class="result-value">${tempSplit.toFixed(1)}°F</span>
+                    </div>
+                    <div class="result-item">
+                        <span>CFM:</span>
+                        <span class="result-value">${cfm} CFM</span>
+                    </div>
+                `;
+            } else if (calcType === 'electrical') {
+                const voltage = parseFloat(document.getElementById('voltage').value);
+                const current = parseFloat(document.getElementById('current').value);
+                
+                if (!voltage || !current) {
+                    alert('Please fill in all fields');
+                    return;
+                }
+
+                const power = voltage * current;
+                
+                resultHTML = `
+                    <div class="result-item">
+                        <span>Power:</span>
+                        <span class="result-value">${power.toFixed(0)} W</span>
+                    </div>
+                    <div class="result-item">
+                        <span>kW:</span>
+                        <span class="result-value">${(power/1000).toFixed(2)} kW</span>
+                    </div>
+                `;
+            }
+
+            document.getElementById('resultContent').innerHTML = resultHTML;
+            document.getElementById('calculatorResult').style.display = 'block';
+        }
+
+        // Voice Entry
+        function startVoiceEntry() {
+            const voiceIndicator = document.getElementById('voiceRecording');
+            voiceIndicator.classList.add('active');
+            
+            // Simulate voice recording
+            setTimeout(() => {
+                voiceIndicator.classList.remove('active');
+                alert('Voice entry: "Customer reports AC not cooling. Checked refrigerant levels, found system low on R-410A. Added 2 lbs refrigerant. System now cooling properly."');
+            }, 3000);
+        }
+
+        // Photo
+        function takePhoto() {
+            alert('📷 Camera would open here\n\nIn the full app, this would:\n• Open device camera\n• Take photo of equipment\n• Attach to job\n• Upload when online');
+        }
+
+        // Directions
+        function getDirections() {
+            alert('🗺️ Opening directions to next job...\n\nIn the full app, this would:\n• Open Google Maps\n• Show route to job location\n• Provide turn-by-turn navigation\n• Show traffic conditions');
+        }
+
+        // Job Functions
+        function startJob(jobId) {
+            alert(`Starting Job #${jobId}\n\n✓ Timer started\n✓ GPS location recorded\n✓ Customer notified\n\nReady to begin work!`);
+        }
+
+        function viewJobDetails(jobId) {
+            alert(`Job #${jobId} Details\n\nCustomer History:\n• Last service: 6 months ago\n• Equipment: Carrier 3-ton AC\n• Warranty: Active\n• Notes: Prefers morning appointments`);
+        }
+
+        // Navigation Functions
+        function showJobs() {
+            alert('Jobs view - showing all scheduled jobs');
+        }
+
+        function showInventory() {
+            alert('Parts Inventory:\n\nOn Truck:\n• R-410A: 15 lbs\n• Filters 16x20: 12\n• Capacitors: 8\n• Contactors: 5\n\nNeed to reorder: R-410A');
+        }
+
+        function showProfile() {
+            alert('Technician Profile:\n\nName: John Tech\nID: TECH-001\nToday: 3 jobs\nCompleted this week: 12\nRating: 4.9/5.0');
+        }
+
+        // Initialize
+        updateOnlineStatus();
+        console.log('ServicePro Elite Mobile Tech App loaded');
+    </script>
+</body>
+</html>

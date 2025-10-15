@@ -1,0 +1,48 @@
+{
+  "name": "ServicePro Elite - Mobile Tech App",
+  "short_name": "ServicePro",
+  "description": "Smart Field-Service Management for HVAC Technicians",
+  "start_url": "/mobile-tech.html",
+  "display": "standalone",
+  "background_color": "#667eea",
+  "theme_color": "#667eea",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["business", "productivity", "utilities"],
+  "screenshots": [
+    {
+      "src": "screenshot1.png",
+      "sizes": "540x720",
+      "type": "image/png"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Today's Jobs",
+      "short_name": "Jobs",
+      "description": "View today's scheduled jobs",
+      "url": "/mobile-tech.html",
+      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "HVAC Calculator",
+      "short_name": "Calculator",
+      "description": "Quick HVAC calculations",
+      "url": "/hvac-calculator.html",
+      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}
