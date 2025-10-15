@@ -3,766 +3,754 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ServicePro Elite - Ultimate HVAC Calculator Suite</title>
+    <title>Ninja AI - HVAC Calculator Suite</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; }
-        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
-        .header { background: white; border-radius: 15px; padding: 30px; margin-bottom: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
-        .logo { font-size: 28px; font-weight: bold; color: #667eea; margin-bottom: 10px; }
-        .tagline { color: #666; font-size: 16px; }
-        .nav-tabs { display: flex; gap: 10px; margin-bottom: 30px; flex-wrap: wrap; }
-        .nav-tab { background: white; border: 2px solid #667eea; color: #667eea; padding: 10px 20px; border-radius: 8px; cursor: pointer; transition: all 0.3s; }
-        .nav-tab.active { background: #667eea; color: white; }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-        .calculator-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(500px, 1fr)); gap: 30px; }
-        .calculator { background: white; border-radius: 15px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
-        .calculator h3 { color: #667eea; margin-bottom: 20px; font-size: 20px; }
-        .input-group { margin: 15px 0; }
-        .input-group label { display: block; margin-bottom: 5px; color: #333; font-weight: 500; }
-        .input-group input, .input-group select { width: 100%; padding: 12px; border: 2px solid #e1e5e9; border-radius: 8px; font-size: 16px; transition: border-color 0.3s; }
-        .input-group input:focus, .input-group select:focus { outline: none; border-color: #667eea; }
-        .result { background: #f8f9fa; padding: 20px; border-radius: 10px; margin-top: 20px; border-left: 4px solid #667eea; }
-        .result h4 { color: #667eea; margin-bottom: 15px; }
-        .result-item { display: flex; justify-content: space-between; margin: 10px 0; padding: 8px 0; border-bottom: 1px solid #e1e5e9; }
-        .result-value { font-weight: bold; color: #2c3e50; }
-        .status-good { color: #27ae60; }
-        .status-bad { color: #e74c3c; }
-        .status-warning { color: #f39c12; }
-        .btn { background: #667eea; color: white; padding: 12px 24px; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; margin: 10px 5px; transition: background 0.3s; }
-        .btn:hover { background: #764ba2; }
-        .offline-indicator { background: #27ae60; color: white; padding: 10px 20px; border-radius: 20px; display: inline-block; font-size: 14px; margin: 10px 0; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%); 
+            min-height: 100vh; 
+            color: white;
+            padding: 20px;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        
+        .header { 
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); 
+            border-radius: 20px; 
+            padding: 30px; 
+            margin-bottom: 30px; 
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(59, 130, 246, 0.3);
+        }
+        .logo { font-size: 36px; font-weight: bold; margin-bottom: 10px; }
+        .tagline { font-size: 18px; opacity: 0.9; }
+        
+        .nav-tabs { 
+            display: flex; 
+            gap: 10px; 
+            margin-bottom: 30px; 
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .nav-tab { 
+            background: rgba(30, 58, 138, 0.5); 
+            border: 2px solid rgba(59, 130, 246, 0.3); 
+            color: white; 
+            padding: 15px 25px; 
+            border-radius: 10px; 
+            cursor: pointer; 
+            transition: all 0.3s;
+            font-size: 16px;
+            font-weight: 600;
+        }
+        .nav-tab:hover {
+            border-color: #60a5fa;
+            transform: translateY(-2px);
+        }
+        .nav-tab.active { 
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); 
+            border-color: #60a5fa;
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.4);
+        }
+        
+        .tab-content { 
+            display: none; 
+        }
+        .tab-content.active { 
+            display: block; 
+            animation: fadeIn 0.3s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .calculator { 
+            background: rgba(30, 58, 138, 0.4); 
+            border-radius: 20px; 
+            padding: 40px; 
+            border: 2px solid rgba(59, 130, 246, 0.3);
+            backdrop-filter: blur(10px);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .calculator h3 { 
+            color: #60a5fa; 
+            margin-bottom: 25px; 
+            font-size: 28px; 
+        }
+        
+        .input-group { 
+            margin: 20px 0; 
+        }
+        .input-group label { 
+            display: block; 
+            margin-bottom: 8px; 
+            font-weight: 500; 
+            color: #93c5fd;
+        }
+        .input-group input, 
+        .input-group select, 
+        .input-group textarea { 
+            width: 100%; 
+            padding: 15px; 
+            border: 2px solid rgba(59, 130, 246, 0.3); 
+            border-radius: 10px; 
+            font-size: 16px; 
+            background: rgba(10, 14, 39, 0.5);
+            color: white;
+            transition: border-color 0.3s;
+        }
+        .input-group input:focus, 
+        .input-group select:focus, 
+        .input-group textarea:focus { 
+            outline: none; 
+            border-color: #60a5fa; 
+        }
+        
+        .result { 
+            background: rgba(10, 14, 39, 0.7); 
+            padding: 25px; 
+            border-radius: 15px; 
+            margin-top: 25px; 
+            border-left: 4px solid #60a5fa;
+        }
+        .result h4 { 
+            color: #60a5fa; 
+            margin-bottom: 20px; 
+            font-size: 22px;
+        }
+        .result-item { 
+            display: flex; 
+            justify-content: space-between; 
+            margin: 15px 0; 
+            padding: 12px 0; 
+            border-bottom: 1px solid rgba(59, 130, 246, 0.2);
+            font-size: 16px;
+        }
+        .result-value { 
+            font-weight: bold; 
+            color: #93c5fd; 
+        }
+        .status-good { color: #4ade80; }
+        .status-bad { color: #f87171; }
+        .status-warning { color: #fbbf24; }
+        
+        .btn { 
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); 
+            color: white; 
+            padding: 15px 35px; 
+            border: none; 
+            border-radius: 10px; 
+            cursor: pointer; 
+            font-size: 18px; 
+            font-weight: 600;
+            margin: 10px 5px; 
+            transition: all 0.3s;
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.3);
+        }
+        .btn:hover { 
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(59, 130, 246, 0.5);
+        }
+        .btn-secondary {
+            background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+        }
+        
+        .offline-indicator { 
+            background: rgba(74, 222, 128, 0.2); 
+            color: #4ade80; 
+            padding: 12px 25px; 
+            border-radius: 25px; 
+            display: inline-block; 
+            font-size: 14px; 
+            margin: 15px 0;
+            border: 2px solid #4ade80;
+        }
+        
+        @media (max-width: 768px) {
+            .nav-tabs { flex-direction: column; }
+            .nav-tab { width: 100%; text-align: center; }
+            .calculator { padding: 25px; }
+        }
     </style>
 <script src="https://sites.super.myninja.ai/_assets/ninja-daytona-script.js"></script>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <div class="logo">ServicePro Elite - Ultimate HVAC Calculator Suite</div>
-            <div class="tagline">Professional Tools for HVAC Technicians - 100% Offline Capable</div>
-            <div class="offline-indicator">📱 OFFLINE READY - All calculations work without internet</div>
+            <div class="logo">🥷 Ninja AI - HVAC Calculator Suite</div>
+            <div class="tagline">Professional Tools for HVAC Technicians</div>
+            <div class="offline-indicator">📱 100% OFFLINE CAPABLE - Works without internet</div>
         </div>
 
         <div class="nav-tabs">
-            <button class="nav-tab active" onclick="showTab('refrigeration')">❄️ Refrigeration</button>
-            <button class="nav-tab" onclick="showTab('airflow')">🌪️ Airflow</button>
-            <button class="nav-tab" onclick="showTab('electrical')">⚡ Electrical</button>
-            <button class="nav-tab" onclick="showTab('duct')">📏 Duct</button>
-            <button class="nav-tab" onclick="showTab('log')">📝 Service Log</button>
+            <button class="nav-tab active" onclick="switchTab('refrigeration')">❄️ Refrigeration</button>
+            <button class="nav-tab" onclick="switchTab('airflow')">🌪️ Airflow</button>
+            <button class="nav-tab" onclick="switchTab('electrical')">⚡ Electrical</button>
+            <button class="nav-tab" onclick="switchTab('duct')">📏 Duct</button>
+            <button class="nav-tab" onclick="switchTab('log')">📝 Service Log</button>
         </div>
 
-        <!-- Refrigeration Performance Calculator -->
+        <!-- ❄️ REFRIGERATION TAB -->
         <div id="refrigeration" class="tab-content active">
-            <div class="calculator-grid">
-                <div class="calculator">
-                    <h3>❄️ System Performance Calculator</h3>
-                    <div class="input-group">
-                        <label>Refrigerant Type:</label>
-                        <select id="refrigerant-type">
-                            <option value="r410a">R-410A</option>
-                            <option value="r22">R-22</option>
-                            <option value="r32">R-32</option>
-                            <option value="r454b">R-454B</option>
-                        </select>
-                    </div>
-                    <div class="input-group">
-                        <label>Suction Pressure (PSI):</label>
-                        <input type="number" id="suction-pressure" placeholder="125" step="0.1">
-                    </div>
-                    <div class="input-group">
-                        <label>Liquid Pressure (PSI):</label>
-                        <input type="number" id="liquid-pressure" placeholder="300" step="0.1">
-                    </div>
-                    <div class="input-group">
-                        <label>Suction Line Temp (°F):</label>
-                        <input type="number" id="suction-temp" placeholder="55" step="0.1">
-                    </div>
-                    <div class="input-group">
-                        <label>Liquid Line Temp (°F):</label>
-                        <input type="number" id="liquid-temp" placeholder="95" step="0.1">
-                    </div>
-                    <div class="input-group">
-                        <label>Indoor Wet Bulb (°F):</label>
-                        <input type="number" id="indoor-wb" placeholder="67" step="0.1">
-                    </div>
-                    <div class="input-group">
-                        <label>Outdoor Dry Bulb (°F):</label>
-                        <input type="number" id="outdoor-db" placeholder="85" step="0.1">
-                    </div>
-                    <button class="btn" onclick="calculateRefrigeration()">Calculate Performance</button>
-                    <div id="refrigeration-result" class="result" style="display:none;">
-                        <h4>📊 System Analysis Results</h4>
-                        <div id="refrigeration-data"></div>
-                    </div>
+            <div class="calculator">
+                <h3>❄️ Superheat/Subcooling Calculator</h3>
+                <div class="input-group">
+                    <label>Suction Pressure (PSIG)</label>
+                    <input type="number" id="suctionPressure" placeholder="e.g., 65" step="0.1">
                 </div>
-
-                <div class="calculator">
-                    <h3>📋 Quick Reference</h3>
-                    <div class="result">
-                        <h4>Target Ranges</h4>
-                        <div class="result-item"><span>Superheat:</span><span class="result-value">5-20°F</span></div>
-                        <div class="result-item"><span>Subcooling:</span><span class="result-value">5-15°F</span></div>
-                        <div class="result-item"><span>Temp Split:</span><span class="result-value">15-22°F</span></div>
-                        <div class="result-item"><span>Capacitor Tolerance:</span><span class="result-value">±6%</span></div>
-                    </div>
+                <div class="input-group">
+                    <label>Suction Temperature (°F)</label>
+                    <input type="number" id="suctionTemp" placeholder="e.g., 45" step="0.1">
+                </div>
+                <div class="input-group">
+                    <label>Liquid Line Temperature (°F)</label>
+                    <input type="number" id="liquidTemp" placeholder="e.g., 105" step="0.1">
+                </div>
+                <div class="input-group">
+                    <label>Liquid Line Pressure (PSIG)</label>
+                    <input type="number" id="liquidPressure" placeholder="e.g., 250" step="0.1">
+                </div>
+                <div class="input-group">
+                    <label>Refrigerant Type</label>
+                    <select id="refrigerantType">
+                        <option value="R-410A">R-410A</option>
+                        <option value="R-22">R-22</option>
+                        <option value="R-134a">R-134a</option>
+                        <option value="R-404A">R-404A</option>
+                    </select>
+                </div>
+                <button class="btn" onclick="calculateRefrigeration()">Calculate</button>
+                <div id="refrigerationResult" class="result" style="display:none;">
+                    <h4>Calculation Results</h4>
+                    <div id="refrigerationResults"></div>
                 </div>
             </div>
         </div>
 
-        <!-- Airflow Calculator -->
+        <!-- 🌪️ AIRFLOW TAB -->
         <div id="airflow" class="tab-content">
-            <div class="calculator-grid">
-                <div class="calculator">
-                    <h3>🌡️ Temperature Split Calculator</h3>
-                    <div class="input-group">
-                        <label>Return Air Temp (°F):</label>
-                        <input type="number" id="return-temp" placeholder="75" step="0.1">
-                    </div>
-                    <div class="input-group">
-                        <label>Supply Air Temp (°F):</label>
-                        <input type="number" id="supply-temp" placeholder="55" step="0.1">
-                    </div>
-                    <div class="input-group">
-                        <label>System Tonnage (optional):</label>
-                        <input type="number" id="system-tons" placeholder="3" step="0.5">
-                    </div>
-                    <button class="btn" onclick="calculateAirflow()">Calculate Airflow</button>
-                    <div id="airflow-result" class="result" style="display:none;">
-                        <h4>🌪️ Airflow Analysis</h4>
-                        <div id="airflow-data"></div>
-                    </div>
+            <div class="calculator">
+                <h3>🌪️ Airflow Calculator</h3>
+                <div class="input-group">
+                    <label>Return Air Temperature (°F)</label>
+                    <input type="number" id="returnTemp" placeholder="e.g., 75" step="0.1">
+                </div>
+                <div class="input-group">
+                    <label>Supply Air Temperature (°F)</label>
+                    <input type="number" id="supplyTemp" placeholder="e.g., 55" step="0.1">
+                </div>
+                <div class="input-group">
+                    <label>System Capacity (Tons)</label>
+                    <input type="number" id="systemTons" placeholder="e.g., 3" step="0.5" min="1" max="20">
+                </div>
+                <button class="btn" onclick="calculateAirflow()">Calculate Airflow</button>
+                <div id="airflowResult" class="result" style="display:none;">
+                    <h4>Calculation Results</h4>
+                    <div id="airflowResults"></div>
                 </div>
             </div>
         </div>
 
-        <!-- Electrical Calculator -->
+        <!-- ⚡ ELECTRICAL TAB -->
         <div id="electrical" class="tab-content">
-            <div class="calculator-grid">
-                <div class="calculator">
-                    <h3>⚡ Electrical Performance Calculator</h3>
-                    <div class="input-group">
-                        <label>Voltage (V):</label>
-                        <input type="number" id="voltage" placeholder="240" step="0.1">
-                    </div>
-                    <div class="input-group">
-                        <label>Amps (A):</label>
-                        <input type="number" id="amps" placeholder="8.5" step="0.1">
-                    </div>
-                    <div class="input-group">
-                        <label>Power Factor (optional):</label>
-                        <input type="number" id="power-factor" placeholder="0.9" step="0.01" min="0" max="1">
-                    </div>
-                    <div class="input-group">
-                        <label>Rated Load Amps (RLA):</label>
-                        <input type="number" id="rla" placeholder="12.0" step="0.1">
-                    </div>
-                    <button class="btn" onclick="calculateElectrical()">Calculate Electrical</button>
-                    <div id="electrical-result" class="result" style="display:none;">
-                        <h4>⚡ Electrical Analysis</h4>
-                        <div id="electrical-data"></div>
-                    </div>
+            <div class="calculator">
+                <h3>⚡ Electrical Load Calculator</h3>
+                <div class="input-group">
+                    <label>Voltage (Volts)</label>
+                    <input type="number" id="voltage" placeholder="e.g., 240" step="1">
                 </div>
-
-                <div class="calculator">
-                    <h3>🔧 Capacitor Tester</h3>
-                    <div class="input-group">
-                        <label>Measured µF:</label>
-                        <input type="number" id="measured-uf" placeholder="35.0" step="0.1">
-                    </div>
-                    <div class="input-group">
-                        <label>Rated µF:</label>
-                        <input type="number" id="rated-uf" placeholder="35.0" step="0.1">
-                    </div>
-                    <button class="btn" onclick="testCapacitor()">Test Capacitor</button>
-                    <div id="capacitor-result" class="result" style="display:none;">
-                        <h4>🔧 Capacitor Analysis</h4>
-                        <div id="capacitor-data"></div>
-                    </div>
+                <div class="input-group">
+                    <label>Current (Amps)</label>
+                    <input type="number" id="current" placeholder="e.g., 15" step="0.1">
+                </div>
+                <div class="input-group">
+                    <label>Power Factor</label>
+                    <input type="number" id="powerFactor" placeholder="e.g., 0.85" step="0.01" min="0" max="1" value="0.85">
+                </div>
+                <div class="input-group">
+                    <label>Phase</label>
+                    <select id="phase">
+                        <option value="1">Single Phase</option>
+                        <option value="3">Three Phase</option>
+                    </select>
+                </div>
+                <button class="btn" onclick="calculateElectrical()">Calculate Power</button>
+                <div id="electricalResult" class="result" style="display:none;">
+                    <h4>Calculation Results</h4>
+                    <div id="electricalResults"></div>
                 </div>
             </div>
         </div>
 
-        <!-- Duct Calculator -->
+        <!-- 📏 DUCT TAB -->
         <div id="duct" class="tab-content">
-            <div class="calculator-grid">
-                <div class="calculator">
-                    <h3>📏 Duct Sizing Calculator</h3>
-                    <div class="input-group">
-                        <label>Duct Shape:</label>
-                        <select id="duct-shape" onchange="updateDuctInputs()">
-                            <option value="round">Round</option>
-                            <option value="rectangular">Rectangular</option>
-                        </select>
-                    </div>
-                    <div id="round-inputs">
-                        <div class="input-group">
-                            <label>Diameter (inches):</label>
-                            <input type="number" id="duct-diameter" placeholder="8" step="0.1">
-                        </div>
-                    </div>
-                    <div id="rect-inputs" style="display:none;">
-                        <div class="input-group">
-                            <label>Width (inches):</label>
-                            <input type="number" id="duct-width" placeholder="12" step="0.1">
-                        </div>
-                        <div class="input-group">
-                            <label>Height (inches):</label>
-                            <input type="number" id="duct-height" placeholder="8" step="0.1">
-                        </div>
-                    </div>
-                    <div class="input-group">
-                        <label>CFM:</label>
-                        <input type="number" id="duct-cfm" placeholder="400" step="10">
-                    </div>
-                    <button class="btn" onclick="calculateDuct()">Calculate Duct</button>
-                    <div id="duct-result" class="result" style="display:none;">
-                        <h4>🌪️ Duct Analysis</h4>
-                        <div id="duct-data"></div>
-                    </div>
+            <div class="calculator">
+                <h3>📏 Duct Sizing Calculator</h3>
+                <div class="input-group">
+                    <label>CFM (Cubic Feet per Minute)</label>
+                    <input type="number" id="ductCfm" placeholder="e.g., 1200" step="10">
+                </div>
+                <div class="input-group">
+                    <label>Velocity (FPM)</label>
+                    <input type="number" id="velocity" placeholder="e.g., 800" step="10">
+                </div>
+                <div class="input-group">
+                    <label>Duct Shape</label>
+                    <select id="ductShape" onchange="updateDuctFields()">
+                        <option value="round">Round</option>
+                        <option value="rectangular">Rectangular</option>
+                    </select>
+                </div>
+                <div id="ductDimensions">
+                    <!-- Dynamic fields will be inserted here -->
+                </div>
+                <button class="btn" onclick="calculateDuct()">Calculate Duct Size</button>
+                <div id="ductResult" class="result" style="display:none;">
+                    <h4>Calculation Results</h4>
+                    <div id="ductResults"></div>
                 </div>
             </div>
         </div>
 
-        <!-- Service Log -->
+        <!-- 📝 SERVICE LOG TAB -->
         <div id="log" class="tab-content">
             <div class="calculator">
-                <h3>📝 Service Log & Export</h3>
-                <button class="btn" onclick="saveServiceLog()">💾 Save Current Reading</button>
-                <button class="btn" onclick="exportToPDF()">📄 Export PDF Report</button>
-                <button class="btn" onclick="clearServiceLog()">🗑️ Clear Log</button>
-                <div id="service-log-display"></div>
+                <h3>📝 Service Log</h3>
+                <div class="input-group">
+                    <label>Service Date</label>
+                    <input type="date" id="serviceDate">
+                </div>
+                <div class="input-group">
+                    <label>Customer Name</label>
+                    <input type="text" id="customerName" placeholder="Enter customer name">
+                </div>
+                <div class="input-group">
+                    <label>Unit Type</label>
+                    <select id="unitType">
+                        <option value="AC">Air Conditioner</option>
+                        <option value="HP">Heat Pump</option>
+                        <option value="Furnace">Furnace</option>
+                        <option value="Boiler">Boiler</option>
+                        <option value="Package">Package Unit</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Service Type</label>
+                    <select id="serviceType">
+                        <option value="Maintenance">Maintenance</option>
+                        <option value="Repair">Repair</option>
+                        <option value="Installation">Installation</option>
+                        <option value="Inspection">Inspection</option>
+                        <option value="Emergency">Emergency</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Technician Notes</label>
+                    <textarea id="techNotes" rows="5" placeholder="Enter detailed service notes..."></textarea>
+                </div>
+                <button class="btn" onclick="saveServiceLog()">Save Service Log</button>
+                <button class="btn btn-secondary" onclick="viewServiceLog()">View Service History</button>
+                <div id="serviceLogResult" class="result" style="display:none;">
+                    <h4>Service History</h4>
+                    <div id="serviceLogResults"></div>
+                </div>
             </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 40px;">
+            <button class="btn btn-secondary" onclick="window.location.href='index.html'">← Back to Home</button>
+            <button class="btn" onclick="window.location.href='app.html'">Open Dashboard →</button>
         </div>
     </div>
 
     <script>
-        // HVAC Calculator Suite - Complete Professional Implementation
-        let serviceLog = JSON.parse(localStorage.getItem('serviceProLog') || '[]');
-
-        // Tab Navigation - Fixed Version
-        function showTab(tabName) {
+        // Tab Switching Function - FIXED
+        function switchTab(tabName) {
             console.log('Switching to tab:', tabName);
             
-            // Hide all tab contents
+            // Hide all tabs
             const allTabs = document.querySelectorAll('.tab-content');
             allTabs.forEach(tab => {
                 tab.classList.remove('active');
                 tab.style.display = 'none';
             });
             
-            // Remove active class from all nav tabs
-            const allNavTabs = document.querySelectorAll('.nav-tab');
-            allNavTabs.forEach(tab => tab.classList.remove('active'));
+            // Remove active class from all buttons
+            const allButtons = document.querySelectorAll('.nav-tab');
+            allButtons.forEach(btn => {
+                btn.classList.remove('active');
+            });
             
-            // Show selected tab content
-            const targetTab = document.getElementById(tabName);
-            if (targetTab) {
-                targetTab.classList.add('active');
-                targetTab.style.display = 'block';
+            // Show selected tab
+            const selectedTab = document.getElementById(tabName);
+            if (selectedTab) {
+                selectedTab.classList.add('active');
+                selectedTab.style.display = 'block';
             }
             
-            // Add active class to clicked tab
-            if (event && event.target) {
-                event.target.classList.add('active');
-            }
+            // Add active class to clicked button
+            event.target.classList.add('active');
         }
-
-        // Initialize first tab on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('Initializing HVAC Calculator...');
-            // Ensure refrigeration tab is visible by default
-            const refrigerationTab = document.getElementById('refrigeration');
-            if (refrigerationTab) {
-                refrigerationTab.style.display = 'block';
-            }
-        });
 
         // Refrigeration Calculator
         function calculateRefrigeration() {
-            const refrigerant = document.getElementById('refrigerant-type').value;
-            const suctionPressure = parseFloat(document.getElementById('suction-pressure').value);
-            const liquidPressure = parseFloat(document.getElementById('liquid-pressure').value);
-            const suctionTemp = parseFloat(document.getElementById('suction-temp').value);
-            const liquidTemp = parseFloat(document.getElementById('liquid-temp').value);
-            const indoorWB = parseFloat(document.getElementById('indoor-wb').value);
-            const outdoorDB = parseFloat(document.getElementById('outdoor-db').value);
-
-            if (![suctionPressure, liquidPressure, suctionTemp, liquidTemp, indoorWB, outdoorDB].every(v => !isNaN(v))) {
+            const suctionPressure = parseFloat(document.getElementById('suctionPressure').value);
+            const suctionTemp = parseFloat(document.getElementById('suctionTemp').value);
+            const liquidTemp = parseFloat(document.getElementById('liquidTemp').value);
+            const liquidPressure = parseFloat(document.getElementById('liquidPressure').value);
+            const refrigerantType = document.getElementById('refrigerantType').value;
+            
+            if (!suctionPressure || !suctionTemp || !liquidTemp || !liquidPressure) {
                 alert('Please fill in all fields');
                 return;
             }
-
-            const superheat = suctionTemp - (70 + (suctionPressure - 118) * 0.5);
-            const subcooling = (95 + (liquidPressure - 295) * 0.5) - liquidTemp;
-            const targetSuperheat = Math.max(5, Math.min(20, 18 - (indoorWB - 65) * 0.5));
-
-            let systemStatus = 'Normal';
-            let chargeStatus = 'Correct';
             
-            if (superheat < 5) { systemStatus = 'Overcharge Risk'; chargeStatus = 'Overcharged'; }
-            else if (superheat > 20) { systemStatus = 'Undercharge Risk'; chargeStatus = 'Undercharged'; }
-            else if (subcooling < 5) { systemStatus = 'Undercharge Risk'; chargeStatus = 'Undercharged'; }
-            else if (subcooling > 15) { systemStatus = 'Overcharge Risk'; chargeStatus = 'Overcharged'; }
-
-            const dataDiv = document.getElementById('refrigeration-data');
-            dataDiv.innerHTML = `
+            // Simplified calculations (in production, use proper PT charts)
+            const saturationTemp = suctionPressure * 0.8; // Approximate
+            const superheat = suctionTemp - saturationTemp;
+            const condensingTemp = liquidPressure * 0.6; // Approximate
+            const subcooling = condensingTemp - liquidTemp;
+            
+            let superheatStatus = 'good';
+            let superheatText = 'Normal';
+            if (superheat < 5) {
+                superheatStatus = 'bad';
+                superheatText = 'Low - Possible flooding';
+            } else if (superheat > 25) {
+                superheatStatus = 'warning';
+                superheatText = 'High - Possible starving';
+            }
+            
+            let subcoolingStatus = 'good';
+            let subcoolingText = 'Normal';
+            if (subcooling < 5) {
+                subcoolingStatus = 'warning';
+                subcoolingText = 'Low - Check charge';
+            } else if (subcooling > 20) {
+                subcoolingStatus = 'bad';
+                subcoolingText = 'High - Overcharged';
+            }
+            
+            const resultsHTML = `
                 <div class="result-item">
                     <span>Superheat:</span>
-                    <span class="result-value ${superheat < 5 || superheat > 20 ? 'status-bad' : 'status-good'}">${superheat.toFixed(1)}°F</span>
+                    <span class="result-value status-${superheatStatus}">${superheat.toFixed(1)}°F</span>
+                </div>
+                <div class="result-item">
+                    <span>Superheat Status:</span>
+                    <span class="result-value status-${superheatStatus}">${superheatText}</span>
                 </div>
                 <div class="result-item">
                     <span>Subcooling:</span>
-                    <span class="result-value ${subcooling < 5 || subcooling > 15 ? 'status-bad' : 'status-good'}">${subcooling.toFixed(1)}°F</span>
+                    <span class="result-value status-${subcoolingStatus}">${subcooling.toFixed(1)}°F</span>
                 </div>
                 <div class="result-item">
-                    <span>Target Superheat:</span>
-                    <span class="result-value">${targetSuperheat.toFixed(1)}°F</span>
+                    <span>Subcooling Status:</span>
+                    <span class="result-value status-${subcoolingStatus}">${subcoolingText}</span>
                 </div>
                 <div class="result-item">
-                    <span>System Status:</span>
-                    <span class="result-value ${systemStatus === 'Normal' ? 'status-good' : 'status-bad'}">${systemStatus}</span>
-                </div>
-                <div class="result-item">
-                    <span>Charge Status:</span>
-                    <span class="result-value ${chargeStatus === 'Correct' ? 'status-good' : 'status-bad'}">${chargeStatus}</span>
+                    <span>Refrigerant:</span>
+                    <span class="result-value">${refrigerantType}</span>
                 </div>
             `;
-            document.getElementById('refrigeration-result').style.display = 'block';
+            
+            document.getElementById('refrigerationResults').innerHTML = resultsHTML;
+            document.getElementById('refrigerationResult').style.display = 'block';
         }
 
         // Airflow Calculator
         function calculateAirflow() {
-            const returnTemp = parseFloat(document.getElementById('return-temp').value);
-            const supplyTemp = parseFloat(document.getElementById('supply-temp').value);
-            const tons = parseFloat(document.getElementById('system-tons').value);
-
-            if (!returnTemp || !supplyTemp) {
-                alert('Please fill in temperature fields');
+            const returnTemp = parseFloat(document.getElementById('returnTemp').value);
+            const supplyTemp = parseFloat(document.getElementById('supplyTemp').value);
+            const systemTons = parseFloat(document.getElementById('systemTons').value);
+            
+            if (!returnTemp || !supplyTemp || !systemTons) {
+                alert('Please fill in all fields');
                 return;
             }
-
+            
             const tempSplit = Math.abs(returnTemp - supplyTemp);
-            let performanceStatus = 'Normal';
-            let recommendation = 'System operating within range';
-            let estimatedCFM = '--';
-
+            const cfm = systemTons * 400; // Standard 400 CFM per ton
+            const btuh = cfm * tempSplit * 1.08;
+            const sensibleHeat = btuh * 0.75;
+            const latentHeat = btuh * 0.25;
+            
+            let splitStatus = 'good';
+            let splitText = 'Normal';
             if (tempSplit < 15) {
-                performanceStatus = 'Low Split';
-                recommendation = 'Check airflow, refrigerant, or ductwork';
-            } else if (tempSplit > 22) {
-                performanceStatus = 'High Split';
-                recommendation = 'Check for restrictions or overcooling';
+                splitStatus = 'warning';
+                splitText = 'Low - Check airflow';
+            } else if (tempSplit > 25) {
+                splitStatus = 'warning';
+                splitText = 'High - Check system';
             }
-
-            if (tons) {
-                estimatedCFM = (tons * 400).toFixed(0);
-            }
-
-            const dataDiv = document.getElementById('airflow-data');
-            dataDiv.innerHTML = `
+            
+            const resultsHTML = `
                 <div class="result-item">
-                    <span>Temperature Split (ΔT):</span>
-                    <span class="result-value ${tempSplit < 15 || tempSplit > 22 ? 'status-bad' : 'status-good'}">${tempSplit.toFixed(1)}°F</span>
+                    <span>Temperature Split:</span>
+                    <span class="result-value status-${splitStatus}">${tempSplit.toFixed(1)}°F</span>
                 </div>
                 <div class="result-item">
-                    <span>Performance Status:</span>
-                    <span class="result-value ${performanceStatus === 'Normal' ? 'status-good' : 'status-warning'}">${performanceStatus}</span>
+                    <span>Split Status:</span>
+                    <span class="result-value status-${splitStatus}">${splitText}</span>
                 </div>
                 <div class="result-item">
                     <span>Estimated CFM:</span>
-                    <span class="result-value">${estimatedCFM}</span>
+                    <span class="result-value">${cfm.toFixed(0)} CFM</span>
                 </div>
                 <div class="result-item">
-                    <span>Recommendation:</span>
-                    <span class="result-value">${recommendation}</span>
+                    <span>Total BTUH:</span>
+                    <span class="result-value">${btuh.toFixed(0)} BTUH</span>
+                </div>
+                <div class="result-item">
+                    <span>Sensible Heat:</span>
+                    <span class="result-value">${sensibleHeat.toFixed(0)} BTUH</span>
+                </div>
+                <div class="result-item">
+                    <span>Latent Heat:</span>
+                    <span class="result-value">${latentHeat.toFixed(0)} BTUH</span>
                 </div>
             `;
-            document.getElementById('airflow-result').style.display = 'block';
+            
+            document.getElementById('airflowResults').innerHTML = resultsHTML;
+            document.getElementById('airflowResult').style.display = 'block';
         }
 
         // Electrical Calculator
         function calculateElectrical() {
             const voltage = parseFloat(document.getElementById('voltage').value);
-            const amps = parseFloat(document.getElementById('amps').value);
-            const powerFactor = parseFloat(document.getElementById('power-factor').value) || 1.0;
-            const rla = parseFloat(document.getElementById('rla').value);
-
-            if (!voltage || !amps) {
-                alert('Please fill in voltage and amperage');
+            const current = parseFloat(document.getElementById('current').value);
+            const powerFactor = parseFloat(document.getElementById('powerFactor').value);
+            const phase = parseInt(document.getElementById('phase').value);
+            
+            if (!voltage || !current) {
+                alert('Please fill in voltage and current');
                 return;
             }
-
-            const wattage = voltage * amps * powerFactor;
-            const ampPercentage = rla ? (amps / rla * 100) : 0;
-            let loadStatus = 'Normal';
-
-            if (ampPercentage > 110) loadStatus = 'Overloaded';
-            else if (ampPercentage < 70) loadStatus = 'Underloaded';
-            else if (ampPercentage > 100) loadStatus = 'Near Limit';
-
-            const dataDiv = document.getElementById('electrical-data');
-            dataDiv.innerHTML = `
-                <div class="result-item">
-                    <span>Wattage:</span>
-                    <span class="result-value">${wattage.toFixed(1)} W</span>
-                </div>
-                <div class="result-item">
-                    <span>Amp Draw % of RLA:</span>
-                    <span class="result-value ${ampPercentage > 100 ? 'status-bad' : 'status-good'}">${ampPercentage.toFixed(1)}%</span>
-                </div>
-                <div class="result-item">
-                    <span>Load Status:</span>
-                    <span class="result-value ${loadStatus === 'Normal' ? 'status-good' : 'status-warning'}">${loadStatus}</span>
-                </div>
-            `;
-            document.getElementById('electrical-result').style.display = 'block';
-        }
-
-        // Capacitor Test
-        function testCapacitor() {
-            const measured = parseFloat(document.getElementById('measured-uf').value);
-            const rated = parseFloat(document.getElementById('rated-uf').value);
-
-            if (!measured || !rated) {
-                alert('Please fill in capacitor values');
-                return;
+            
+            const pf = powerFactor || 1.0;
+            let power, apparentPower;
+            
+            if (phase === 1) {
+                power = voltage * current * pf;
+                apparentPower = voltage * current;
+            } else {
+                power = Math.sqrt(3) * voltage * current * pf;
+                apparentPower = Math.sqrt(3) * voltage * current;
             }
-
-            const difference = Math.abs(measured - rated);
-            const percentageOff = (difference / rated) * 100;
-            const tolerance = 6;
-            const result = percentageOff <= tolerance ? 'PASS' : 'FAIL';
-
-            const dataDiv = document.getElementById('capacitor-data');
-            dataDiv.innerHTML = `
+            
+            const reactivePower = Math.sqrt(Math.pow(apparentPower, 2) - Math.pow(power, 2));
+            const watts = power;
+            const kilowatts = power / 1000;
+            
+            const resultsHTML = `
                 <div class="result-item">
-                    <span>Measured vs Rated:</span>
-                    <span class="result-value">${difference.toFixed(1)} µF</span>
+                    <span>Real Power:</span>
+                    <span class="result-value">${watts.toFixed(1)} W (${kilowatts.toFixed(2)} kW)</span>
                 </div>
                 <div class="result-item">
-                    <span>Percentage Off:</span>
-                    <span class="result-value ${result === 'PASS' ? 'status-good' : 'status-bad'}">${percentageOff.toFixed(1)}%</span>
+                    <span>Apparent Power:</span>
+                    <span class="result-value">${apparentPower.toFixed(1)} VA</span>
                 </div>
                 <div class="result-item">
-                    <span>Test Result:</span>
-                    <span class="result-value ${result === 'PASS' ? 'status-good' : 'status-bad'}">${result}</span>
+                    <span>Reactive Power:</span>
+                    <span class="result-value">${reactivePower.toFixed(1)} VAR</span>
+                </div>
+                <div class="result-item">
+                    <span>Power Factor:</span>
+                    <span class="result-value">${pf.toFixed(2)}</span>
+                </div>
+                <div class="result-item">
+                    <span>Phase:</span>
+                    <span class="result-value">${phase === 1 ? 'Single' : 'Three'} Phase</span>
                 </div>
             `;
-            document.getElementById('capacitor-result').style.display = 'block';
+            
+            document.getElementById('electricalResults').innerHTML = resultsHTML;
+            document.getElementById('electricalResult').style.display = 'block';
         }
 
         // Duct Calculator
-        function calculateDuct() {
-            const shape = document.getElementById('duct-shape').value;
-            const cfm = parseFloat(document.getElementById('duct-cfm').value);
-
-            if (!cfm) {
-                alert('Please enter CFM');
-                return;
-            }
-
-            let area, diameter, velocity, recommendedSize, status;
+        function updateDuctFields() {
+            const shape = document.getElementById('ductShape').value;
+            const dimensionsDiv = document.getElementById('ductDimensions');
             
             if (shape === 'round') {
-                diameter = parseFloat(document.getElementById('duct-diameter').value);
-                if (!diameter) { alert('Please enter diameter'); return; }
-                area = Math.PI * Math.pow(diameter / 2, 2) / 144;
+                dimensionsDiv.innerHTML = `
+                    <div class="input-group">
+                        <label>Diameter (inches) - Optional</label>
+                        <input type="number" id="diameter" placeholder="Leave blank to calculate" step="0.1">
+                    </div>
+                `;
             } else {
-                const width = parseFloat(document.getElementById('duct-width').value);
-                const height = parseFloat(document.getElementById('duct-height').value);
-                if (!width || !height) { alert('Please enter dimensions'); return; }
-                area = (width * height) / 144;
-                diameter = Math.sqrt(4 * area * 144 / Math.PI);
+                dimensionsDiv.innerHTML = `
+                    <div class="input-group">
+                        <label>Width (inches) - Optional</label>
+                        <input type="number" id="width" placeholder="Leave blank to calculate" step="0.1">
+                    </div>
+                    <div class="input-group">
+                        <label>Height (inches) - Optional</label>
+                        <input type="number" id="height" placeholder="Leave blank to calculate" step="0.1">
+                    </div>
+                `;
             }
-
-            velocity = (cfm / area).toFixed(0);
-            const targetDiameter = Math.sqrt(4 * (cfm / 1000) * 144 / Math.PI);
-
-            let status = 'Good';
-            let recommendation = 'Current size adequate';
-            
-            if (velocity < 600) {
-                status = 'Low';
-                recommendation = 'Increase duct size';
-            } else if (velocity > 1800) {
-                status = 'High';
-                recommendation = 'Decrease duct size';
-            }
-
-            recommendedSize = targetDiameter.toFixed(1) + '" diameter';
-
-            const dataDiv = document.getElementById('duct-data');
-            dataDiv.innerHTML = `
-                <div class="result-item">
-                    <span>Velocity:</span>
-                    <span class="result-value ${status === 'Good' ? 'status-good' : 'status-warning'}">${velocity} FPM</span>
-                </div>
-                <div class="result-item">
-                    <span>Recommended Size:</span>
-                    <span class="result-value">${recommendedSize}</span>
-                </div>
-                <div class="result-item">
-                    <span>Status:</span>
-                    <span class="result-value">${status}</span>
-                </div>
-                <div class="result-item">
-                    <span>Recommendation:</span>
-                    <span class="result-value">${recommendation}</span>
-                </div>
-            `;
-            document.getElementById('duct-result').style.display = 'block';
         }
 
-        function updateDuctInputs() {
-            const shape = document.getElementById('duct-shape').value;
-            document.getElementById('round-inputs').style.display = shape === 'round' ? 'block' : 'none';
-            document.getElementById('rect-inputs').style.display = shape === 'rectangular' ? 'block' : 'none';
+        function calculateDuct() {
+            const cfm = parseFloat(document.getElementById('ductCfm').value);
+            const velocity = parseFloat(document.getElementById('velocity').value);
+            const shape = document.getElementById('ductShape').value;
+            
+            if (!cfm || !velocity) {
+                alert('Please enter CFM and velocity');
+                return;
+            }
+            
+            const area = cfm / velocity; // Area in square feet
+            let diameter = 0;
+            let width = 0;
+            let height = 0;
+            
+            if (shape === 'round') {
+                const diameterInput = document.getElementById('diameter');
+                if (diameterInput && diameterInput.value) {
+                    diameter = parseFloat(diameterInput.value);
+                } else {
+                    diameter = Math.sqrt(area * 144 / Math.PI) * 2; // Calculate diameter in inches
+                }
+            } else {
+                const widthInput = document.getElementById('width');
+                const heightInput = document.getElementById('height');
+                
+                if (widthInput && widthInput.value && heightInput && heightInput.value) {
+                    width = parseFloat(widthInput.value);
+                    height = parseFloat(heightInput.value);
+                } else {
+                    const ratio = 1.5; // Common aspect ratio
+                    height = Math.sqrt(area * 144 / ratio);
+                    width = height * ratio;
+                }
+            }
+            
+            const resultsHTML = `
+                <div class="result-item">
+                    <span>Required Area:</span>
+                    <span class="result-value">${area.toFixed(2)} sq ft</span>
+                </div>
+                <div class="result-item">
+                    <span>Duct Shape:</span>
+                    <span class="result-value">${shape.charAt(0).toUpperCase() + shape.slice(1)}</span>
+                </div>
+                ${shape === 'round' ? `
+                <div class="result-item">
+                    <span>Diameter:</span>
+                    <span class="result-value">${diameter.toFixed(1)} inches</span>
+                </div>
+                ` : `
+                <div class="result-item">
+                    <span>Width:</span>
+                    <span class="result-value">${width.toFixed(1)} inches</span>
+                </div>
+                <div class="result-item">
+                    <span>Height:</span>
+                    <span class="result-value">${height.toFixed(1)} inches</span>
+                </div>
+                `}
+                <div class="result-item">
+                    <span>Velocity:</span>
+                    <span class="result-value">${velocity} FPM</span>
+                </div>
+                <div class="result-item">
+                    <span>CFM:</span>
+                    <span class="result-value">${cfm} CFM</span>
+                </div>
+            `;
+            
+            document.getElementById('ductResults').innerHTML = resultsHTML;
+            document.getElementById('ductResult').style.display = 'block';
         }
 
         // Service Log Functions
-        function saveToLog(type, data) {
-            const entry = {
-                type,
-                data,
-                timestamp: new Date().toLocaleString(),
-                id: Date.now()
-            };
-            let log = JSON.parse(localStorage.getItem('serviceProLog') || '[]');
-            log.unshift(entry);
-            if (log.length > 100) log = log.slice(0, 100);
-            localStorage.setItem('serviceProLog', JSON.stringify(log));
-        }
-
         function saveServiceLog() {
-            alert('Service log saved to local storage!');
-        }
-
-        function exportToPDF() {
-            const timestamp = new Date().toLocaleString();
-            const report = `
-SERVICE REPORT - ${timestamp}
-================================
-
-REFRIGERATION:
-Refrigerant: ${document.getElementById('refrigerant-type').value}
-Suction: ${document.getElementById('suction-pressure').value} PSI
-Liquid: ${document.getElementById('liquid-pressure').value} PSI
-Suction Temp: ${document.getElementById('suction-temp').value}°F
-Liquid Temp: ${document.getElementById('liquid-temp').value}°F
-
-AIRFLOW:
-Return: ${document.getElementById('return-temp').value}°F
-Supply: ${document.getElementById('supply-temp').value}°F
-Tonnage: ${document.getElementById('system-tons').value}
-
-ELECTRICAL:
-Voltage: ${document.getElementById('voltage').value}V
-Amps: ${document.getElementById('amps').value}A
-RLA: ${document.getElementById('rla').value}A
-
-Generated by ServicePro Elite HVAC Calculator
-            `;
-
-            const blob = new Blob([report], { type: 'text/plain' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `service-report-${Date.now()}.txt`;
-            a.click();
-            URL.revokeObjectURL(url);
-        }
-
-        function clearServiceLog() {
-            if (confirm('Clear all service logs?')) {
-                localStorage.removeItem('serviceProLog');
-                alert('Service log cleared');
+            const date = document.getElementById('serviceDate').value;
+            const customerName = document.getElementById('customerName').value;
+            const unitType = document.getElementById('unitType').value;
+            const serviceType = document.getElementById('serviceType').value;
+            const notes = document.getElementById('techNotes').value;
+            
+            if (!date || !customerName || !notes) {
+                alert('Please fill in date, customer name, and notes');
+                return;
             }
+            
+            const logEntry = {
+                id: Date.now(),
+                date: date,
+                customerName: customerName,
+                unitType: unitType,
+                serviceType: serviceType,
+                notes: notes,
+                timestamp: new Date().toLocaleString()
+            };
+            
+            let serviceLogs = JSON.parse(localStorage.getItem('ninja_ai_service_logs') || '[]');
+            serviceLogs.unshift(logEntry);
+            
+            if (serviceLogs.length > 100) {
+                serviceLogs = serviceLogs.slice(0, 100);
+            }
+            
+            localStorage.setItem('ninja_ai_service_logs', JSON.stringify(serviceLogs));
+            
+            alert('✅ Service log saved successfully!');
+            document.getElementById('techNotes').value = '';
+            document.getElementById('customerName').value = '';
         }
 
-        // Auto-save functionality
-        ['suction-pressure', 'liquid-pressure', 'suction-temp', 'liquid-temp', 'indoor-wb', 'outdoor-db',
-         'return-temp', 'supply-temp', 'system-tons', 'voltage', 'amps', 'rla', 'measured-uf', 'rated-uf',
-         'duct-diameter', 'duct-width', 'duct-height', 'duct-cfm'].forEach(id => {
-            const element = document.getElementById(id);
-            if (element) {
-                element.value = localStorage.getItem(id) || '';
-                element.addEventListener('input', () => localStorage.setItem(id, element.value));
+        function viewServiceLog() {
+            const serviceLogs = JSON.parse(localStorage.getItem('ninja_ai_service_logs') || '[]');
+            
+            if (serviceLogs.length === 0) {
+                alert('No service logs found');
+                return;
             }
-        });
+            
+            let logsHTML = '';
+            serviceLogs.forEach(log => {
+                logsHTML += `
+                    <div style="border: 2px solid rgba(59, 130, 246, 0.3); padding: 20px; margin: 15px 0; border-radius: 10px; background: rgba(10, 14, 39, 0.5);">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
+                            <strong style="color: #60a5fa; font-size: 18px;">${log.date} - ${log.customerName}</strong>
+                            <span style="color: #93c5fd; font-size: 14px;">${log.timestamp}</span>
+                        </div>
+                        <div style="margin: 10px 0;">
+                            <strong style="color: #93c5fd;">Unit:</strong> ${log.unitType} | 
+                            <strong style="color: #93c5fd;">Service:</strong> ${log.serviceType}
+                        </div>
+                        <div style="margin-top: 15px; white-space: pre-wrap; line-height: 1.6;">${log.notes}</div>
+                    </div>
+                `;
+            });
+            
+            document.getElementById('serviceLogResults').innerHTML = logsHTML;
+            document.getElementById('serviceLogResult').style.display = 'block';
+        }
 
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
-            updateDuctInputs();
+            console.log('Ninja AI HVAC Calculator initialized');
+            
+            // Set today's date
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('serviceDate').value = today;
+            
+            // Initialize duct fields
+            updateDuctFields();
         });
     </script>
 </body>
 </html>
-           function quickCalc(calcType) {
-               const resultsDiv = document.getElementById('quick-calc-results');
-               let result = '';
-               
-               switch(calcType) {
-                   case 'temp-split':
-                       const tempSplit = parseFloat(document.getElementById('quick-temp-split').value) || 0;
-                       if (tempSplit < 15) {
-                           result = '<div class="alert alert-error">❌ Low temperature split - Check airflow or refrigerant levels</div>';
-                       } else if (tempSplit > 22) {
-                           result = '<div class="alert alert-warning">⚠️ High temperature split - Check for restrictions</div>';
-                       } else {
-                           result = '<div class="alert alert-success">✅ Normal temperature split - System operating correctly</div>';
-                       }
-                       break;
-                       
-                   case 'superheat':
-                       const superheat = parseFloat(document.getElementById('quick-superheat').value) || 0;
-                       if (superheat < 5) {
-                           result = '<div class="alert alert-error">❌ Low superheat - Possible overcharge</div>';
-                       } else if (superheat > 20) {
-                           result = '<div class="alert alert-warning">⚠️ High superheat - Possible undercharge</div>';
-                       } else {
-                           result = '<div class="alert alert-success">✅ Normal superheat - Charge is correct</div>';
-                       }
-                       break;
-                       
-                   case 'amps':
-                       const ampPercentage = parseFloat(document.getElementById('quick-amps').value) || 0;
-                       if (ampPercentage > 110) {
-                           result = '<div class="alert alert-error">❌ High amp draw - Check for overload or low voltage</div>';
-                       } else if (ampPercentage < 70) {
-                           result = '<div class="alert alert-warning">⚠️ Low amp draw - Check for underload</div>';
-                       } else {
-                           result = '<div class="alert alert-success">✅ Normal amp draw - Motor operating correctly</div>';
-                       }
-                       break;
-               }
-               
-               resultsDiv.innerHTML = result;
-           }
-
-           // Initialize - FIXED FOR TAB SWITCHING
-           document.addEventListener('DOMContentLoaded', function() {
-               console.log('HVAC Calculator initializing...');
-               
-               // Make sure refrigeration tab is visible by default
-               const refrigerationTab = document.getElementById('refrigeration');
-               if (refrigerationTab) {
-                   refrigerationTab.style.display = 'block';
-                   refrigerationTab.classList.add('active');
-               }
-               
-               // Make sure the first nav tab is active
-               const firstNavTab = document.querySelector('.nav-tab');
-               if (firstNavTab) {
-                   firstNavTab.classList.add('active');
-               }
-               
-               updateDuctInputs();
-               console.log('HVAC Calculator initialized successfully');
-           });
-
-           // Calculator Launch Functions - FIXED for external calls
-           function launchCalculator(type) {
-               // Open calculator and try to navigate to specific section
-               const newWindow = window.open('hvac-calculator.html', '_blank');
-               if (newWindow) {
-                   // Try to switch to specific tab after window loads
-                   setTimeout(() => {
-                       try {
-                           if (newWindow.showTab) {
-                               newWindow.showTab(type);
-                           }
-                       } catch (e) {
-                           console.log('Could not auto-switch tab in new window');
-                       }
-                   }, 1500);
-               }
-           }
-
-           function quickCalc(calcType) {
-               const resultsDiv = document.getElementById('quick-calc-results');
-               let result = '';
-               
-               switch(calcType) {
-                   case 'temp-split':
-                       const tempSplit = parseFloat(document.getElementById('quick-temp-split').value) || 0;
-                       if (tempSplit < 15) {
-                           result = '<div class="alert alert-error">❌ Low temperature split - Check airflow or refrigerant levels</div>';
-                       } else if (tempSplit > 22) {
-                           result = '<div class="alert alert-warning">⚠️ High temperature split - Check for restrictions</div>';
-                       } else {
-                           result = '<div class="alert alert-success">✅ Normal temperature split - System operating correctly</div>';
-                       }
-                       break;
-                       
-                   case 'superheat':
-                       const superheat = parseFloat(document.getElementById('quick-superheat').value) || 0;
-                       if (superheat < 5) {
-                           result = '<div class="alert alert-error">❌ Low superheat - Possible overcharge</div>';
-                       } else if (superheat > 20) {
-                           result = '<div class="alert alert-warning">⚠️ High superheat - Possible undercharge</div>';
-                       } else {
-                           result = '<div class="alert alert-success">✅ Normal superheat - Charge is correct</div>';
-                       }
-                       break;
-                       
-                   case 'amps':
-                       const ampPercentage = parseFloat(document.getElementById('quick-amps').value) || 0;
-                       if (ampPercentage > 110) {
-                           result = '<div class="alert alert-error">❌ High amp draw - Check for overload or low voltage</div>';
-                       } else if (ampPercentage < 70) {
-                           result = '<div class="alert alert-warning">⚠️ Low amp draw - Check for underload</div>';
-                       } else {
-                           result = '<div class="alert alert-success">✅ Normal amp draw - Motor operating correctly</div>';
-                       }
-                       break;
-               }
-               
-               resultsDiv.innerHTML = result;
-           }
-
-           // Add smooth scrolling for better UX
-           document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-               anchor.addEventListener('click', function (e) {
-                   e.preventDefault();
-                   const target = document.querySelector(this.getAttribute('href'));
-                   if (target) {
-                       target.scrollIntoView({
-                           behavior: 'smooth',
-                           block: 'start'
-                       });
-                   }
-               });
-           });
-
-           // Add keyboard navigation support
-           document.addEventListener('keydown', function(e) {
-               if (e.key === 'Tab') {
-                   // Allow normal tab navigation
-                   return;
-               }
-               
-               // Add keyboard shortcuts for calculators
-               if (e.ctrlKey || e.metaKey) {
-                   switch(e.key) {
-                       case '1':
-                           e.preventDefault();
-                           showTab('refrigeration');
-                           break;
-                       case '2':
-                           e.preventDefault();
-                           showTab('airflow');
-                           break;
-                       case '3':
-                           e.preventDefault();
-                           showTab('electrical');
-                           break;
-                       case '4':
-                           e.preventDefault();
-                           showTab('duct');
-                           break;
-                   }
-               }
-           });
-
-           console.log('HVAC Calculator fully loaded with all enhancements');
