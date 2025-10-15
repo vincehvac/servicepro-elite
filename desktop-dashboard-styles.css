@@ -1,0 +1,692 @@
+/* Desktop Dashboard Complete Styles - Tasks 4.1 to 4.8 */
+
+/* Interactive Job List - Task 4.1 */
+.interactive-job-list {
+    background: var(--bg-primary);
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.section-header h2 {
+    margin: 0;
+    color: var(--text-primary);
+    font-size: var(--font-size-h2);
+}
+
+.action-buttons {
+    display: flex;
+    gap: 0.5rem;
+}
+
+/* Filter Panel - Task 4.2 */
+.filter-panel {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.filter-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    align-items: end;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.filter-group label {
+    font-size: var(--font-size-small);
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.filter-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+/* Job Wizard Modal - Task 4.3 */
+.job-wizard-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+}
+
+.wizard-content {
+    position: relative;
+    background: var(--bg-primary);
+    border-radius: var(--radius-lg);
+    width: 90%;
+    max-width: 800px;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: var(--shadow-xl);
+}
+
+.wizard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 2rem;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.wizard-header h2 {
+    margin: 0;
+    color: var(--text-primary);
+}
+
+/* Wizard Progress - Task 4.3 */
+.wizard-progress {
+    display: flex;
+    justify-content: space-between;
+    padding: 2rem;
+    background: var(--bg-secondary);
+}
+
+.wizard-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    flex: 1;
+    position: relative;
+}
+
+.wizard-step::after {
+    content: '';
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    width: 100%;
+    height: 2px;
+    background: var(--border-color);
+    z-index: 0;
+}
+
+.wizard-step:last-child::after {
+    display: none;
+}
+
+.step-number {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--bg-tertiary);
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    border: 2px solid var(--border-color);
+    position: relative;
+    z-index: 1;
+    transition: var(--transition-base);
+}
+
+.wizard-step.active .step-number {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+    transform: scale(1.1);
+}
+
+.wizard-step.completed .step-number {
+    background: var(--success-color);
+    color: white;
+    border-color: var(--success-color);
+}
+
+.wizard-step.completed .step-number::after {
+    content: '✓';
+}
+
+.step-label {
+    font-size: var(--font-size-small);
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.wizard-step.active .step-label {
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+/* Wizard Body */
+.wizard-body {
+    padding: 2rem;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.wizard-page {
+    display: none;
+}
+
+.wizard-page.active {
+    display: block;
+    animation: fadeIn 0.3s ease;
+}
+
+.wizard-page h3 {
+    margin-bottom: 1.5rem;
+    color: var(--text-primary);
+}
+
+/* Customer List */
+.customer-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin: 1rem 0;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.customer-item {
+    padding: 1rem;
+    background: var(--bg-secondary);
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.customer-item:hover {
+    border-color: var(--primary-color);
+    transform: translateX(4px);
+}
+
+.customer-item.selected {
+    border-color: var(--primary-color);
+    background: rgba(0, 71, 171, 0.05);
+}
+
+.customer-item strong {
+    display: block;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+}
+
+.customer-item span {
+    color: var(--text-secondary);
+    font-size: var(--font-size-small);
+}
+
+/* Parts List - Task 4.4 */
+.parts-item {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+    align-items: center;
+}
+
+.ai-pricing-banner {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: linear-gradient(135deg, rgba(0, 71, 171, 0.1) 0%, rgba(245, 166, 35, 0.1) 100%);
+    border: 1px solid var(--primary-color);
+    border-radius: var(--radius-md);
+    margin-bottom: 1.5rem;
+}
+
+.ai-pricing-banner span:first-child {
+    font-size: 2rem;
+}
+
+.ai-pricing-banner strong {
+    color: var(--primary-color);
+    display: block;
+    margin-bottom: 0.25rem;
+}
+
+.ai-pricing-banner p {
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: var(--font-size-small);
+}
+
+.ai-suggestion {
+    background: rgba(245, 166, 35, 0.1);
+    border-left: 4px solid var(--secondary-color);
+    padding: 1rem;
+    border-radius: var(--radius-sm);
+    margin-top: 1rem;
+    font-size: var(--font-size-body);
+    color: var(--text-primary);
+}
+
+/* Job Review */
+.job-review {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.review-section {
+    padding: 1.5rem;
+    background: var(--bg-secondary);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
+}
+
+.review-section h4 {
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+    font-size: var(--font-size-h4);
+}
+
+.review-section p {
+    margin: 0.5rem 0;
+    color: var(--text-primary);
+}
+
+.total-cost {
+    font-size: var(--font-size-large);
+    color: var(--primary-color);
+    padding-top: 1rem;
+    border-top: 2px solid var(--border-color);
+    margin-top: 1rem;
+}
+
+/* Wizard Footer */
+.wizard-footer {
+    display: flex;
+    justify-content: space-between;
+    padding: 1.5rem 2rem;
+    border-top: 2px solid var(--border-color);
+    background: var(--bg-secondary);
+}
+
+/* Calendar View - Task 4.5 */
+.calendar-view {
+    background: var(--bg-primary);
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
+}
+
+.calendar-controls {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.calendar-week-label {
+    font-weight: 600;
+    color: var(--text-primary);
+    min-width: 180px;
+    text-align: center;
+}
+
+.calendar-grid {
+    margin-top: 1.5rem;
+    overflow-x: auto;
+}
+
+.calendar-header {
+    display: grid;
+    grid-template-columns: 150px repeat(7, 1fr);
+    gap: 1px;
+    background: var(--border-color);
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+    overflow: hidden;
+}
+
+.calendar-header > div {
+    background: var(--primary-color);
+    color: white;
+    padding: 1rem;
+    text-align: center;
+    font-weight: 600;
+    font-size: var(--font-size-small);
+}
+
+.tech-column {
+    text-align: left !important;
+}
+
+.calendar-row {
+    display: grid;
+    grid-template-columns: 150px repeat(7, 1fr);
+    gap: 1px;
+    background: var(--border-color);
+}
+
+.tech-name {
+    background: var(--bg-secondary);
+    padding: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+}
+
+.day-cell {
+    background: var(--bg-primary);
+    padding: 0.5rem;
+    min-height: 100px;
+    transition: var(--transition-fast);
+}
+
+.day-cell:hover {
+    background: var(--bg-secondary);
+}
+
+.job-card {
+    background: var(--primary-color);
+    color: white;
+    padding: 0.5rem;
+    border-radius: 4px;
+    margin-bottom: 0.5rem;
+    cursor: move;
+    font-size: var(--font-size-small);
+    transition: var(--transition-fast);
+}
+
+.job-card:hover {
+    transform: scale(1.05);
+    box-shadow: var(--shadow-sm);
+}
+
+.job-card-id {
+    font-weight: 600;
+}
+
+.job-card-time {
+    font-size: 11px;
+    opacity: 0.9;
+}
+
+/* Chat Widget - Task 4.6 */
+.chat-widget {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    width: 350px;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-xl);
+    z-index: 999;
+}
+
+.chat-header {
+    background: var(--primary-color);
+    color: white;
+    padding: 1rem 1.5rem;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 600;
+}
+
+.chat-badge {
+    background: var(--danger-color);
+    color: white;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.chat-body {
+    display: flex;
+    flex-direction: column;
+    height: 400px;
+}
+
+.chat-messages {
+    flex: 1;
+    padding: 1rem;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.chat-message {
+    max-width: 80%;
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius-md);
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.chat-message.received {
+    align-self: flex-start;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+}
+
+.chat-message.sent {
+    align-self: flex-end;
+    background: var(--primary-color);
+    color: white;
+}
+
+.message-sender {
+    font-weight: 600;
+    font-size: var(--font-size-small);
+    margin-bottom: 0.25rem;
+    color: var(--text-primary);
+}
+
+.message-text {
+    font-size: var(--font-size-body);
+    line-height: 1.4;
+}
+
+.message-time {
+    font-size: 11px;
+    opacity: 0.7;
+    margin-top: 0.25rem;
+}
+
+.chat-input-area {
+    display: flex;
+    gap: 0.5rem;
+    padding: 1rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.chat-input-area .form-input {
+    flex: 1;
+}
+
+/* Quick Actions - Task 4.7 */
+.quick-actions {
+    position: fixed;
+    top: 90px;
+    right: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    z-index: 998;
+}
+
+.quick-actions .btn {
+    box-shadow: var(--shadow-lg);
+    min-width: 160px;
+    justify-content: flex-start;
+}
+
+.btn-icon {
+    font-size: 1.25rem;
+}
+
+/* Optimized Animations - Task 4.8 */
+.smooth-transition {
+    transition: transform var(--transition-base), opacity var(--transition-base);
+}
+
+.fade-in {
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.slide-up {
+    animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive - Task 1.5 */
+@media (max-width: 1024px) {
+    .quick-actions {
+        position: static;
+        flex-direction: row;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+    }
+    
+    .chat-widget {
+        width: 300px;
+    }
+}
+
+@media (max-width: 768px) {
+    .filter-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .filter-actions {
+        width: 100%;
+    }
+    
+    .filter-actions .btn {
+        flex: 1;
+    }
+    
+    .wizard-content {
+        width: 95%;
+        max-height: 95vh;
+    }
+    
+    .wizard-progress {
+        padding: 1rem;
+    }
+    
+    .wizard-step {
+        font-size: var(--font-size-small);
+    }
+    
+    .step-number {
+        width: 32px;
+        height: 32px;
+        font-size: var(--font-size-small);
+    }
+    
+    .step-label {
+        font-size: 11px;
+    }
+    
+    .calendar-grid {
+        overflow-x: scroll;
+    }
+    
+    .calendar-header,
+    .calendar-row {
+        min-width: 800px;
+    }
+    
+    .chat-widget {
+        width: calc(100% - 2rem);
+        left: 1rem;
+        right: 1rem;
+    }
+    
+    .quick-actions {
+        flex-direction: column;
+    }
+    
+    .quick-actions .btn {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .interactive-job-list,
+    .calendar-view {
+        padding: 1rem;
+    }
+    
+    .wizard-body {
+        padding: 1rem;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .action-buttons .btn {
+        width: 100%;
+    }
+}
